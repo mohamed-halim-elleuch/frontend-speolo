@@ -15,5 +15,4 @@ yarn add dateformat
 yarn add react-hook-form  
 
 # run project  
-cd /front-react  
 npm start  
