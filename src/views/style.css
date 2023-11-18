@@ -1,0 +1,24 @@
+/* src/App.css */
+.app {
+	text-align: center;
+
+	background-image: url('./images/background.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	height: 100vh;	
+  
+  }
+ 
+  
+ /* .logo {
+	height: 40vmin;
+	pointer-events: none;
+  }
+  
+  .header {
+	background-color: #282c34;
+	padding: 20px;
+	color: white;
+  }*/
+  
