@@ -5,8 +5,11 @@ import { ReactComponent as Cave } from '../images/cave.svg'
 import '../css/Navbar.css'
 import Button from '@mui/joy/Button';
 import { useCheckAuthentication, useLogout } from '../../apis/AuthContext'
+import { LanguageSelector } from './LanguageSelector'
+import { useTranslation } from 'react-i18next'
 
 const Navbar = () => {
+  const {t} = useTranslation("translation");
   const checkAuthentication = useCheckAuthentication();
   const [showNavbar, setShowNavbar] = useState(false)
   const logout = useLogout();
@@ -36,22 +39,25 @@ const Navbar = () => {
         <div className={`nav-elements  ${showNavbar && 'active'}`}>
           <ul>
             <li>
-              <NavLink to="/authenticate/home">Home</NavLink>
+              <NavLink to="/authenticate/home">{t('Navbar.home')}</NavLink>
             </li>
             <li>
-              <NavLink to="/authenticate/contribute">Contribute</NavLink>
+              <NavLink to="/authenticate/contribute">{t('Navbar.contribute')}</NavLink>
             </li>
             <li>
-              <NavLink to="/authenticate/search-page">Search</NavLink>
+              <NavLink to="/authenticate/search-page">{t('Navbar.search')}</NavLink>
             </li>
             <li>
-              <NavLink to="/authenticate/user-profile">User Profile</NavLink>
+              <NavLink to="/authenticate/user-profile">{t('Navbar.user-profile')}</NavLink>
             </li>
             <li>
-              <NavLink to="/authenticate/contact">Contact</NavLink>
+              <NavLink to="/authenticate/contact">{t('Navbar.contact')}</NavLink>
             </li>
             <li>
-            <Button color="neutral" onClick={handleLogOut} size="sm" variant="solid">Logout</Button>
+            <Button color="neutral" onClick={handleLogOut} size="sm" variant="solid">{t('Navbar.log-out')}</Button>
+            </li>
+            <li>
+              <LanguageSelector />
             </li>
           </ul>
         </div>

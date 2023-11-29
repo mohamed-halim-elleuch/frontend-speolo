@@ -39,6 +39,7 @@ import { getSensors } from '../../../../apis/SensorController';
 import { searchObservations } from '../../../../apis/CaveObservationController';
 import { useParams } from 'react-router-dom';
 import { getUsers } from '../../../../apis/UserController';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -54,6 +55,7 @@ type Order = 'asc' | 'desc';
 // with exampleArray.slice().sort(exampleComparator)
 
 function RowMenu() {
+  const {t} = useTranslation("translation");
   return (
     <Dropdown>
       <MenuButton
@@ -64,11 +66,11 @@ function RowMenu() {
       </MenuButton>
       <Menu size="sm" sx={{ minWidth: 140 }}>
        
-        <MenuItem>Edit</MenuItem>
-        <MenuItem>Rename</MenuItem>
+        <MenuItem>{t('Obs.table.edit')}</MenuItem>
+        <MenuItem>{t('Obs.table.rename')}</MenuItem>
         
         <Divider />
-        <MenuItem color="danger">Delete</MenuItem>
+        <MenuItem color="danger">{t('Obs.table.delete')}</MenuItem>
       </Menu>
     </Dropdown>
   );
@@ -76,6 +78,7 @@ function RowMenu() {
 
 
 export default function FileTable() {
+  const {t} = useTranslation("translation");
   const { id } = useParams();
   const [sensorType,setSensorType] = React.useState(null);
   const [order, setOrder] = React.useState<Order>('desc');
@@ -126,9 +129,9 @@ export default function FileTable() {
 
 
       <FormControl size="sm">
-        <FormLabel>Sensor Type</FormLabel>
-        <Select size="md" placeholder="All">
-          <Option value="all">All</Option>
+        <FormLabel>{t('Obs.sensor')}</FormLabel>
+        <Select size="md" placeholder={t('Obs.all')}>
+          <Option value="all">{t('Obs.all')}</Option>
           <Option value="reefnet">Reefnet Sensor</Option>
           <Option value="ctd">CTD Sensor</Option>
           <Option value="pluviometer">PluvioMeter</Option>
@@ -137,9 +140,9 @@ export default function FileTable() {
       </FormControl>
 
       <FormControl size="sm">
-        <FormLabel>Author</FormLabel>
-        <Select size="md" placeholder="All">
-          <Option value="all">All</Option>
+        <FormLabel>{t('Obs.author')}</FormLabel>
+        <Select size="md" placeholder={t('Obs.all')}>
+          <Option value="all">{t('Obs.all')}</Option>
           <Option value="olivia">Olivia Rhye</Option>
           <Option value="steve">Steve Hampton</Option>
           <Option value="ciaran">Ciaran Murray</Option>
@@ -165,7 +168,7 @@ export default function FileTable() {
       >
         <Input
           size="sm"
-          placeholder="Search"
+          placeholder={t('Obs.search')}
           startDecorator={<SearchIcon />}
           sx={{ flexGrow: 1 }}
         />
@@ -213,8 +216,8 @@ export default function FileTable() {
         }}
       >
         <FormControl sx={{ flex: 1 }} size="sm">
-          <FormLabel>Search for observation</FormLabel>
-          <Input size="sm" placeholder="Search" startDecorator={<SearchIcon />} />
+          <FormLabel>{t('Obs.serach-label')}</FormLabel>
+          <Input size="sm" placeholder={t('Obs.search')} startDecorator={<SearchIcon />} />
         </FormControl>
         {renderFilters()}
       </Box>
@@ -264,15 +267,13 @@ export default function FileTable() {
                   sx={{ verticalAlign: 'text-bottom' }}
                 />
               </th>
-              <th style={{ width: "25%", padding: '12px 6px' }}>
-                
-                  File Name
-                
+              <th style={{ width: "25%", padding: '12px 6px' }}>  
+              {t('Obs.table.file-name')} 
               </th>
-              <th style={{ width: "14%", padding: '12px 6px' }}>Sensor Type</th> 
-              <th style={{ width: "14%", padding: '12px 6px' }}>Begin Date</th>
-              <th style={{ width: "14%", padding: '12px 6px' }}>End Date</th>
-              <th style={{ width: "20%", padding: '12px 6px' }}>Author</th>
+              <th style={{ width: "14%", padding: '12px 6px' }}>{t('Obs.table.sensor')}</th> 
+              <th style={{ width: "14%", padding: '12px 6px' }}>{t('Obs.table.begin-date')}</th>
+              <th style={{ width: "14%", padding: '12px 6px' }}>{t('Obs.table.end-date')}</th>
+              <th style={{ width: "20%", padding: '12px 6px' }}>{t('Obs.table.author')}</th>
               <th style={{ width: "8%", padding: '12px 6px' }}></th>
               
             </tr>
@@ -331,7 +332,7 @@ export default function FileTable() {
               </tr>
             ))): (
               <tr>
-                <td colSpan={5}>Loading or empty state</td>
+                <td colSpan={5}>{t('Obs.loading')}</td>
               </tr>)}
           </tbody>
         </Table>
@@ -354,7 +355,7 @@ export default function FileTable() {
           color="neutral"
           startDecorator={<KeyboardArrowLeftIcon />}
         >
-          Previous
+          {t('Obs.table.previous')}
         </Button>
 
         <Box sx={{ flex: 1 }} />
@@ -376,7 +377,7 @@ export default function FileTable() {
           color="neutral"
           endDecorator={<KeyboardArrowRightIcon />}
         >
-          Next
+          {t('Obs.table.next')}
         </Button>
       </Box>
     </React.Fragment>

@@ -15,9 +15,11 @@ import dayjs from 'dayjs';
 import { createObservation, uploadFile } from '../../apis/CaveObservationController';
 import ShowMessage from './ShowMessage';
 import { getSensorTypes } from '../../apis/SensorTypeController';
+import { useTranslation } from 'react-i18next';
 // const options = ['ReefNet', 'CTD'];
 
 export default function Contribute() {
+  const {t} = useTranslation("translation");
     const [options,setOptions] = React.useState(null);
     const [beginvalue, setBeginValue] = React.useState(null);
     const [endvalue, setEndValue] = React.useState(null);
@@ -99,14 +101,14 @@ export default function Contribute() {
   >
     
     <Typography variant='h4' sx={{ marginBottom: 2 }}>
-      ADD YOUR CONTRIBUTIONS
+    {t('Contribute.add-cont')}
     </Typography>
     {showMessage ?   <ShowMessage openvalue={showMessage} message="Observation added" status="success" /> : <></>}
 
     <TextField
     {...register('caveId')}
       name="caveId"
-      label="Cave ID"
+      label={t('Contribute.cave-id')}
       id="caveId"
       sx={{ marginBottom: 2, width: '100%' }}
       InputProps={{
@@ -137,7 +139,7 @@ export default function Contribute() {
         <TextField
           {...params}
           name="timeZone"
-          label="Choose the Country Name"
+          label={t('Contribute.country')}
           inputProps={{
             ...params.inputProps,
             autoComplete: 'new-password', // disable autocomplete and autofill
@@ -162,7 +164,7 @@ export default function Contribute() {
         isOptionEqualToValue={(option, value) => option.name === value}
         getOptionLabel={(option) => option?.name } 
         sx={{ marginBottom: 2, width: '100%' }}
-        renderInput={(params) => <TextField {...params} label="Sensor Type" />}
+        renderInput={(params) => <TextField {...params} label={t('Contribute.sensor')} />}
       />
 
     <LocalizationProvider dateAdapter={AdapterDayjs} >
@@ -170,7 +172,7 @@ export default function Contribute() {
       {...register('beginDate')}
         name="beginDate"
         sx={{ marginBottom: 2, width: '100%' }}
-        label="Begin DateTime"
+        label={t('Contribute.begin-date')}
         value={beginvalue}
         onChange={(newValue) => setValue('beginDate',newValue)}
       />
@@ -181,7 +183,7 @@ export default function Contribute() {
       {...register('endDate')}
         name="endDate"
         sx={{ marginBottom: 2, width: '100%' }}
-        label="End DateTime"
+        label={t('Contribute.end-date')}
         value={endvalue}
         onChange={(newValue) => setValue('endDate',newValue)}
       />
@@ -192,10 +194,10 @@ export default function Contribute() {
         component="label"
         variant="outlined"
         startIcon={<CloudUploadIcon />}
-        sx={{ width: '40%', height: '39px' }}
+        sx={{ width: '41%', height: '39px' }}
         
       >
-        Upload file
+        {t('Contribute.upload')}
         <VisuallyHiddenInput type="file" accept=".csv" onChange={handleFileChange} />
       </Button>
 
@@ -222,7 +224,7 @@ export default function Contribute() {
       type="submit"
       sx={{ width: '50%', marginTop: 2 }}
     >
-      Submit
+      {t('Contribute.submit')}
     </Button>
   </Box>
 </form>

@@ -1,0 +1,109 @@
+{
+    "Home": {
+        "title": "Grottes du monde"
+    },
+    "Navbar": {
+        "contact": "Contact",
+        "home": "Accueil",
+		"user-profile":"Profil",
+		"log-out":"Déconnexion",
+		"contribute":"Contribuer",
+		"search":"Rechercher",
+		"language-selector":{"fr":"Français","en":"Anglais"}
+    },
+	"Contribute":{
+		"add-cont":"AJOUTEZ VOS CONTRIBUTIONS",
+		"cave-id": "ID de la grotte",
+		"country": "Choisissez le nom du pays",
+		"sensor": "Type de capteur",
+		"begin-date": "Date de début",
+		"end-date":"Date de fin",
+		"upload":"CHARGER LE FICHIER",
+		"submit":"SOUMETTRE"
+	},
+	"Search":{
+		"title" : "RECHERCHONS DANS LA BASE DE DONNÉES",
+		"cave-name" : "Nom de la grotte",
+		"cave-id" : "ID de la grotte",
+		"country" : "Choisissez le nom du pays",
+		"search" : "Recherche",
+		"table":{
+			"name" : "Nom",
+			"id" : "ID",
+			"depth" : "Profondeur",
+			"length" : "Longueur",
+			"latitude" : "Latitude",
+			"longitude" : "Longitude",
+			"county" : "Comté",
+			"country" : "Code pays",
+			"cave_obs" : "Observations",
+			"rows" : "Lignes par page:",
+			"view":"Voir"
+		}
+	},
+	"Obs":{
+		"title":"Observations",
+		"serach-label":"Recherche d'une observation",
+		"search":"Rechercher",
+		"sensor":"Type de capteur",
+		"author":"Auteur",
+		"download":"TÉLÉCHARGER ZIP",
+		"all" : "Tous",
+		"loading" : "Chargement ou état vide",
+		"table":{
+			"file-name":"Nom du fichier",
+			"sensor":"Type de capteur",
+			"begin-date":"Date de début",
+			"end-date":"Date de fin",
+			"author":"Auteur",
+			"edit":"Éditer",
+			"rename":"Renommer",
+			"delete":"Supprimer",
+			"previous":"PRÉCÉDENT",
+			"next":"SUIVANT"
+		}
+	},
+	"User":{
+		"name":"Nom et prénom",
+		"license":"Numéro de licence",
+		"email":"Email",
+		"phone":"Téléphone",
+		"address":"Adresse",
+		"add":"AJOUTER",
+		"edit":"Éditer",
+		"delete":"Supprimer",
+		"row":"Row",
+		"sensor":"Type de capteur",
+		"added":"Date d'ajout",
+		"file-name":"Nom du fichier"
+	},
+	"Login":{
+		"big-title":"BIENVENUE DANS LA BASE DE DONNÉES DÉDIÉE À LA SPÉLÉOLOGIE",
+		"title" : "Connexion",
+		"email" : "Entrez votre email",
+		"password" : "Entrez votre mot de passe",
+		"forget" : "Vous avez oublié votre mot de passe ?",
+		"button":"SE CONNECTER",
+		"welcome" : "Bienvenue !",
+		"text":"Pour rester en contact avec nous, veuillez vous connecter à l'aide de vos coordonnées."
+	},
+	"Signup":{
+		"title":"Créer un Compte",
+		"first-name":"Prénom",
+		"last-name":"Nom de famille",
+		"email":"Email",
+		"license":"Numéro de licence",
+		"password":"Mot de passe",
+		"confirm-pass":"Confirmer le Mot de passe",
+		"button":"S'INSCRIRE",
+		"welcome":"Créez votre compte",
+		"text":"Entrez vos coordonnées et commencez votre voyage en tant que spéléologue"
+
+	},
+	"Forget-pass":{
+		"title" : "SE CONNECTER",
+		"email" : "Entrez votre Email",
+		"login-again":"Se connecter à nouveau",
+		"button":"RÉINITIALISER VOTRE MOT DE PASSE"
+	}
+}

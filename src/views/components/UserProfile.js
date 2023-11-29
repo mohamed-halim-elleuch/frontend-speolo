@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import {Container,Breadcrumbs,Typography,Card,CardContent,CardMedia,Button,List,ListItem,ListItemText,Divider,Grid,LinearProgress,Box,Icon,Avatar} from '@mui/material';
+import {Container,Typography,Card,CardContent,Button,List,ListItem,ListItemText,Divider,Grid,Box,Avatar} from '@mui/material';
 import { fetchUserInfo } from '../../apis/UserController';
 import dateFormat from 'dateformat';
 import ListItemButton from '@mui/material/ListItemButton';
 import Table from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
-import ListItemDecorator, {
-  listItemDecoratorClasses,
-} from '@mui/joy/ListItemDecorator';
-
+import  {listItemDecoratorClasses,} from '@mui/joy/ListItemDecorator';
+import { useTranslation } from 'react-i18next';
+import { searchObservations } from '../../apis/CaveObservationController';
+import { getCaveById } from '../../apis/CaveController';
+import dayjs, { Dayjs } from 'dayjs';
+import { getSensorTypeById } from '../../apis/SensorTypeController';
 function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
@@ -25,9 +27,11 @@ const rows = [
 
 
 export default function UserProfile() {
+  const {t} = useTranslation("translation");
   const [index, setIndex] = React.useState(0);
   const [user, setUser] = useState({firstName:'',lastName:'',email:'',license:'',createdAt:''});
-
+  const [groupedData, setGroupedData] = useState([]);
+  const [selectedCaveData, setSelectedCaveData] = useState([]);
   useEffect(() => {
 
     const fetchData = async () => {
@@ -41,15 +45,84 @@ export default function UserProfile() {
       }
     };
 
+    const fetchUserObs = async () => {
+      try{
+        const originalData = await searchObservations(`{"createdBy":"${user._id}"}`);
+        
+
+        // Group the data by caveId
+        const groupedByCaveId = originalData.reduce((acc, item) => {
+          const { caveId } = item;
+          if (!acc[caveId]) {
+            acc[caveId] = [];
+          }
+          acc[caveId].push(item);
+          return acc;
+        }, {});
+        // Set the grouped data in the state
+        setGroupedData(groupedByCaveId);
+        const uniqueCaveIds = Object.keys(groupedByCaveId);
+        // Use Promise.all to wait for all requests to complete
+        await Promise.all(
+          uniqueCaveIds.map(async (caveId) => {
+            try {
+              const response = await getCaveById(caveId);
+              const caveName = response.name;
+
+              // Update state with cave name
+              setGroupedData((prevData) => ({
+                ...prevData,
+                [caveId]: prevData[caveId].map((item) => ({
+                  ...item,
+                  caveName,
+                })),
+              }));
+              
+              setSelectedCaveData(groupedData[0]);
+            } catch (error) {
+              console.error(`Error fetching cave name for ${caveId}:`, error);
+            }
+          })
+        );
+
+        
+      }catch(error){
+        console.log("Error getting user contributions");
+      }
+    };
+
+
+
     fetchData();
+    fetchUserObs()
     console.log("user page: ",user);
+    console.log("grouped data: ",groupedData);
+    console.log("grouped data2: ",selectedCaveData);
     
 
-  }, [user.createdAt]);
+  }, [user.email]);
 
-  const handleButtonClick = () => {
-    // Handle button click logic here
-  };
+  const getinfofile= async(data)=>{
+    const responses =await Promise.all(
+    data.map(async(item)=>{
+          const formattedBeginDate = item?.beginDate ? dayjs(item.beginDate).format('MMM DD, YYYY') : 'no_date';
+          const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
+          const datePart = `${formattedBeginDate}_${formattedEndDate}`;
+          const fileName = `${item?.timeZone}_${datePart}.csv` || 'file.csv';
+          
+          const sensorID = item?.sensorId || '';
+          const resSensor = await getSensorTypeById(sensorID);
+          
+         console.log('r ',resSensor?.data?.name);
+          
+          return { ...item,"sensor_type":resSensor?.data?.name, "fileName": fileName  };
+    }));
+  return responses;
+  }
+  const caveNames = Object.values(groupedData).map((caveId) => ({
+    id: caveId[0].caveId,text: caveId[0].caveName,
+  }));
+
   return (
     <Box  sx={{ backgroundColor: '#eee' }}>
       <Container sx={{ py: 3.7 }}>
@@ -67,61 +140,58 @@ export default function UserProfile() {
               {dateFormat(user.createdAt, "dddd, mmmm dS, yyyy")} 
               </Typography>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px',marginTop:'4px' }}>
-                <Button variant="contained">Add</Button>
-                <Button variant="contained" color="success" style={{ marginLeft: '8px' }}>Edit</Button>
-                <Button variant="outlined" color="error" style={{ marginLeft: '8px' }}>Delete</Button>
+                <Button variant="contained">{t('User.add')}</Button>
+                <Button variant="contained" color="success" style={{ marginLeft: '8px' }}>{t('User.edit')}</Button>
+                <Button variant="outlined" color="error" style={{ marginLeft: '8px' }}>{t('User.delete')}</Button>
               </div>
             </CardContent>
           </Card>
 <br />
-            <Card >
-              <CardContent sx={{ padding: 0 ,pt:2,maxHeight:'250px'}}>
-              <nav aria-label="secondary mailbox folders">
-                <List aria-label="Sidebar"
-                    sx={{
-                      '--ListItem-paddingLeft': '0px',
-                      '--ListItemDecorator-size': '64px',
-                      '--ListItem-minHeight': '32px',
-                      '--List-nestedInsetStart': '13px',
-                      [`& .${listItemDecoratorClasses.root}`]: {
-                        justifyContent: 'flex-end',
-                        pr: '18px',
-                      },
-                      '& [role="button"]': {
-                        borderRadius: '0 20px 20px 0',
-                      },
-                      padding: 0
-                    }}
-                    className="rounded-3">
-                  {[
-                    {text: 'Villebruc cave' },
-                    { text: 'Beget Cave' },
-                    {  text: 'Saint-Joseph cave', color: '#55acee' },
-                  ].map((item, indexdata) => (
-                    <React.Fragment key={indexdata} >
-                    <ListItem disablePadding>
-                    <ListItemButton
-                    
-               selected={index === indexdata}
-               color={index === indexdata ? 'neutral' : undefined}
-               onClick={() => {setIndex(indexdata);console.log(index)}}
-              
-              component="a"
-              href="#simple-list"
-              className="d-flex justify-content-between align-items-center p-3"
-            >
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-                      </ListItem>
-                      
-                      {indexdata !== 2 && <Divider />}
-                     
-                    </React.Fragment>
-                  ))}
-                </List>
-                </nav>
-              </CardContent>
-            </Card>
+<Card>
+      <CardContent sx={{ padding: 0, height: '252px', overflowY: 'auto' }}>
+        <List
+          aria-label="Sidebar"
+          sx={{
+            '--ListItem-paddingLeft': '0px',
+            '--ListItemDecorator-size': '64px',
+            '--ListItem-minHeight': '32px',
+            '--List-nestedInsetStart': '13px',
+            [`& .${listItemDecoratorClasses.root}`]: {
+              justifyContent: 'flex-end',
+              pr: '18px',
+            },
+            '& [role="button"]': {
+              borderRadius: '0 20px 20px 0',
+            },
+            padding: 0,
+          }}
+          className="rounded-3"
+        >
+          {caveNames.map((item, indexdata) => (
+            <React.Fragment key={indexdata}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  selected={index === indexdata}
+                  onClick={async() => {
+                    setIndex(indexdata);
+                    console.log(indexdata);
+                    const info = await getinfofile(groupedData[item.id]);
+                    setSelectedCaveData(info);
+                    console.log("grouped data2: ",info);
+                  }}
+                  component="a"
+                  href="#simple-list"
+                  className="d-flex justify-content-between align-items-center p-3"
+                >
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+              {indexdata !== caveNames.length - 1 && <Divider />}
+            </React.Fragment>
+          ))}
+        </List>
+      </CardContent>
+    </Card>
           </Grid>
           
           <Grid item lg={8}>
@@ -130,11 +200,11 @@ export default function UserProfile() {
                 <Grid container>
                   {[
                     
-                    { label: 'Full Name', value: `${user.firstName} ${user.lastName}` },
-                    { label: 'License Number', value: user.license },
-                    { label: 'Email', value: user.email },
-                    { label: 'Phone', value: '(097) 234-5678' },
-                    { label: 'Address', value: 'Bay Area, San Francisco, CA' },
+                    { label: `${t('User.name')}`, value: `${user.firstName} ${user.lastName}` },
+                    { label: `${t('User.license')}`, value: user.license },
+                    { label: `${t('User.email')}`, value: user.email },
+                    { label: `${t('User.phone')}`, value: '(097) 234-5678' },
+                    { label: `${t('User.address')}`, value: 'Bay Area, San Francisco, CA' },
                   ].map((item, index) => (
                     <React.Fragment key={index}>
                       <Grid item sm={3}>
@@ -198,19 +268,19 @@ export default function UserProfile() {
                         <Table stickyHeader>
                           <thead>
                             <tr>
-                              <th style={{ width: 80 }}>Row</th>
-                              <th style={{ width: 160 }} >Sensor Type</th>
-                              <th style={{ width: 150 }}>Added date</th>
-                              <th style={{ width: 345 }}>File</th>
+                              <th style={{ width: 80 }}>{t('User.row')}</th>
+                              <th style={{ width: 160 }} >{t('User.sensor')}</th>
+                              <th style={{ width: 150 }}>{t('User.added')}</th>
+                              <th style={{ width: 345 }}>{t('User.file-name')}</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {rows.map((row) => (
-                              <tr key={row.name}>
-                                <td>{row.name}</td>
-                                <td>{row.calories}</td>
-                                <td>{row.fat}</td>
-                                <td>{row.carbs}</td>
+                            {selectedCaveData?.map((row,index) => (
+                              <tr key={index+1}>
+                                <td>{index+1}</td>
+                                <td>{row?.sensor_type}</td>
+                                <td>{row?.fat}</td>
+                                <td>{row?.fileName}</td>
                                
                               </tr>
                             ))}

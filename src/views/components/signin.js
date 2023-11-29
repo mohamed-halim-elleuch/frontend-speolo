@@ -1,14 +1,17 @@
 import '../css/signin.css';
 import React, { useState } from 'react';
 import ForgotPassword from './ForgotPassword';
-import { SignInRequest, SignUpRequest } from '../../apis/authentication';
+import {  SignUpRequest } from '../../apis/authentication';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
-import { Alert } from '@mui/material';
+import { Alert} from '@mui/material';
 import { useLogin } from '../../apis/AuthContext';
+import { useTranslation } from 'react-i18next';
+
 
 const SignIn = () => {
   const login = useLogin();
+  const {t} = useTranslation("translation");
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [checkPassword, setCheckPassword] = useState(false);
@@ -78,24 +81,28 @@ const SignIn = () => {
 
   return (
     <div className="sign">
-                {checkPassword ?       <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} onClose={handleClose} message="Passwords don't match. Please try again!" key={vertical + horizontal} >
-                                    <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords don't match. Please try again!
-                                            </Alert></Snackbar> : <></>}
-            <h4 className="heading">WELCOME TO THE DATABASE DEDICATED TO CAVING</h4>
+
+          {checkPassword ?       <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} onClose={handleClose} message="Passwords don't match. Please try again!" key={vertical + horizontal} >
+                              <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords don't match. Please try again!
+                                      </Alert></Snackbar> : <></>}
+         
+          <h4 className="heading">{t('Login.big-title')}</h4>
+          
               <div className={`containers ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
                 <div className={`form-container sign-up-container ${isRightPanelActive ? 'right-panel-active' : ''}`}>
                   
         <form onSubmit={handleSignUp}>
-          <h3>Create Account</h3>
 
-          <input type="text" placeholder="First Name" name="firstName" required value={formSignUp.firstName} onChange={handleChangeSignUp}/>
-          <input type="text" placeholder="Last Name" name="lastName" required value={formSignUp.lastName} onChange={handleChangeSignUp}/>
-          <input type="email" placeholder="Email" name="email" required value={formSignUp.email} onChange={handleChangeSignUp}/>
-          <input type="text" placeholder="License" name="license" value={formSignUp.license} onChange={handleChangeSignUp} />
-          <input type="password" placeholder="Password" name="password" required value={formSignUp.password} onChange={handleChangeSignUp}/>
-          <input type="password" placeholder="Confirm Password" name="confirm_password" required value={formSignUp.confirm_password} onChange={handleChangeSignUp}/>
+          <h3>{t('Signup.title')}</h3>
+
+          <input type="text" placeholder= {t('Signup.first-name')} name="firstName" required value={formSignUp.firstName} onChange={handleChangeSignUp}/>
+          <input type="text" placeholder={t('Signup.last-name')} name="lastName" required value={formSignUp.lastName} onChange={handleChangeSignUp}/>
+          <input type="email" placeholder={t('Signup.email')} name="email" required value={formSignUp.email} onChange={handleChangeSignUp}/>
+          <input type="text" placeholder={t('Signup.license')} name="license" value={formSignUp.license} onChange={handleChangeSignUp} />
+          <input type="password" placeholder={t('Signup.password')} name="password" required value={formSignUp.password} onChange={handleChangeSignUp}/>
+          <input type="password" placeholder={t('Signup.confirm-pass')} name="confirm_password" required value={formSignUp.confirm_password} onChange={handleChangeSignUp}/>
           <div className="container ">
-            <button type="submit" >Sign Up</button>
+            <button type="submit" >{t('Signup.button')}</button>
           </div>
         </form>
                   <div id="successMessage" className="success-message"></div>
@@ -104,12 +111,12 @@ const SignIn = () => {
   <div className={`form-container sign-in-container ${!isRightPanelActive ? 'right-panel-active' : ''}`}>
 
         <form onSubmit={handleSignIn}>
-        <h3>Login</h3>
-          <input type="email" id="email" placeholder="Enter Your Email" required value={formSignIn.email} onChange={handleChangeSignIn}/>
-          <input type="password" id="password" placeholder="Enter Your Password" required value={formSignIn.password} onChange={handleChangeSignIn}/>
+        <h3>{t('Login.title')}</h3>
+          <input type="email" id="email" placeholder={t('Login.email')} required value={formSignIn.email} onChange={handleChangeSignIn}/>
+          <input type="password" id="password" placeholder={t('Login.password')} required value={formSignIn.password} onChange={handleChangeSignIn}/>
           <div className="password-message"></div>
-          <a href="#" className="forgot-password-link" onClick={handleForgotPasswordClick}>Forgot your password?</a>
-          <button id="btnSignIn" type="submit" >Sign In</button>
+          <a href="#" className="forgot-password-link" onClick={handleForgotPasswordClick}>{t('Login.forget')}</a>
+          <button id="btnSignIn" type="submit" >{t('Login.button')}</button>
         </form>
 
     <div id="errorMessage" className="error-message"></div>
@@ -119,22 +126,23 @@ const SignIn = () => {
   <div className="overlay-container">
     <div className="overlay">
       <div className="overlay-panel overlay-left left-panel">
-        <h3>Welcome Back!</h3>
-        <p>To keep connected with us please login with your details</p>
+        <h3>{t('Login.welcome')}</h3>
+        <p>{t('Login.text')}</p>
         <button className="ghost" id="signIn" onClick={handleSignInClick}>
-          Sign In
+        {t('Login.button')}
         </button>
       </div>
       <div className="overlay-panel overlay-right right-panel">
-        <h3>Create Your Account</h3>
-        <p>Enter your details and start a journey as a caver</p>
+        <h3>{t('Signup.welcome')}</h3>
+        <p>{t('Signup.text')}</p>
         <button className="ghost" id="signUp" onClick={handleSignUpClick}>
-          Sign Up
+        {t('Signup.button')}
         </button>
       </div>
     </div>
   </div>
 </div>
+
     </div>
   );
 };

@@ -12,6 +12,7 @@ import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
 import FileTable from './Components/FileTable.tsx';
 import FileList from './Components/FileList.tsx';
+import { useTranslation } from 'react-i18next';
 
 
 const useEnhancedEffect =
@@ -19,7 +20,7 @@ const useEnhancedEffect =
 
 export default function ObservationFiles() {
 
-
+  const {t} = useTranslation("translation");
 
   return (
     <CssVarsProvider disableTransitionOnChange>
@@ -61,13 +62,13 @@ export default function ObservationFiles() {
               justifyContent: 'space-between',
             }}
           >
-            <Typography level="h2">Observations</Typography>
+            <Typography level="h2">{t('Obs.title')}</Typography>
             <Button
               color="primary"
               startDecorator={<DownloadRoundedIcon />}
               size="sm"
             >
-              Download ZIP
+              {t('Obs.download')}
             </Button>
           </Box>
           <FileTable />

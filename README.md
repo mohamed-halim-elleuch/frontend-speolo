@@ -13,6 +13,7 @@ yarn add dayjs
 yarn add @mui/x-date-pickers
 yarn add dateformat 
 yarn add react-hook-form
+yarn add i18next react-i18next
 
 # run project
 cd /front-react

@@ -1,0 +1,109 @@
+{
+    "Home": {
+        "title": "World Caves"
+    },
+    "Navbar": {
+        "contact": "Contact",
+        "home": "Home",
+		"user-profile":"Profile",
+		"log-out":"Logout",
+		"contribute":"Contribute",
+		"search":"Search",
+		"language-selector":{"fr":"French","en":"English"}
+    },
+	"Contribute":{
+		"add-cont":"ADD YOUR CONTRIBUTIONS",
+		"cave-id": "Cave ID",
+		"country": "Choose the Country Name",
+		"sensor": "Sensor Type",
+		"begin-date": "Begin DateTime",
+		"end-date":"End DateTime",
+		"upload":"UPLOAD FILE",
+		"submit":"SUBMIT"
+	},
+	"Search":{
+		"title":"LET'S SEARCH THE DATABASE",
+		"cave-name":"Cave Name",
+		"cave-id":"Cave ID",
+		"country": "Choose the Country Name",
+		"search":"Search",
+		"table":{
+			"name":"Name",
+			"id":"ID",
+			"depth":"Depth",
+			"length":"Length",
+			"latitude":"Latitude",
+			"longitude":"Longitude",
+			"county":"County",
+			"country":"Country Code",
+			"cave_obs":"Observations",
+			"rows":"Rows per page:",
+			"view":"View"
+		}
+	},
+	"Obs":{
+		"title":"Observations",
+		"serach-label":"Search for observation",
+		"search":"Search",
+		"sensor":"Sensor Type",
+		"author":"Author",
+		"download":"DOWNLOAD ZIP",
+		"all":"All",
+		"loading":"Loading or empty state",
+		"table":{
+			"file-name":"File Name",
+			"sensor":"Sensor Type",
+			"begin-date":"Begin DateTime",
+			"end-date":"End DateTime",
+			"author":"Author",
+			"edit":"Edit",
+			"rename":"Rename",
+			"delete":"Delete",
+			"previous":"PREVIOUS",
+			"next":"NEXT"
+		}
+	},
+	"User":{
+		"name":"Full Name",
+		"license":"License Number",
+		"email":"Email",
+		"phone":"Phone",
+		"address":"Address",
+		"add":"ADD",
+		"edit":"Edit",
+		"delete":"Delete",
+		"row":"Row",
+		"sensor":"Sensor Type",
+		"added":"Added date",
+		"file-name":"File Name"
+	},
+	"Login":{
+		"big-title":"WELCOME TO THE DATABASE DEDICATED TO CAVING",
+		"title":"Login",
+		"email":"Enter Your Email",
+		"password":"Enter Your Password",
+		"forget":"Forgot your password?",
+		"button":"SIGN IN",
+		"welcome":"Welcome Back!",
+		"text":"To keep connected with us please login with your details"
+	},
+	"Signup":{
+		"title":"Create Account",
+		"first-name":"First Name",
+		"last-name":"Last Name",
+		"email":"Email",
+		"license":"License Number",
+		"password":"Password",
+		"confirm-pass":"Confirm Password",
+		"button":"SIGN UP",
+		"welcome":"Create Your Account",
+		"text":"Enter your details and start a journey as a caver"
+
+	},
+	"Forget-pass":{
+		"title":"Login",
+		"email":"Enter Your Email",
+		"login-again":"Login Again",
+		"button":"RESET PASSWORD"
+	}
+}

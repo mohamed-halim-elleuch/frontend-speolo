@@ -16,6 +16,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { getCaveById, searchCaves } from '../../apis/CaveController';
+import { useTranslation } from 'react-i18next';
 
 
 const columns = [
@@ -24,35 +25,35 @@ const columns = [
   {
     id: 'depth',
     label: 'Depth',
-    minWidth: 80,
+    minWidth: 120,
     align: 'center',
     
   },
   {
     id: 'length',
     label: 'Length',
-    minWidth: 80,
+    minWidth: 120,
     align: 'center',
     
   },
   {
     id: 'latitude',
     label: 'Latitude',
-    minWidth: 180,
+    minWidth: 150,
     align: 'center',
     
   },
   {
     id: 'longitude',
     label: 'Longitude',
-    minWidth: 180,
+    minWidth: 150,
     align: 'center',
     
   },
   {
     id: 'county',
     label: 'County',
-    minWidth: 170,
+    minWidth: 150,
     align: 'center',
     
   },  {
@@ -73,6 +74,7 @@ const columns = [
 
 
 export default function SearchPage() {
+  const {t} = useTranslation("translation");
   const {handleSubmit,register,setValue,getValues,control,watch,formState: { errors }, } = useForm();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -142,13 +144,13 @@ export default function SearchPage() {
     }}
   >
     <Typography variant='h6' sx={{ marginBottom: 2 }}>
-    LET'S SEARCH THE DATABASE
+    {t('Search.title')}
     </Typography>
     <Box display="flex" marginBottom={2} sx={{alignItems: 'center'}}>
     <TextField
     {...register('caveName')}
       name="caveName"
-      label="Cave Name"
+      label={t('Search.cave-name')}
       size='small'
       id="outlined-start-adornment"
       sx={{ marginBottom: 1, width: '100%', marginInlineEnd:1}}
@@ -161,7 +163,7 @@ export default function SearchPage() {
     {...register('caveID')}
       name="caveID"
       size='small'
-      label="Cave ID"
+      label={t('Search.cave-id')}
       id="outlined-start-adornment"
       sx={{ marginBottom: 1, width: '100%' ,marginInlineStart:1}}
       InputProps={{
@@ -195,7 +197,7 @@ export default function SearchPage() {
           {...params}
           name="countryName"
           size='small'
-          label="Choose the Country Name"
+          label={t('Search.country')}
           inputProps={{
             ...params.inputProps,
             autoComplete: 'new-password', // disable autocomplete and autofill
@@ -211,7 +213,7 @@ export default function SearchPage() {
       
       sx={{ width: '45%',marginInlineStart:1,height:'38px'}}
     >
-      Search
+      {t('Search.search')}
     </Button>
     </Box>
   </Box>
@@ -230,7 +232,7 @@ export default function SearchPage() {
                   style={{ minWidth: column.minWidth }}
                 >
                  <Typography variant="body1" fontWeight="bold" >
-                    {column.label}
+                    {t(`Search.table.${column.id}`)}
                   </Typography>
                 </TableCell>
               ))}
@@ -249,7 +251,7 @@ export default function SearchPage() {
                         
                         <TableCell key={column.id} align={column.align}>
                           {column.format 
-                            ?  <Button variant="contained" color="info" size="small" onClick={() => handleButtonClick(row)}>View</Button>
+                            ?  <Button variant="contained" color="info" size="small" onClick={() => handleButtonClick(row)}>{t("Search.table.view")}</Button>
                             : value}
                         
                         </TableCell>
@@ -272,6 +274,7 @@ export default function SearchPage() {
         count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
+        labelRowsPerPage={t("Search.table.rows")}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
