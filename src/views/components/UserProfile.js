@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Container,Typography,Card,CardContent,Button,List,ListItem,ListItemText,Divider,Grid,Box,Avatar} from '@mui/material';
+import {Container,Typography,Card,CardContent,Button,List,ListItem,ListItemText,Divider,Grid,Box,Avatar, IconButton} from '@mui/material';
 import { fetchUserInfo } from '../../apis/UserController';
 import dateFormat from 'dateformat';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -7,23 +7,15 @@ import Table from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 import  {listItemDecoratorClasses,} from '@mui/joy/ListItemDecorator';
 import { useTranslation } from 'react-i18next';
-import { searchObservations } from '../../apis/CaveObservationController';
+import { deleteObservation, searchObservations } from '../../apis/CaveObservationController';
 import { getCaveById } from '../../apis/CaveController';
 import dayjs, { Dayjs } from 'dayjs';
 import { getSensorTypeById } from '../../apis/SensorTypeController';
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+import Link from '@mui/joy/Link';
+import { GridDeleteIcon } from '@mui/x-data-grid';
 
-const rows = [
-  createData('1', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
-  createData('2', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
-  createData('3', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
-  createData('4', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
-  createData('5', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
-  createData('6', 'Reefnet sensor', 'Feb 3, 2023', 'Reefnet_13-05-2020_20-01-2022_villebruc'),
 
-];
+
 
 
 export default function UserProfile() {
@@ -32,12 +24,28 @@ export default function UserProfile() {
   const [user, setUser] = useState({firstName:'',lastName:'',email:'',license:'',createdAt:''});
   const [groupedData, setGroupedData] = useState([]);
   const [selectedCaveData, setSelectedCaveData] = useState([]);
+ 
+  const handleDelete = async (row) => {
+    const res = await deleteObservation(row.id);
+    console.log("delete",res);
+  };
+  
+  const downloadFile = (row) => {
+    //window.open(row.filePath, '_blank');
+    const parts = row?.filePath.split('/');
+
+// Get the last part of the array (which is the part after the last "/")
+    const fileName = parts[parts.length - 1];
+    window.open("http://127.0.0.1:8083/uploads/" + fileName,'_blank');
+  };
+
   useEffect(() => {
 
     const fetchData = async () => {
       try {
+        
         const userdata = await fetchUserInfo();
-        setUser({...userdata,address:'Bay Area, San Francisco, CA',phone:'(098) 765-4321'});
+        setUser({...userdata});
         
       } catch (error) {
         console.error('Error fetching sensor types:', error);
@@ -89,33 +97,35 @@ export default function UserProfile() {
       }catch(error){
         console.log("Error getting user contributions");
       }
+      
     };
 
 
 
-    fetchData();
-    fetchUserObs()
+
+      fetchData();
+      fetchUserObs();
+       // Mark the page as refreshed
+    
     console.log("user page: ",user);
     console.log("grouped data: ",groupedData);
     console.log("grouped data2: ",selectedCaveData);
     
-
+    
   }, [user.email]);
 
   const getinfofile= async(data)=>{
     const responses =await Promise.all(
     data.map(async(item)=>{
-          const formattedBeginDate = item?.beginDate ? dayjs(item.beginDate).format('MMM DD, YYYY') : 'no_date';
-          const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
-          const datePart = `${formattedBeginDate}_${formattedEndDate}`;
-          const fileName = `${item?.timeZone}_${datePart}.csv` || 'file.csv';
+          //const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
           
+        
           const sensorID = item?.sensorId || '';
           const resSensor = await getSensorTypeById(sensorID);
           
          console.log('r ',resSensor?.data?.name);
           
-          return { ...item,"sensor_type":resSensor?.data?.name, "fileName": fileName  };
+          return { ...item,"sensor_type":resSensor?.data?.name };
     }));
   return responses;
   }
@@ -130,7 +140,7 @@ export default function UserProfile() {
 
         <Grid container spacing={3} >
           <Grid  item lg={4}  justifyContent="center" alignItems="center">
-          <Card sx={{ pt: 4 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Card sx={{ pt: 2 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Avatar   alt="Johnatan Smith" src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" sx={{ width: 150, height:150 }}/>
             <CardContent style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
               <Typography variant="body1" color="textSecondary" paragraph>
@@ -139,16 +149,12 @@ export default function UserProfile() {
               <Typography variant="body2" color="textSecondary" paragraph>
               {dateFormat(user.createdAt, "dddd, mmmm dS, yyyy")} 
               </Typography>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px',marginTop:'4px' }}>
-                <Button variant="contained">{t('User.add')}</Button>
-                <Button variant="contained" color="success" style={{ marginLeft: '8px' }}>{t('User.edit')}</Button>
-                <Button variant="outlined" color="error" style={{ marginLeft: '8px' }}>{t('User.delete')}</Button>
-              </div>
+
             </CardContent>
           </Card>
 <br />
 <Card>
-      <CardContent sx={{ padding: 0, height: '252px', overflowY: 'auto' }}>
+      <CardContent sx={{ padding: 0, height: '100%', overflowY: 'auto',minHeight:'70px' }}>
         <List
           aria-label="Sidebar"
           sx={{
@@ -194,17 +200,16 @@ export default function UserProfile() {
     </Card>
           </Grid>
           
-          <Grid item lg={8}>
-            <Card className="mb-4">
+          <Grid item lg={8} >
+            <Card className="mb-4" >
               <CardContent>
-                <Grid container>
+                <Grid container >
                   {[
                     
                     { label: `${t('User.name')}`, value: `${user.firstName} ${user.lastName}` },
                     { label: `${t('User.license')}`, value: user.license },
                     { label: `${t('User.email')}`, value: user.email },
-                    { label: `${t('User.phone')}`, value: '(097) 234-5678' },
-                    { label: `${t('User.address')}`, value: 'Bay Area, San Francisco, CA' },
+                    { label: `${t('User.address')}`, value: user.address },
                   ].map((item, index) => (
                     <React.Fragment key={index}>
                       <Grid item sm={3}>
@@ -216,13 +221,13 @@ export default function UserProfile() {
                         <Typography className="text-muted">{item.value}</Typography>
                         
                       </Grid>
-                      {index < 4 && (
-            <Grid item xs={12} >
-                <br />
-              <Divider />
-              <br />
-            </Grid>
-          )}
+                      {index < 3 && (
+                              <Grid item xs={12} >
+                                  <br />
+                                <Divider />
+                                <br />
+                              </Grid>
+                              )}
                       
                     </React.Fragment>
                   ))}
@@ -231,17 +236,17 @@ export default function UserProfile() {
               </CardContent>
             </Card>
             <br />
-            <Grid container spacing={3} >
+            <Grid container spacing={3} style={{ height: '47vh' }}>
               {[...Array(1)].map((_, index) => (
-                <Grid item md={12} key={index} >
-                  <Card className="mb-4" sx={{height:'250px'}}>
+                <Grid item md={12} key={index} style={{ height: '100%' }} >
+                  <Card className="mb-4" sx={{ height: '100%' }}>
                     <CardContent sx={{padding:0,paddingLeft:1}}>
                     <Sheet
                         sx={{
                           '--TableCell-height': '40px',
                           // the number is the amount of the header rows.
                           '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                          height: 250,
+                          height: '43.5vh',
                           overflow: 'auto',
                           background: (theme) =>
                             `linear-gradient(${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
@@ -268,10 +273,12 @@ export default function UserProfile() {
                         <Table stickyHeader>
                           <thead>
                             <tr>
-                              <th style={{ width: 80 }}>{t('User.row')}</th>
-                              <th style={{ width: 160 }} >{t('User.sensor')}</th>
-                              <th style={{ width: 150 }}>{t('User.added')}</th>
-                              <th style={{ width: 345 }}>{t('User.file-name')}</th>
+                              <th style={{ width: 50 }}>{t('User.row')}</th>
+                              <th style={{ width: 125 }} >{t('User.sensor')}</th>
+                              <th style={{ width: 155 }}>{t('User.added')}</th>
+                              <th style={{ width: 260 }}>{t('User.file-name')}</th>
+                              {user.role === "admin" ? <th style={{ width: 40 }}></th>: <></>}
+                              
                             </tr>
                           </thead>
                           <tbody>
@@ -279,9 +286,15 @@ export default function UserProfile() {
                               <tr key={index+1}>
                                 <td>{index+1}</td>
                                 <td>{row?.sensor_type}</td>
-                                <td>{row?.fat}</td>
-                                <td>{row?.fileName}</td>
-                               
+                                <td>{row?.createdAt ? dayjs(row.createdAt).format('MMM D, YYYY  hh:mm') : 'no_date'}</td>
+                                <td><Link level="body-xs" component="button" onClick={() => downloadFile(row)}>{row?.fileName}</Link></td>
+                                {user.role === "admin" ?
+                                <td>
+                                  <IconButton aria-label="delete" onClick={() => handleDelete(row)}>
+                                    <GridDeleteIcon color="warning" />
+                                  </IconButton>
+                                </td>
+                                : <></>}
                               </tr>
                             ))}
                           </tbody>

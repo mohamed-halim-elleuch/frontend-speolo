@@ -154,9 +154,7 @@ export default function SearchPage() {
       size='small'
       id="outlined-start-adornment"
       sx={{ marginBottom: 1, width: '100%', marginInlineEnd:1}}
-      InputProps={{
-        startAdornment: <InputAdornment position="start">e.g. Beget</InputAdornment>,
-      }}
+      
     />
 
     <TextField
@@ -166,9 +164,7 @@ export default function SearchPage() {
       label={t('Search.cave-id')}
       id="outlined-start-adornment"
       sx={{ marginBottom: 1, width: '100%' ,marginInlineStart:1}}
-      InputProps={{
-        startAdornment: <InputAdornment position="start">e.g. 78714</InputAdornment>,
-      }}
+      
     />
     </Box>
     <Box display="flex" marginBottom={2} sx={{alignItems: 'center'}}>

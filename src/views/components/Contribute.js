@@ -8,14 +8,15 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
+
 import { Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
-import dayjs from 'dayjs';
 import { createObservation, uploadFile } from '../../apis/CaveObservationController';
 import ShowMessage from './ShowMessage';
 import { getSensorTypes } from '../../apis/SensorTypeController';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@mui/joy';
+import BasicModalDialog from './DialogButton';
 // const options = ['ReefNet', 'CTD'];
 
 export default function Contribute() {
@@ -26,7 +27,14 @@ export default function Contribute() {
     const [value, setValueType] = React.useState(null);
     const [sensorValue, setSensorValue] = React.useState('');
     const [showMessage,setShowMessage] = React.useState(false);
+    const [newSensorName, setNewSensorName] = React.useState('');
 
+    const handleAddSensor = () => {
+      // Implement logic to add the new sensor
+      console.log('Adding new sensor:', newSensorName);
+      // Clear the input field after adding
+      setNewSensorName('');
+    };
     React.useEffect(()=>{
       const fetchSensorType = async()=>{
       try{
@@ -48,16 +56,13 @@ export default function Contribute() {
       // Get relevant form data
       const {caveId, beginDate, endDate, sensorId } = getValues();
       // Format the dates using dayjs
-      const formattedBeginDate = dayjs(beginDate).format('MMM DD, YY');
-      const formattedEndDate = dayjs(endDate).format('MMM DD, YY');
 
       // Create a dynamic file name based on form data
-      const fileName = `${caveId}_${formattedBeginDate}_${formattedEndDate}.csv`;
 
       // Rename the file
-      const renamedFile = new File([file], fileName, { type: file?.type });
-
-      setValue('selectedFile', renamedFile);
+      //const renamedFile = new File([file], fileName, { type: file?.type });
+      setValue("fileName",file.name)
+      setValue('selectedFile', file);
       
     };
 
@@ -147,6 +152,7 @@ export default function Contribute() {
         />
       )}
     />
+    <Box display="flex" sx={{alignItems: 'center'}}>
     <Autocomplete
     {...register('sensorId')}
         value={value}
@@ -166,7 +172,8 @@ export default function Contribute() {
         sx={{ marginBottom: 2, width: '100%' }}
         renderInput={(params) => <TextField {...params} label={t('Contribute.sensor')} />}
       />
-
+            <BasicModalDialog />
+</Box>
     <LocalizationProvider dateAdapter={AdapterDayjs} >
       <DateTimePicker
       {...register('beginDate')}
@@ -192,7 +199,7 @@ export default function Contribute() {
     <Box display="flex" marginBottom={2} sx={{alignItems: 'center'}}>
       <Button
         component="label"
-        variant="outlined"
+        variant="soft"
         startIcon={<CloudUploadIcon />}
         sx={{ width: '41%', height: '39px' }}
         
@@ -219,7 +226,7 @@ export default function Contribute() {
     </Box>
 
     <Button
-      variant="contained"
+      variant="solid"
       color="primary"
       type="submit"
       sx={{ width: '50%', marginTop: 2 }}

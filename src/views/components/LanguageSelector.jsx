@@ -4,7 +4,7 @@ import { Box, IconButton, Menu, MenuItem } from "@mui/material";
 import React, { useState } from 'react';
 import Tooltip from '@mui/material/Tooltip';
 
-export const LanguageSelector = () =>
+export const LanguageSelector = ({color}) =>
 {
     const [t, i18n] = useTranslation('translation');
     const [anchorEl, setAnchorEl] = useState(null);
@@ -26,7 +26,7 @@ export const LanguageSelector = () =>
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <TranslateIcon  color="action" />
+            <TranslateIcon  style={{ color: color }} />
           </IconButton>
         </Tooltip>
       

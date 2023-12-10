@@ -57,7 +57,7 @@ const Navbar = () => {
             <Button color="neutral" onClick={handleLogOut} size="sm" variant="solid">{t('Navbar.log-out')}</Button>
             </li>
             <li>
-              <LanguageSelector />
+              <LanguageSelector color="black"/>
             </li>
           </ul>
         </div>

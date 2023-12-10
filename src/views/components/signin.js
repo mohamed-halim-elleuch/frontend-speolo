@@ -4,9 +4,10 @@ import ForgotPassword from './ForgotPassword';
 import {  SignUpRequest } from '../../apis/authentication';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
-import { Alert} from '@mui/material';
+import { Alert, Box, Grid} from '@mui/material';
 import { useLogin } from '../../apis/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from './LanguageSelector';
 
 
 const SignIn = () => {
@@ -51,7 +52,8 @@ const SignIn = () => {
     const handleSignIn = async (event) => {
       event.preventDefault();
       try {
-        const userData = login(formSignIn,navigate);
+        console.log('User form:', formSignIn);
+        const userData = await login(formSignIn,navigate);
         console.log('User data:', userData);
       } catch (error) {
         console.error('Login failed', error);
@@ -86,7 +88,21 @@ const SignIn = () => {
                               <Alert onClose={handleClose} severity="error" sx={{ width: '100%' }}>Passwords don't match. Please try again!
                                       </Alert></Snackbar> : <></>}
          
-          <h4 className="heading">{t('Login.big-title')}</h4>
+                                      <Grid container spacing={12} alignItems="center" justifyContent="flex-end">
+                                      <Grid item xs={6} md={1}> </Grid>
+                                        <Grid item xs={6}  md={10}>
+                                          
+                                        <h4 className="heading" >{t('Login.big-title')}</h4>
+                                        </Grid>
+                                        <Grid item xs={6} md={1}>
+                                        <LanguageSelector color="white"/></Grid>
+                                        
+                                        </Grid>
+                                        <br/>
+                                        
+          
+          
+        
           
               <div className={`containers ${isRightPanelActive ? 'right-panel-active' : ''}`} id="container">
                 <div className={`form-container sign-up-container ${isRightPanelActive ? 'right-panel-active' : ''}`}>
@@ -142,6 +158,7 @@ const SignIn = () => {
     </div>
   </div>
 </div>
+
 
     </div>
   );

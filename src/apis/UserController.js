@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = 'http://127.0.0.1:8083'; 
+const API_BASE_URL = `http://${process.env.REACT_APP_API_BASE_URL}:${process.env.REACT_APP_PORT}`; 
 const token = localStorage.getItem('token');
 
 export const fetchUserInfo = async () => {

@@ -92,6 +92,7 @@
 		"first-name":"Prénom",
 		"last-name":"Nom de famille",
 		"email":"Email",
+		"address":"Adresse",
 		"license":"Numéro de licence",
 		"password":"Mot de passe",
 		"confirm-pass":"Confirmer le Mot de passe",

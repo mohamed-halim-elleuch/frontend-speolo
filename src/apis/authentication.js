@@ -2,8 +2,8 @@
 import axios from 'axios';
 
 
-const ipAddress = '127.0.0.1';
-const port = '8083';
+const ipAddress = process.env.REACT_APP_API_BASE_URL;
+const port = process.env.REACT_APP_PORT;
 
 export const SignUpRequest = async (formSignUp) => {
     const email = formSignUp.email;

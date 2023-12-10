@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const API_BASE_URL = 'http://127.0.0.1:8083'; 
+const API_BASE_URL = `http://${process.env.REACT_APP_API_BASE_URL}:${process.env.REACT_APP_PORT}`; 
 const token = localStorage.getItem('token');
 
 export const fetchObservationById = async (id) => {
@@ -50,7 +50,6 @@ export  const uploadFile = async (file) => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-
       const response = await axios.post(`${API_BASE_URL}/api/caveObservation/upload`, formData, {
         headers: {
             Authorization: `Bearer ${token}`, 

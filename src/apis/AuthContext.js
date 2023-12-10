@@ -1,15 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { fetchUserInfo } from './UserController';
 
 
-const ipAddress = '127.0.0.1';
-const port = '8083';
+const ipAddress = process.env.REACT_APP_API_BASE_URL;
+const port = process.env.REACT_APP_PORT;
 
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  
+
   useEffect(() => {
 checkAuthentication();
   }, []);
@@ -30,10 +33,13 @@ checkAuthentication();
        const token = data.data.token;
         // Save the token to local storage or session storage for future authenticated requests
       localStorage.setItem('token', token);
-        
+
         setIsAuthenticated(true);
         // Redirect to the user's dashboard
+        
         navigate('user-profile');
+        window.location.reload();
+       
         return data;
       } else {
         // Display error message for wrong login credentials
@@ -44,10 +50,12 @@ checkAuthentication();
       // Handle any errors that occurred during the request
       console.error(error);
     });
+
 };
 
   const logout = () => {
     localStorage.removeItem('token');
+
     // Perform your logout logic and set isAuthenticated to false
     setIsAuthenticated(false);
   };
@@ -72,10 +80,13 @@ checkAuthentication();
 
   const checkAuthentication = () => {
     const authToken = localStorage.getItem('token');
+
     if (authToken) {
+
       setIsAuthenticated(true);
       return true;
     } else {
+   
       setIsAuthenticated(false);
       return false;
     }

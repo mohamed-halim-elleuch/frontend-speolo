@@ -95,8 +95,7 @@ export default function FileTable() {
        
           const formattedBeginDate = item?.beginDate ? dayjs(item.beginDate).format('MMM DD, YYYY') : 'no_date';
           const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
-          const datePart = `${formattedBeginDate}_${formattedEndDate}`;
-          const fileName = `${datePart}.csv` || 'file.csv';
+          const fileName = item?.fileName || 'file.csv';
           const resUser = await getUsers(`{"_id":"${item.createdBy}"}`);
           
           const sensorID = item.sensorId || '';
@@ -314,7 +313,7 @@ export default function FileTable() {
                     <Avatar size="sm">{row?.customer?.initial}</Avatar>
                     <div>
                       <Typography level="body-xs">{row?.customer?.name}</Typography>
-                      <Typography level="body-xs">{row?.customer?.email}</Typography>
+                      
                     </div>
                   </Box>
                 </td>
@@ -359,7 +358,7 @@ export default function FileTable() {
         </Button>
 
         <Box sx={{ flex: 1 }} />
-        {['1', '2', '…', '5', '6'].map((page) => (
+        {['1', '2'].map((page) => (
           <IconButton
             key={page}
             size="sm"
