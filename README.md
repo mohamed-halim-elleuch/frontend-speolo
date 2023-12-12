@@ -17,7 +17,7 @@ yarn add i18next react-i18next
 
 or  
 
-npm install  
+yarn install  
 
 # run project  
 npm start  
