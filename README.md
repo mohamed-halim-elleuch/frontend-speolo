@@ -23,6 +23,11 @@ npm install
 npm start  
 
 
+# docker run
+docker build -t frontend .
+docker-compose up
+
+
 
 
 
