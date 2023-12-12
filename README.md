@@ -26,8 +26,3 @@ npm start
 
 
 
-#To do
-remove the three buttons in the profile page
-remove telephone number
-
-
