@@ -52,9 +52,9 @@ const SignIn = () => {
     const handleSignIn = async (event) => {
       event.preventDefault();
       try {
-        console.log('User form:', formSignIn);
+        
         const userData = await login(formSignIn,navigate);
-        console.log('User data:', userData);
+        
       } catch (error) {
         console.error('Login failed', error);
       }
@@ -65,7 +65,7 @@ const SignIn = () => {
       if (formSignUp.password !== formSignUp.confirm_password) {
         setCheckPassword(true);
         setState({vertical: 'top',horizontal: 'center',  open: true });
-        console.log('check password', checkPassword);
+        
       }
       try {
         const userData = await SignUpRequest(formSignUp);

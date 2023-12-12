@@ -22,7 +22,7 @@ export const getSensors = async (filter, skip, take, sortBy) => {
       params: { filter, skip, take, sortBy },headers: {
         Authorization: `Bearer ${token}` },
     });
-    console.log("get sensor: ",response);
+    
     return response.data;
   } catch (error) {
     console.error('Error fetching sensors :', error);

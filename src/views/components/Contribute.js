@@ -28,7 +28,7 @@ export default function Contribute() {
     const [sensorValue, setSensorValue] = React.useState('');
     const [showMessage,setShowMessage] = React.useState(false);
     const [newSensorName, setNewSensorName] = React.useState('');
-
+    const [newSensorAdd,setNewSensorAdd] = React.useState('');
     const handleAddSensor = () => {
       // Implement logic to add the new sensor
       console.log('Adding new sensor:', newSensorName);
@@ -47,7 +47,7 @@ export default function Contribute() {
     }
 
     fetchSensorType();
-    },[]);
+    },[newSensorAdd]);
     
     const {handleSubmit,register,setValue,getValues,control,watch,formState: { errors }, } = useForm();
     
@@ -74,10 +74,10 @@ export default function Contribute() {
         const responsefile = await uploadFile(data.selectedFile);
         const filePath = responsefile.data.fileUrl; 
         setValue('filePath', filePath);
-        console.log('data',data)
+        
           // Second request, launched only when filePath is available
           const response = await createObservation({...data,"filePath":getValues('filePath') });
-          console.log(response.data);
+          
     
           // Any additional logic or handling after both requests have completed
           setShowMessage(true);
@@ -172,7 +172,7 @@ export default function Contribute() {
         sx={{ marginBottom: 2, width: '100%' }}
         renderInput={(params) => <TextField {...params} label={t('Contribute.sensor')} />}
       />
-            <BasicModalDialog />
+            <BasicModalDialog  setNewSensorAdd={setNewSensorAdd}/>
 </Box>
     <LocalizationProvider dateAdapter={AdapterDayjs} >
       <DateTimePicker

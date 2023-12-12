@@ -92,7 +92,6 @@ export default function SearchPage() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data); // This will contain the form values
     try{
       if(data.caveID === ''){
     const response = await searchCaves(data.caveName,data.countryName);
@@ -105,13 +104,11 @@ export default function SearchPage() {
       })
     );
     setRows(responses);
-    console.log('rows', rows);
       }else{
         const response = await getCaveById(data.caveID);
         const county = response[`entrances`]?.[0]["county"];
         const country = response[`entrances`]?.[0]["country"];
         setRows([{ ...response, "country": country, "county": county }]);
-        console.log('res',rows)
       }
   } catch (error) {
     console.error('Error fetching sensor types:', error);

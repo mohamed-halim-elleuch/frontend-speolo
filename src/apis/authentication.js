@@ -16,7 +16,7 @@ export const SignUpRequest = async (formSignUp) => {
     
     try {
       const response = await axios.post(`http://${ipAddress}:${port}/api/user/register`, {email,password,firstName,lastName,license,});
-      console.log('first ',response.data);
+      
       return response.data;
     } catch (error) {
       console.error(error);

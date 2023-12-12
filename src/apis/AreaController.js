@@ -23,7 +23,7 @@ export const getArea = async (filter, skip, take, sortBy) => {
         'Authorization': `Bearer ${token}`,
       },
     });
-    console.log("get area: ",response.data.data);
+    
     return response.data.data;
   } catch (error) {
     console.error('Error fetching areas :', error);

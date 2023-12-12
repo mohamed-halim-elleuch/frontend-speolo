@@ -101,16 +101,16 @@ export default function FileTable() {
           const sensorID = item.sensorId || '';
           const resSensor = await getSensorTypeById(sensorID);
           
-         console.log('r ',resSensor?.data?.name);
+        
           
           return { ...item,"sensor_type":resSensor?.data?.name ,"beginDate":formattedBeginDate,"endDate":formattedEndDate, "fileName": fileName ,"customer": {  "initial": resUser[0].lastName.charAt(0).toUpperCase(),  "name":`${resUser[0].firstName} ${resUser[0].lastName}`, "email": resUser[0].email,} };
         }));     
         setRows(responses);
 
-        console.log("rows: ",rows)
+        
       } catch (error) {
         setRows([]);
-        console.log("rows: ",rows)
+        
         console.error('Error fetching observation types:', error);
         // Handle errors as needed
       }

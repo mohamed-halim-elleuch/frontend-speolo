@@ -22,7 +22,7 @@ checkAuthentication();
     const password = formSignIn.password;
     axios.post(`http://${ipAddress}:${port}/api/user/login`, { email ,  password })
     .then(response => {
-      console.log(response);
+      
       // Assuming the response contains a success status indicating successful login
       const data = response.data;
       if (data.success) {
@@ -71,7 +71,7 @@ checkAuthentication();
     
     try {
       const response = await axios.post(`http://${ipAddress}:${port}/api/user/register`, {email,password,firstName,lastName,license,});
-      console.log(response.data);
+      
       return response.data,"ok";
     } catch (error) {
       console.error(error);

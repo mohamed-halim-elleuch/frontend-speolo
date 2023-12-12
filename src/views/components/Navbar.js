@@ -16,7 +16,6 @@ const Navbar = () => {
 
   const handleLogOut = async (event) => {
     const check = checkAuthentication();
-    console.log('check',check);
     event.preventDefault();
     logout();
   };

@@ -27,7 +27,7 @@ export default function UserProfile() {
  
   const handleDelete = async (row) => {
     const res = await deleteObservation(row.id);
-    console.log("delete",res);
+    
   };
   
   const downloadFile = (row) => {
@@ -107,9 +107,6 @@ export default function UserProfile() {
       fetchUserObs();
        // Mark the page as refreshed
     
-    console.log("user page: ",user);
-    console.log("grouped data: ",groupedData);
-    console.log("grouped data2: ",selectedCaveData);
     
     
   }, [user.email]);
@@ -122,8 +119,7 @@ export default function UserProfile() {
         
           const sensorID = item?.sensorId || '';
           const resSensor = await getSensorTypeById(sensorID);
-          
-         console.log('r ',resSensor?.data?.name);
+        
           
           return { ...item,"sensor_type":resSensor?.data?.name };
     }));
@@ -180,10 +176,10 @@ export default function UserProfile() {
                   selected={index === indexdata}
                   onClick={async() => {
                     setIndex(indexdata);
-                    console.log(indexdata);
+                    
                     const info = await getinfofile(groupedData[item.id]);
                     setSelectedCaveData(info);
-                    console.log("grouped data2: ",info);
+                    
                   }}
                   component="a"
                   href="#simple-list"
@@ -287,7 +283,7 @@ export default function UserProfile() {
                                 <td>{index+1}</td>
                                 <td>{row?.sensor_type}</td>
                                 <td>{row?.createdAt ? dayjs(row.createdAt).format('MMM D, YYYY  hh:mm') : 'no_date'}</td>
-                                <td><Link level="body-xs" component="button" onClick={() => downloadFile(row)}>{row?.fileName}</Link></td>
+                                <td><Link level="body-xs" component="button" onClick={() => downloadFile(row)}>{row?.fileName ? row?.fileName:"Unnamed"}</Link></td>
                                 {user.role === "admin" ?
                                 <td>
                                   <IconButton aria-label="delete" onClick={() => handleDelete(row)}>
