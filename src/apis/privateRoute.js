@@ -11,7 +11,10 @@ const PrivateRoute = ({ element, redirectTo = '/authenticate', ...rest }) => {
       <Route {...rest} element={element} />
     </Routes>
   ) : (
-    <Navigate to={redirectTo} replace />
+    <>
+    <Navigate to={redirectTo} replace={true} />
+
+    </>
   );
 };
 

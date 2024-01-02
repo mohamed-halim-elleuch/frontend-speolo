@@ -1,44 +1,38 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import * as React from 'react';
 import Avatar from '@mui/joy/Avatar';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Checkbox from '@mui/joy/Checkbox';
 import Divider from '@mui/joy/Divider';
+import Dropdown from '@mui/joy/Dropdown';
 import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
-import Link from '@mui/joy/Link';
-import Input from '@mui/joy/Input';
-import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
-import ModalClose from '@mui/joy/ModalClose';
-import Select from '@mui/joy/Select';
-import Option from '@mui/joy/Option';
-import Table from '@mui/joy/Table';
-import Sheet from '@mui/joy/Sheet';
-import Checkbox from '@mui/joy/Checkbox';
 import IconButton, { iconButtonClasses } from '@mui/joy/IconButton';
-import Typography from '@mui/joy/Typography';
+import Input from '@mui/joy/Input';
+import Link from '@mui/joy/Link';
 import Menu from '@mui/joy/Menu';
 import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
-import Dropdown from '@mui/joy/Dropdown';
+import Modal from '@mui/joy/Modal';
+import ModalClose from '@mui/joy/ModalClose';
+import ModalDialog from '@mui/joy/ModalDialog';
+import Option from '@mui/joy/Option';
+import Select from '@mui/joy/Select';
+import Sheet from '@mui/joy/Sheet';
+import Table from '@mui/joy/Table';
+import Typography from '@mui/joy/Typography';
+import * as React from 'react';
 // icons
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SearchIcon from '@mui/icons-material/Search';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import MoreHorizRoundedIcon from '@mui/icons-material/MoreHorizRounded';
-import { getSensorTypeById, getSensorTypes } from '../../../../apis/SensorTypeController';
-import dayjs, { Dayjs } from 'dayjs';
+
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { getSensors } from '../../../../apis/SensorController';
-import { searchObservations } from '../../../../apis/CaveObservationController';
-import { useParams } from 'react-router-dom';
-import { getUsers } from '../../../../apis/UserController';
+import dayjs, { Dayjs } from 'dayjs';
+
 import { useTranslation } from 'react-i18next';
 
 
@@ -67,7 +61,6 @@ function RowMenu() {
       <Menu size="sm" sx={{ minWidth: 140 }}>
        
         <MenuItem>{t('Obs.table.edit')}</MenuItem>
-        <MenuItem>{t('Obs.table.rename')}</MenuItem>
         
         <Divider />
         <MenuItem color="danger">{t('Obs.table.delete')}</MenuItem>
@@ -77,47 +70,14 @@ function RowMenu() {
 }
 
 
-export default function FileTable() {
+export default function FileTable({rows}) {
   const {t} = useTranslation("translation");
-  const { id } = useParams();
   const [sensorType,setSensorType] = React.useState(null);
   const [order, setOrder] = React.useState<Order>('desc');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
-  const [rows,setRows] = React.useState([{id: '',fileName:'',sensor_type:'',beginDate: '',endDate: '',customer: {  initial: '',  name: '',  email: '',},}]);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await searchObservations(`{"caveId":"${id}"}`);
-        const responses = await Promise.all(data.map(async (item) => {
-       
-          const formattedBeginDate = item?.beginDate ? dayjs(item.beginDate).format('MMM DD, YYYY') : 'no_date';
-          const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
-          const fileName = item?.fileName || 'file.csv';
-          const resUser = await getUsers(`{"_id":"${item.createdBy}"}`);
-          
-          const sensorID = item.sensorId || '';
-          const resSensor = await getSensorTypeById(sensorID);
-          
-        
-          
-          return { ...item,"sensor_type":resSensor?.data?.name ,"beginDate":formattedBeginDate,"endDate":formattedEndDate, "fileName": fileName ,"customer": {  "initial": resUser[0].lastName.charAt(0).toUpperCase(),  "name":`${resUser[0].firstName} ${resUser[0].lastName}`, "email": resUser[0].email,} };
-        }));     
-        setRows(responses);
-
-        
-      } catch (error) {
-        setRows([]);
-        
-        console.error('Error fetching observation types:', error);
-        // Handle errors as needed
-      }
-    };
-
-    fetchData();
-      }, [rows[0]?.id]);
+  
     
       const downloadFile = (row) => {
         window.open(row.filePath, '_blank');
@@ -127,9 +87,9 @@ export default function FileTable() {
     <React.Fragment>
 
 
-      <FormControl size="sm">
+      <FormControl size="sm" >
         <FormLabel>{t('Obs.sensor')}</FormLabel>
-        <Select size="md" placeholder={t('Obs.all')}>
+        <Select size="md"  sx={{height:"38.6px"}} placeholder={t('Obs.all')}>
           <Option value="all">{t('Obs.all')}</Option>
           <Option value="reefnet">Reefnet Sensor</Option>
           <Option value="ctd">CTD Sensor</Option>
@@ -140,7 +100,7 @@ export default function FileTable() {
 
       <FormControl size="sm">
         <FormLabel>{t('Obs.author')}</FormLabel>
-        <Select size="md" placeholder={t('Obs.all')}>
+        <Select size="md" sx={{height:"38.6px"}} placeholder={t('Obs.all')}>
           <Option value="all">{t('Obs.all')}</Option>
           <Option value="olivia">Olivia Rhye</Option>
           <Option value="steve">Steve Hampton</Option>
@@ -152,6 +112,9 @@ export default function FileTable() {
       </FormControl>
     </React.Fragment>
   );
+
+
+
   return (
     <React.Fragment>
       <Sheet
@@ -230,6 +193,26 @@ export default function FileTable() {
           flexShrink: 1,
           overflow: 'auto',
           minHeight: 0,
+          "&::-webkit-scrollbar": {
+            width: "12px", // Set the width of the scrollbar
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#888", // Set the color of the thumb
+            borderRadius: "8px",
+            backgroundClip: "content-box",
+            border: "3px solid transparent",
+          },
+
+          "&::-webkit-scrollbar-thumb:hover": {
+            background: "#7A90A4",
+            backgroundClip: "content-box",
+            border: "3px solid transparent",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "#f1f1f1", // Set the color of the track
+            borderRadius: "10px",
+            // Round the corners of the track
+          },
         }}
       >
         <Table

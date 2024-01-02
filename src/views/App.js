@@ -1,57 +1,102 @@
+import React from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import SignIn from "./signin/signin.js";
+import "./style.css";
 
-import React from 'react';
-import SignIn from './components/signin';
-import './style.css';
-import { BrowserRouter, Routes, Route,Navigate } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import Contribute from './components/Contribute';
-import SearchPage from './components/SearchPage';
-import UserProfile from './components/UserProfile';
-import Home from './components/Home';
-import NoPage from './components/NoPage';
-import Contact from './components/contact';
-import ObservationFiles from './components/files/Files.tsx';
-import { AuthProvider } from '../apis/AuthContext.js';
-import PrivateRoute from '../apis/privateRoute.js';
-
+//import Navbar from './components/Navbar.js';
+import CssBaseline from "@mui/joy/CssBaseline";
+import { AuthProvider } from "../apis/AuthContext.js";
+import PrivateRoute from "../apis/privateRoute.js";
+import Header from "./Navbar/Header.js";
+import Layout from "./Navbar/Layout.tsx";
+import Navigation from "./Navbar/Navigation.js";
+import Contribute from "./contribute/Contribute.js";
+import Dashboard from "./dashboard/Dashboard.js";
+import ObservationFiles from "./files/Files.tsx";
+import Home from "./incomplete/Home.js";
+import NoPage from "./incomplete/NoPage.js";
+import Contact from "./incomplete/contact.js";
+import SearchPage from "./search/SearchPage.js";
 function App() {
-  
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const dashboardRoute = window.location.pathname;
+
   return (
-    <>
-    
-    
     <AuthProvider>
+      {" "}
+      {/* Your authentication provider */}
       <BrowserRouter>
-      
-      <Routes>
-      
-        <Route
-       path="/authenticate" element={<div className="app" ><SignIn /></div>} />
-      <Route path="/" element={<Navigate to="/authenticate" />} />
+        <CssBaseline />
+
+        <Routes>
+          <Route
+            path="/authenticate"
+            element={
+              <div className="app">
+                <SignIn />
+              </div>
+            }
+          />
+          <Route path="/" element={<Navigate to="/authenticate" />} />
           <Route
             path="/authenticate/*"
             element={
               <React.Fragment>
-                <Navbar />
-                <PrivateRoute path="/home" element={<Home />} />
-                <PrivateRoute path="contribute" element={<Contribute  />} />
-                <PrivateRoute path="contact" element={<Contact />} />
-                <PrivateRoute path="no-page" element={<NoPage />} />
-                <PrivateRoute path="search-page" element={<SearchPage />} />
-                <PrivateRoute path="user-profile/" element={<UserProfile />} />
-                <PrivateRoute path="caves/:id" element={<ObservationFiles />} />
+                {drawerOpen && (
+                  <Layout.SideDrawer onClose={() => setDrawerOpen(false)}>
+                    <Navigation />
+                  </Layout.SideDrawer>
+                )}
+
+                <Layout.Root
+                  currentProfile={dashboardRoute === "/authenticate/dashboard"}
+                  sx={{
+                    ...(drawerOpen && {
+                      height: "100vh",
+                      overflow: "hidden",
+                    }),
+                  }}
+                >
+                  <Layout.Header>
+                    <Header />
+                  </Layout.Header>
+
+                  {dashboardRoute === "/authenticate/dashboard" && (
+                    <Layout.SideNav>
+                      <Navigation />
+                    </Layout.SideNav>
+                  )}
+                  <PrivateRoute index path="home" element={<Home />} />
+                  <PrivateRoute
+                    index
+                    path="contribute"
+                    element={<Contribute />}
+                  />
+                  <PrivateRoute index path="contact" element={<Contact />} />
+                  <PrivateRoute index path="no-page" element={<NoPage />} />
+                  <PrivateRoute
+                    index
+                    path="search-page"
+                    element={<SearchPage />}
+                  />
+                  <PrivateRoute
+                    index
+                    path="dashboard"
+                    element={<Dashboard />}
+                  />
+                  <PrivateRoute
+                    index
+                    path="caves/:id"
+                    element={<ObservationFiles />}
+                  />
+                </Layout.Root>
               </React.Fragment>
             }
           />
-      <Route path="*" element={<NoPage/> }/>
-          
-          
-        
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
-    
-    </>
   );
 }
 

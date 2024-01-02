@@ -1,0 +1,11 @@
+version: '3'
+services:
+  frontend:
+    container_name: frontend-speolo
+    image: frontend
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - './app:/app'
+      - '/app/node_modules'

@@ -2,13 +2,34 @@
 .app {
 	text-align: center;
 
-	background-image: url('./images/background.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
+	background-image: url('../images/background.jpg'); /* Replace 'path/to/your/image.jpg' with the actual path to your image */
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
 	height: 100vh;	
   
   }
+
+body ::-webkit-scrollbar {
+            width: "12px"; 
+          }
+body ::-webkit-scrollbar-thumb{
+            background: "#888"; 
+            border-radius: "8px";
+            background-clip: "content-box";
+            border: "3px solid transparent"
+          }
+
+body ::-webkit-scrollbar-thumb:hover{
+            background: "#7A90A4";
+            background-clip: "content-box";
+            border: "3px solid transparent";
+          }
+body ::-webkit-scrollbar-track {
+            background: "#f1f1f1";
+            border-radius: "10px";
+        
+          }
  
   
  /* .logo {

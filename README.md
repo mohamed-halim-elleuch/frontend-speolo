@@ -18,17 +18,9 @@ yarn add i18next react-i18next
 # run project  
 npm start  
 
-i18next is often used to enable multi-language support in your application. 
-i18next helps you manage translations for your application. It allows you to define translations for different languages and provides a mechanism to switch between these languages dynamically.
-With i18next, you can dynamically switch between languages in your React application without needing a page reload. 
-i18next simplifies the process of managing translations in a React application by providing a clean separation between code and content.
 
 
 
 
-
-#To do
-remove the three buttons in the profile page
-remove telephone number
 
 

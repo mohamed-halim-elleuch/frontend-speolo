@@ -1,60 +1,57 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { fetchUserInfo } from './UserController';
-
+import React, { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
+import { fetchUserInfo } from "./UserController";
 
 const ipAddress = process.env.REACT_APP_API_BASE_URL;
 const port = process.env.REACT_APP_PORT;
-
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  
 
   useEffect(() => {
-checkAuthentication();
+    checkAuthentication();
   }, []);
 
-  const login = async (formSignIn,navigate) => {
+  const login = async (formSignIn, navigate) => {
     const email = formSignIn.email;
     const password = formSignIn.password;
-    axios.post(`http://${ipAddress}:${port}/api/user/login`, { email ,  password })
-    .then(response => {
-      
-      // Assuming the response contains a success status indicating successful login
-      const data = response.data;
-      if (data.success) {
+    axios
+      .post(`http://${ipAddress}:${port}/api/user/login`, { email, password })
+      .then((response) => {
+        // Assuming the response contains a success status indicating successful login
+        const data = response.data;
+        if (data.success) {
+          // Check to see if we stored our cookie's JWT
 
-      // Check to see if we stored our cookie's JWT
+          // Retrieve the bearer token from the response
+          const token = data.data.token;
+          const email = data.data.email;
+          // Save the token to local storage or session storage for future authenticated requests
+          localStorage.setItem("token", token);
+          localStorage.setItem("email", email);
 
-        // Retrieve the bearer token from the response
-       const token = data.data.token;
-        // Save the token to local storage or session storage for future authenticated requests
-      localStorage.setItem('token', token);
+          setIsAuthenticated(true);
+          // Redirect to the user's dashboard
 
-        setIsAuthenticated(true);
-        // Redirect to the user's dashboard
-        
-        navigate('user-profile');
-        window.location.reload();
-       
-        return data;
-      } else {
-        // Display error message for wrong login credentials
-        alert('Incorrect email or password. Please try again.');
-      }
-    })
-    .catch(error => {
-      // Handle any errors that occurred during the request
-      console.error(error);
-    });
+          navigate("dashboard");
+          window.location.reload();
 
-};
+          return data;
+        } else {
+          // Display error message for wrong login credentials
+          alert("Incorrect email or password. Please try again.");
+        }
+      })
+      .catch((error) => {
+        // Handle any errors that occurred during the request
+        console.error(error);
+      });
+  };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
 
     // Perform your logout logic and set isAuthenticated to false
     setIsAuthenticated(false);
@@ -68,46 +65,45 @@ checkAuthentication();
     const lastName = formSignUp.lastName;
     const license = formSignUp.license;
 
-    
     try {
-      const response = await axios.post(`http://${ipAddress}:${port}/api/user/register`, {email,password,firstName,lastName,license,});
-      
-      return response.data,"ok";
+      const response = await axios.post(
+        `http://${ipAddress}:${port}/api/user/register`,
+        { email, password, firstName, lastName, license }
+      );
+
+      return response.data, "ok";
     } catch (error) {
       console.error(error);
     }
   };
 
   const checkAuthentication = () => {
-    const authToken = localStorage.getItem('token');
+    const authToken = localStorage.getItem("token");
 
     if (authToken) {
-
       setIsAuthenticated(true);
       return true;
     } else {
-   
       setIsAuthenticated(false);
       return false;
     }
-
-};
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout,checkAuthentication }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, login, logout, checkAuthentication }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-
-
 export const useAuth = () => useContext(AuthContext);
 
 export const useLogin = () => {
-    const { login } = useAuth();
-    return login;
-  };
+  const { login } = useAuth();
+  return login;
+};
 
 export const useCheckAuthentication = () => {
   const { checkAuthentication } = useAuth();
@@ -124,8 +120,7 @@ export const useLogout = () => {
   return logout;
 };
 
-
-  /*const AuthenticatedComponent = () => {
+/*const AuthenticatedComponent = () => {
   const [authenticated, setAuthenticated] = useState(false);
 
   useEffect(() => {
@@ -137,12 +132,11 @@ export const useLogout = () => {
     authenticateUser();
   }, []);*/
 
-  /*res.cookie('authToken', token, {
+/*res.cookie('authToken', token, {
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production', // Ensure secure in production (requires HTTPS)
   sameSite: 'None', // Adjust according to your needs
 });*/
-
 
 /*  const { cookie } = req.headers;
 
