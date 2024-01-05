@@ -6,8 +6,30 @@ import * as React from "react";
 import Layout from "../../Navbar/Layout.tsx";
 import NotificationContent from "./NotificationContent.js";
 import Notifications from "./Notifications.js";
+import { getNotifications } from "../../../apis/NotificationController.js";
 
 export default function NotificationsList() {
+  const [notifications, setNotifications] = React.useState([]);
+  const [selectedNotificationId, setSelectedNotificationId] =
+    React.useState(null);
+
+  const handleNotificationSelect = (id) => {
+    setSelectedNotificationId(id);
+  };
+  React.useEffect(() => {
+    const fetchNotification = async () => {
+      try {
+        const responseNotifications = await getNotifications();
+        setNotifications(responseNotifications.data);
+        console.log(notifications);
+      } catch (error) {
+        console.error("Error fetching Notifications :", error);
+      }
+    };
+
+    fetchNotification();
+  }, [selectedNotificationId]);
+
   return (
     <Box
       sx={[
@@ -50,10 +72,13 @@ export default function NotificationsList() {
             <SearchRoundedIcon />
           </IconButton>
         </Box>
-        <Notifications />
+        <Notifications
+          notifications={notifications}
+          onNotificationSelect={handleNotificationSelect}
+        />
       </Layout.SidePane>
       <Layout.Main>
-        <NotificationContent />
+        <NotificationContent selectedNotificationId={selectedNotificationId} />
       </Layout.Main>
     </Box>
   );

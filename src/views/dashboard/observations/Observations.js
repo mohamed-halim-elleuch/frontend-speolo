@@ -2,18 +2,22 @@ import React, { useEffect, useState } from "react";
 
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import SearchIcon from "@mui/icons-material/Search";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
 import { Card } from "@mui/joy";
-import dateFormat from "dateformat";
 import AspectRatio from "@mui/joy/AspectRatio";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
+import DialogActions from "@mui/joy/DialogActions";
+import DialogContent from "@mui/joy/DialogContent";
+import DialogTitle from "@mui/joy/DialogTitle";
 import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
 import Input from "@mui/joy/Input";
+import Modal from "@mui/joy/Modal";
+import ModalDialog from "@mui/joy/ModalDialog";
 import Sheet from "@mui/joy/Sheet";
 import Tab from "@mui/joy/Tab";
 import TabList from "@mui/joy/TabList";
@@ -21,10 +25,14 @@ import TabPanel from "@mui/joy/TabPanel";
 import Tabs from "@mui/joy/Tabs";
 import Typography from "@mui/joy/Typography";
 import { Autocomplete, TextField } from "@mui/material";
+import dateFormat from "dateformat";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { getCaveById } from "../../../apis/CaveController.js";
-import { searchObservations } from "../../../apis/CaveObservationController.js";
+import {
+  deleteObservation,
+  searchObservations,
+} from "../../../apis/CaveObservationController.js";
 import {
   getSensorTypeById,
   getSensorTypes,
@@ -32,6 +40,7 @@ import {
 import { getUsers } from "../../../apis/UserController.js";
 import caveImage from "../../../images/cave_map.png";
 import Layout from "../../Navbar/Layout.tsx";
+import EditObservation from "./EditObservation.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles";
 
@@ -42,9 +51,10 @@ export default function Observations() {
   const [page, setPage] = React.useState(0);
   const [dataLength, setDataLength] = React.useState(0);
   const [selectedRow, setSelectedRow] = React.useState(0); // Store the selected row index
-
+  const [open, setOpen] = React.useState(false);
   const [sensorOptions, setSensorOptions] = useState([]); // Separate state for sensor options
   const [userNameOptions, setUserNameOptions] = useState([]); // Separate state for user name options
+
   const {
     handleSubmit,
     register,
@@ -92,12 +102,12 @@ export default function Observations() {
     fetchSensorType();
     fetchUserName();
     console.log("sensorOptions", sensorOptions);
-  }, []);
+  }, [selectedRow]);
   const [prevPage, setPrevPage] = useState(0);
 
   useEffect(() => {
     setPrevPage((prev) => Math.max(prev, page));
-  }, [page]);
+  }, [page, selectedRow]);
 
   useEffect(() => {
     const fetchObservations = async () => {
@@ -115,7 +125,9 @@ export default function Observations() {
 
           return {
             ...row,
-            user: `${firstAdditionalInfo[0].firstName} ${firstAdditionalInfo[0].lastName}`,
+            user: `${firstAdditionalInfo[0]?.firstName} ${
+              firstAdditionalInfo[0]?.lastName || ""
+            }`,
           };
         });
 
@@ -138,8 +150,7 @@ export default function Observations() {
     ) {
       fetchObservations();
     }
-    setSelectedRow(0);
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, selectedRow]);
 
   const onSubmit = (data) => {
     console.log("Form data:", data);
@@ -189,7 +200,8 @@ export default function Observations() {
 
     fetchObservationDetails();
     console.log("New data", observations);
-  }, [selectedRow]);
+  }, [selectedRow, page, rowsPerPage]);
+
   const filedetails = [
     {
       label: "File",
@@ -199,7 +211,7 @@ export default function Observations() {
     {
       label: "Sensor",
       value:
-        observations[page * rowsPerPage + selectedRow]?.sensor || "Not defined",
+        observations[page * rowsPerPage + selectedRow]?.sensor || "Not found",
     },
 
     {
@@ -243,7 +255,23 @@ export default function Observations() {
       )}`,
     },
   ];
+  const deleteFile = async () => {
+    try {
+      const observationIdToDelete =
+        observations[page * rowsPerPage + selectedRow]?.id;
+      const response = await deleteObservation(observationIdToDelete);
+      setObservations((prevObservations) => {
+        return prevObservations.filter(
+          (observation) => observation.id !== observationIdToDelete
+        );
+      });
 
+      // Update the selected row
+      setSelectedRow((prevSelectedRow) => Math.max(prevSelectedRow - 1, 0));
+    } catch (error) {
+      console.error("Error deleting sensor type:", error);
+    }
+  };
   return (
     <Box
       sx={{
@@ -429,21 +457,56 @@ export default function Observations() {
             </Box>
             <Divider />
             <Box sx={{ py: 2, px: 1 }}>
-              <Button
-                variant="plain"
-                size="sm"
-                endDecorator={<EditRoundedIcon />}
-              >
-                Edit
-              </Button>
+              <EditObservation />
               <Button
                 variant="plain"
                 color="warning"
                 size="sm"
+                onClick={() => setOpen(true)}
                 endDecorator={<DeleteIcon />}
               >
                 Delete
               </Button>
+              <Modal open={open} onClose={() => setOpen(false)}>
+                <ModalDialog variant="outlined" role="alertdialog">
+                  <DialogTitle>
+                    <WarningRoundedIcon />
+                    Confirmation
+                  </DialogTitle>
+                  <Divider />
+                  <DialogContent>
+                    <div>
+                      Are you sure you want to delete{" "}
+                      <strong>
+                        {
+                          observations[page * rowsPerPage + selectedRow]
+                            ?.fileName
+                        }
+                      </strong>{" "}
+                      ?
+                    </div>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      variant="solid"
+                      color="danger"
+                      onClick={() => {
+                        deleteFile();
+                        setOpen(false);
+                      }}
+                    >
+                      Delete File
+                    </Button>
+                    <Button
+                      variant="plain"
+                      color="neutral"
+                      onClick={() => setOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </ModalDialog>
+              </Modal>
             </Box>
           </TabPanel>
         </Tabs>

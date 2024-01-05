@@ -110,7 +110,9 @@ export default function SensorTypes() {
 
           return {
             ...row,
-            user: `${firstAdditionalInfo[0].firstName} ${firstAdditionalInfo[0].lastName}`,
+            user: `${firstAdditionalInfo[0]?.firstName} ${
+              firstAdditionalInfo[0]?.lastName || ""
+            }`,
           };
         });
 
@@ -558,12 +560,3 @@ export default function SensorTypes() {
     </Box>
   );
 }
-
-const properties = [
-  { value: "encoding", label: "ENCODING" },
-  { value: "AAAA", label: "YEAR" },
-  { value: "JJ", label: "DAY" },
-  { value: "HH", label: "HOUR" },
-  { value: "MM", label: "MINUTE" },
-  { value: "SS", label: "SECOND" },
-];

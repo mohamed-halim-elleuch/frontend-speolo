@@ -1,33 +1,17 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
-import IconButton from "@mui/joy/IconButton";
-import Table from "@mui/joy/Table";
-import Typography from "@mui/joy/Typography";
-import Sheet from "@mui/joy/Sheet";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { Box } from "@mui/material";
-import { Button } from "@mui/joy";
-import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/joy/IconButton";
 import Link from "@mui/joy/Link";
-function createData(name, role, email, address) {
-  return {
-    name,
-    role,
-    email,
-    address,
-    details: [
-      {
-        date: "2020-01-05",
-        country: "France",
-        lastObservation: "SU-12821-SiphonVillebruc-mars-juin2021.csv",
-      },
-    ],
-  };
-}
-
-function Row({ row, initialOpen }) {
+import Sheet from "@mui/joy/Sheet";
+import Table from "@mui/joy/Table";
+import Typography from "@mui/joy/Typography";
+import { Box } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { searchObservations } from "../../../apis/CaveObservationController";
+import dayjs from "dayjs";
+function Row({ dataRow, initialOpen }) {
   const [open, setOpen] = useState(initialOpen || false);
+  const [row, setRow] = useState(dataRow);
   const downloadFile = (row) => {
     window.open(row.filePath, "_blank");
     //const parts = row?.filePath.split("/");
@@ -36,6 +20,25 @@ function Row({ row, initialOpen }) {
     //const fileName = parts[parts.length - 1];
     //window.open("http://127.0.0.1:8083/uploads/" + fileName, "_blank");
   };
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const responseDetails = await searchObservations(
+          `{"createdBy":"${dataRow?._id}"}`,
+          0,
+          1
+        );
+
+        setRow((prevRow) => ({ ...prevRow, details: responseDetails }));
+        console.log("details", row);
+      } catch (error) {
+        setRow((prevRow) => ({ ...prevRow, details: [""] }));
+        console.error("Error fetching Notification:", error);
+      }
+    };
+    fetchUserDetails();
+  }, [open]);
+
   return (
     <>
       <tr>
@@ -50,8 +53,10 @@ function Row({ row, initialOpen }) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </td>
-        <th scope="row">{row.name}</th>
-        <td>{row.role}</td>
+        <th scope="row">
+          {row?.firstName} {row?.lastName}
+        </th>
+        <td>{row?.role}</td>
         <td
           style={{
             whiteSpace: "nowrap",
@@ -59,7 +64,7 @@ function Row({ row, initialOpen }) {
             textOverflow: "ellipsis",
           }}
         >
-          {row.email}
+          {row?.email || "anonymous@gmail.com"}
         </td>
         <td
           style={{
@@ -68,7 +73,7 @@ function Row({ row, initialOpen }) {
             textOverflow: "ellipsis",
           }}
         >
-          {row.address}
+          {row?.address}
         </td>
       </tr>
       <tr>
@@ -92,15 +97,6 @@ function Row({ row, initialOpen }) {
                 <Typography level="body-lg" component="div">
                   Details
                 </Typography>
-                <Button
-                  variant="soft"
-                  color="danger"
-                  startDecorator={<DeleteIcon />}
-                  size="sm"
-                  sx={{ textTransform: "none", marginInlineEnd: 1 }}
-                >
-                  Delete
-                </Button>
               </Box>
               <Table
                 stickyHeader
@@ -116,24 +112,24 @@ function Row({ row, initialOpen }) {
                 <thead>
                   <tr>
                     <th style={{ width: "25%" }}>Account Creation Date</th>
-                    <th style={{ width: "25%" }}>Country</th>
+                    <th style={{ width: "25%" }}>License Id</th>
                     <th style={{ width: "50%" }}>Last added observation</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {row.details.map((detailsRow) => (
-                    <tr key={detailsRow.date}>
-                      <th scope="row">{detailsRow.date}</th>
-                      <td>{detailsRow.country}</td>
+                  {row?.details?.map((detailsRow) => (
+                    <tr key={row?._id}>
+                      <th scope="row">
+                        {dayjs(row?.createdAt).format("MMM D, YYYY hh:mm")}
+                      </th>
+                      <td>{row?.license}</td>
                       <td>
                         <Link
                           level="body-xs"
                           component="button"
-                          onClick={() => downloadFile(detailsRow)}
+                          onClick={() => downloadFile(detailsRow?.filePath)}
                         >
-                          {detailsRow?.lastObservation
-                            ? detailsRow?.lastObservation
-                            : "Unnamed"}
+                          {detailsRow?.fileName}
                         </Link>
                       </td>
                     </tr>
@@ -148,46 +144,7 @@ function Row({ row, initialOpen }) {
   );
 }
 
-const rows = [
-  createData(
-    "Halim Elleuch",
-    "User",
-    "halim.elleuch@mail.com",
-    "450 Route des Chappes, 06410 Biot"
-  ),
-  createData(
-    "Anonymous 123",
-    "Admin",
-    "anonymous@mail.com",
-    "450 Route des Chappes, 06410 Biot"
-  ),
-  createData(
-    "Halim Elleuch",
-    "User",
-    "halim.elleuch@mail.com",
-    "450 bd du president wilson, 06600 antibes"
-  ),
-  createData(
-    "Anonymous 123",
-    "Admin",
-    "anonymous@mail.com",
-    "450 Route des Dolines, 06560 valbonne"
-  ),
-  createData(
-    "Halim Elleuch",
-    "User",
-    "halim.elleuch@mail.com",
-    "450 Route des Chappes, 06410 Biot"
-  ),
-  createData(
-    "Anonymous 123",
-    "Admin",
-    "anonymous@mail.com",
-    "450 Route des Dolines, 06560 valbonne"
-  ),
-];
-
-function UsersList() {
+function UsersList({ rows }) {
   return (
     <div>
       <div
@@ -249,8 +206,8 @@ function UsersList() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, index) => (
-              <Row key={row.name} row={row} initialOpen={index === 0} />
+            {rows?.map((row, index) => (
+              <Row key={row?._id} dataRow={row} initialOpen={index === 0} />
             ))}
           </tbody>
         </Table>

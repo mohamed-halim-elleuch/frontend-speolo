@@ -1,26 +1,64 @@
-import AspectRatio from "@mui/joy/AspectRatio";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
-import Card from "@mui/joy/Card";
-import CardOverflow from "@mui/joy/CardOverflow";
 import Divider from "@mui/joy/Divider";
 import Sheet from "@mui/joy/Sheet";
 import Snackbar from "@mui/joy/Snackbar";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
-
-import ArticleIcon from "@mui/icons-material/Article";
+import dateFormat from "dateformat";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import {
+  deleteNotification,
+  getNotificationById,
+} from "../../../apis/NotificationController";
 
-export default function NotificationContent() {
+export default function NotificationContent({ selectedNotificationId }) {
   const [open, setOpen] = React.useState([false, false, false]);
+  const [notification, setNotification] = React.useState([]);
+  React.useEffect(() => {
+    const fetchNotification = async () => {
+      try {
+        const responseNotifications = await getNotificationById(
+          selectedNotificationId || "6592b2494ea010743ec4ad1d"
+        );
+        const responseString = responseNotifications.data.description;
+        const match = responseString.match(/id: (\w+)/);
+        const deltedObjectId = match && match[1];
+        console.log("deltedObjectId", deltedObjectId);
+        // if (deltedObjectId) {
+        //   // Sending another request using the extracted ID
+        //   const secondResponse = await getSensorTypeById(deltedObjectId);
+        //   setNotification({
+        //     ...responseNotifications.data,
+        //     secondData: secondResponse.data,
+        //   });
+        //   // Handle the second response data
+        //   console.log("Second response:", secondResponse.data);
+        // } else {
+        setNotification(responseNotifications.data);
+        console.error("ID not found in the response");
+        // }
 
-  const handleSnackbarOpen = (index) => {
-    const updatedOpen = [...open];
-    updatedOpen[index] = true;
-    setOpen(updatedOpen);
+        console.log(notification);
+      } catch (error) {
+        console.error("Error fetching Notification:", error);
+      }
+    };
+
+    fetchNotification();
+  }, [selectedNotificationId]);
+
+  const handleSnackbarOpen = async (index) => {
+    try {
+      //await deleteNotification(selectedNotificationId);
+      const updatedOpen = [...open];
+      updatedOpen[index] = true;
+      setOpen(updatedOpen);
+    } catch (error) {
+      console.error("Error deleting Notification:", error);
+    }
   };
 
   const handleSnackbarClose = (index) => {
@@ -49,16 +87,14 @@ export default function NotificationContent() {
         }}
       >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Avatar
-            src="https://i.pravatar.cc/40?img=3"
-            srcSet="https://i.pravatar.cc/80?img=3"
-          />
+          <Avatar src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" />
           <Box sx={{ ml: 2 }}>
             <Typography level="title-sm" textColor="text.primary" mb={0.5}>
               Alex Jonnold
             </Typography>
             <Typography level="body-xs" textColor="text.tertiary">
-              21 Oct 2022
+              {dateFormat(notification?.createdAt, "ddd, mmm dS, yyyy")} at{" "}
+              {dateFormat(notification?.createdAt, "h:MM:ss TT")}
             </Typography>
           </Box>
         </Box>
@@ -96,7 +132,7 @@ export default function NotificationContent() {
               </Button>
             }
           >
-            Your message has been deleted.
+            Your notification has been deleted.
           </Snackbar>
         </Box>
       </Box>
@@ -110,7 +146,7 @@ export default function NotificationContent() {
         }}
       >
         <Typography level="title-lg" textColor="text.primary">
-          Details of deleted contribution
+          {notification?.title}
         </Typography>
       </Box>
       <Divider />
@@ -122,15 +158,17 @@ export default function NotificationContent() {
           marginBottom: "16px",
         }}
       >
-        File observation_refneet.csv is deleted by Anonymous 123.
+        {notification?.description}
+        <br />
+        {/* File observation_refneet.csv is deleted by Anonymous 123.
         <br />
         <br />
         This file is related to cave "Embut de villebruc" located in Valbonne.
         <br />
-        He has information from 10-10-2021 to 12-12-2022 from Reefnet sensor
+        He has information from 10-10-2021 to 12-12-2022 from Reefnet sensor */}
       </div>
-      <Divider />
-      <Typography level="title-sm" mt={2} mb={2}>
+      {/* <Divider /> */}
+      {/* <Typography level="title-sm" mt={2} mb={2}>
         Attachments
       </Typography>
       <Box
@@ -160,7 +198,7 @@ export default function NotificationContent() {
             <Typography level="body-xs">100 KB</Typography>
           </Box>
         </Card>
-      </Box>
+      </Box> */}
     </Sheet>
   );
 }

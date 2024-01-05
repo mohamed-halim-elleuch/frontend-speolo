@@ -16,6 +16,13 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import Button from "@mui/joy/Button";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+import Modal from "@mui/joy/Modal";
+import DialogActions from "@mui/joy/DialogActions";
+import DialogContent from "@mui/joy/DialogContent";
+import DialogTitle from "@mui/joy/DialogTitle";
+import ModalDialog from "@mui/joy/ModalDialog";
 import ListItemButton from "@mui/material/ListItemButton";
 import { GridDeleteIcon } from "@mui/x-data-grid";
 import dateFormat from "dateformat";
@@ -34,6 +41,7 @@ export default function UserProfile() {
   const email = localStorage.getItem("email");
   const { t } = useTranslation("translation");
   const [index, setIndex] = React.useState(0);
+  const [open, setOpen] = React.useState(false);
   const [user, setUser] = useState({
     _id: "",
     firstName: "",
@@ -366,11 +374,11 @@ export default function UserProfile() {
                               <th style={{ width: 260 }}>
                                 {t("User.file-name")}
                               </th>
-                              {user.role === "admin" ? (
+                              {/* {user.role === "admin" ? (
                                 <th style={{ width: 40 }}></th>
                               ) : (
                                 <></>
-                              )}
+                              )} */}
                             </tr>
                           </thead>
                           <tbody>
@@ -391,21 +399,67 @@ export default function UserProfile() {
                                     component="button"
                                     onClick={() => downloadFile(row)}
                                   >
-                                    {row?.fileName ? row?.fileName : "Unnamed"}
+                                    {row?.fileName || "Unnamed"}
                                   </Link>
                                 </td>
-                                {user.role === "admin" ? (
+                                {/* {user.role === "admin" ? (
                                   <td>
                                     <IconButton
                                       aria-label="delete"
-                                      onClick={() => handleDelete(row)}
+                                      onClick={() => setOpen(true)}
                                     >
                                       <GridDeleteIcon color="warning" />
                                     </IconButton>
+                                    <Modal
+                                      open={open}
+                                      onClose={() => setOpen(false)}
+                                    >
+                                      <ModalDialog
+                                        variant="outlined"
+                                        role="alertdialog"
+                                      >
+                                        <DialogTitle>
+                                          <WarningRoundedIcon />
+                                          Confirmation
+                                        </DialogTitle>
+                                        <Divider />
+                                        <DialogContent>
+                                          <div>
+                                            Are you sure you want to delete{" "}
+                                            <strong>
+                                              {
+                                                selectedCaveData[index]
+                                                  ?.fileName
+                                              }
+                                            </strong>{" "}
+                                            ?
+                                          </div>
+                                        </DialogContent>
+                                        <DialogActions>
+                                          <Button
+                                            variant="solid"
+                                            color="danger"
+                                            onClick={() => {
+                                              handleDelete(row);
+                                              setOpen(false);
+                                            }}
+                                          >
+                                            Delete File
+                                          </Button>
+                                          <Button
+                                            variant="plain"
+                                            color="neutral"
+                                            onClick={() => setOpen(false)}
+                                          >
+                                            Cancel
+                                          </Button>
+                                        </DialogActions>
+                                      </ModalDialog>
+                                    </Modal>
                                   </td>
                                 ) : (
                                   <></>
-                                )}
+                                )} */}
                               </tr>
                             ))}
                           </tbody>

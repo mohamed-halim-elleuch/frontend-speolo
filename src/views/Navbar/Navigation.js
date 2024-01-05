@@ -13,12 +13,25 @@ import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import ListSubheader from "@mui/joy/ListSubheader";
 import * as React from "react";
 import { useActiveContent } from "../../apis/ActiveContentContext";
+import { getNotifications } from "../../apis/NotificationController";
 export default function Navigation() {
   const { activeContent, setNewActiveContent } = useActiveContent();
-
+  const [unread, setUnread] = React.useState(null);
   const handleItemClick = (content) => {
     setNewActiveContent(content);
   };
+  React.useEffect(() => {
+    const fetchNotification = async () => {
+      try {
+        const responseNotifications = await getNotifications();
+        setUnread(responseNotifications?.unreadCount);
+      } catch (error) {
+        console.error("Error fetching Notifications :", error);
+      }
+    };
+
+    fetchNotification();
+  }, []);
 
   return (
     <List size="sm" sx={{ "--ListItem-radius": "8px", "--List-gap": "4px" }}>
@@ -97,7 +110,7 @@ export default function Navigation() {
               </ListItemDecorator>
               <ListItemContent>Notifications</ListItemContent>
               <Chip variant="soft" color="warning" size="sm">
-                4
+                {unread}
               </Chip>
             </ListItemButton>
           </ListItem>

@@ -8,166 +8,31 @@ import ListItemButton, { listItemButtonClasses } from "@mui/joy/ListItemButton";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
-
-const data = [
-  {
-    name: "Alex Jonnold",
-    avatar: "https://i.pravatar.cc/40?img=3",
-    avatar2x: "https://i.pravatar.cc/80?img=3",
-    date: "21 Oct 2022",
-    title: "Deleted contribution",
-    body: "File observation_refneet.csv is deleted by…",
-    color: "warning.400",
-    unread: true,
-  },
-  {
-    name: "Pete Sand",
-    avatar: "https://i.pravatar.cc/40?img=4",
-    avatar2x: "https://i.pravatar.cc/80?img=4",
-    date: "06 Jul 2022",
-    title: "Deleted sensor",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "success.400",
-    unread: true,
-  },
-  {
-    name: "Kate Gates",
-    avatar: "https://i.pravatar.cc/40?img=5",
-    avatar2x: "https://i.pravatar.cc/80?img=5",
-    date: "16 May 2022",
-    title: "Delete notification",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "primary.500",
-    unread: false,
-  },
-  {
-    name: "John Snow",
-    avatar: "https://i.pravatar.cc/40?img=7",
-    avatar2x: "https://i.pravatar.cc/80?img=7",
-    date: "10 May 2022",
-    title: "Create notification",
-    body: "File observation_refneet.csv is added by…",
-    color: "danger.500",
-    unread: true,
-  },
-  {
-    name: "Michael Scott",
-    avatar: "https://i.pravatar.cc/40?img=8",
-    avatar2x: "https://i.pravatar.cc/80?img=8",
-    date: "13 Apr 2022",
-    title: "Delete notification",
-    body: "User Anonymous 123 is deleted, user id=...",
-    color: "danger.500",
-    unread: true,
-  },
-  {
-    name: "Alex Jonnold",
-    avatar: "https://i.pravatar.cc/40?img=3",
-    avatar2x: "https://i.pravatar.cc/80?img=3",
-    date: "21 Oct 2022",
-    title: "Deleted contribution",
-    body: "File observation_refneet.csv is deleted by…",
-    color: "warning.400",
-    unread: true,
-  },
-  {
-    name: "Pete Sand",
-    avatar: "https://i.pravatar.cc/40?img=4",
-    avatar2x: "https://i.pravatar.cc/80?img=4",
-    date: "06 Jul 2022",
-    title: "Deleted sensor",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "success.400",
-    unread: true,
-  },
-  {
-    name: "Kate Gates",
-    avatar: "https://i.pravatar.cc/40?img=5",
-    avatar2x: "https://i.pravatar.cc/80?img=5",
-    date: "16 May 2022",
-    title: "Delete notification",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "primary.500",
-    unread: false,
-  },
-  {
-    name: "John Snow",
-    avatar: "https://i.pravatar.cc/40?img=7",
-    avatar2x: "https://i.pravatar.cc/80?img=7",
-    date: "10 May 2022",
-    title: "Create notification",
-    body: "File observation_refneet.csv is added by…",
-    color: "danger.500",
-    unread: true,
-  },
-  {
-    name: "Michael Scott",
-    avatar: "https://i.pravatar.cc/40?img=8",
-    avatar2x: "https://i.pravatar.cc/80?img=8",
-    date: "13 Apr 2022",
-    title: "Delete notification",
-    body: "User Anonymous 123 is deleted, user id=...",
-    color: "danger.500",
-    unread: true,
-  },
-  {
-    name: "Alex Jonnold",
-    avatar: "https://i.pravatar.cc/40?img=3",
-    avatar2x: "https://i.pravatar.cc/80?img=3",
-    date: "21 Oct 2022",
-    title: "Deleted contribution",
-    body: "File observation_refneet.csv is deleted by…",
-    color: "warning.400",
-    unread: true,
-  },
-  {
-    name: "Pete Sand",
-    avatar: "https://i.pravatar.cc/40?img=4",
-    avatar2x: "https://i.pravatar.cc/80?img=4",
-    date: "06 Jul 2022",
-    title: "Deleted sensor",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "success.400",
-    unread: true,
-  },
-  {
-    name: "Kate Gates",
-    avatar: "https://i.pravatar.cc/40?img=5",
-    avatar2x: "https://i.pravatar.cc/80?img=5",
-    date: "16 May 2022",
-    title: "Delete notification",
-    body: "Sensor soft is deleted, sensor id=...",
-    color: "primary.500",
-    unread: false,
-  },
-  {
-    name: "John Snow",
-    avatar: "https://i.pravatar.cc/40?img=7",
-    avatar2x: "https://i.pravatar.cc/80?img=7",
-    date: "10 May 2022",
-    title: "Create notification",
-    body: "File observation_refneet.csv is added by…",
-    color: "danger.500",
-    unread: true,
-  },
-  {
-    name: "Michael Scott",
-    avatar: "https://i.pravatar.cc/40?img=8",
-    avatar2x: "https://i.pravatar.cc/80?img=8",
-    date: "13 Apr 2022",
-    title: "Delete notification",
-    body: "User Anonymous 123 is deleted, user id=...",
-    color: "danger.500",
-    unread: true,
-  },
-];
+import dateFormat from "dateformat";
+import { markAsReadNotification } from "../../../apis/NotificationController";
 
 const getInitials = (name) => {
   const names = name.split(" ");
   return names.map((word) => word[0]).join("");
 };
 
-export default function Notification() {
+export default function Notification({ notifications, onNotificationSelect }) {
+  const [selectedNotificationIndex, setSelectedNotificationIndex] =
+    React.useState(0);
+  const [message, setMessage] = React.useState("");
+
+  const handleNotificationClick = async (index) => {
+    setSelectedNotificationIndex(index);
+    onNotificationSelect(notifications[index]._id);
+    try {
+      const resNotifications = await markAsReadNotification(
+        notifications[index]._id
+      );
+      setMessage(resNotifications.message);
+    } catch (error) {
+      console.error("Error updating Notifications :", error);
+    }
+  };
   return (
     <List
       sx={{
@@ -181,7 +46,6 @@ export default function Notification() {
           },
         "&::-webkit-scrollbar": {
           width: "12px", // Set the width of the scrollbar
-
           transition: "all 300ms",
         },
         "&::-webkit-scrollbar-thumb": {
@@ -203,18 +67,19 @@ export default function Notification() {
         },
       }}
     >
-      {data.map((item, index) => (
+      {notifications?.map((item, index) => (
         <React.Fragment key={index}>
           <ListItem>
             <ListItemButton
-              {...(index === 0 && {
+              onClick={() => handleNotificationClick(index)}
+              {...(index === selectedNotificationIndex && {
                 selected: true,
                 color: "neutral",
               })}
               sx={{
                 p: 0.7,
                 paddingInline: 1.2,
-                borderLeft: item.unread && "3px solid #0b6bcb",
+                borderLeft: !item?.isRead && "3px solid #0b6bcb",
               }}
             >
               <ListItemDecorator
@@ -223,7 +88,7 @@ export default function Notification() {
                 }}
               >
                 <Avatar alt="" sx={{ backgroundColor: "#a9a9ff70" }}>
-                  {getInitials(item.name)}
+                  {/*getInitials(item?.name)*/ "me"}
                 </Avatar>
               </ListItemDecorator>
               <Box sx={{ pl: 2, width: "100%" }}>
@@ -244,14 +109,14 @@ export default function Notification() {
                       width: "32%",
                     }}
                   >
-                    <Typography level="body-xs">{item.name}</Typography>
-                    {item.unread && (
+                    <Typography level="body-xs">{item?.name}</Typography>
+                    {!item?.isRead && (
                       <Box
                         sx={{
                           width: "8px",
                           height: "8px",
                           borderRadius: "99px",
-                          bgcolor: item.color,
+                          bgcolor: item?.color || "warning.400",
                         }}
                       />
                     )}
@@ -263,17 +128,17 @@ export default function Notification() {
                       fontWeight: 430,
                       mb: 0.5,
                       width: "50%",
-                      color: item.unread ? "blueviolet" : "darkslategrey",
+                      color: !item?.isRead ? "blueviolet" : "darkslategrey",
                     }}
                   >
-                    {item.title}
+                    {item?.title}
                   </div>
                   <Typography
                     level="body-xs"
                     textColor="text.tertiary"
                     sx={{ width: "18%" }}
                   >
-                    {item.date}
+                    {dateFormat(item?.createdAt, "dd mmm yyyy")}
                   </Typography>
                 </Box>
                 <div>
@@ -281,9 +146,13 @@ export default function Notification() {
                     style={{
                       fontSize: "13px",
                       color: "#555E68",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      width: "26vw",
                     }}
                   >
-                    {item.body}
+                    {item?.description}
                   </div>
                 </div>
               </Box>

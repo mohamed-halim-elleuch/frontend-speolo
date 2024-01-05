@@ -15,96 +15,22 @@ import Slider from "@mui/joy/Slider";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
 
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import Layout from "../../Navbar/Layout.tsx";
 import UsersList from "./UsersList.js";
+import { getUsers } from "../../../apis/UserController.js";
+import { Input } from "@mui/joy";
 
 export default function Accounts() {
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-
-  const peopleData = [
-    {
-      name: "Andrew Smith",
-      position: "UI Designer",
-      avatar2x: "https://i.pravatar.cc/80?img=7",
-      companyData: [
-        {
-          role: "Senior designer",
-          name: "Dribbble",
-          logo: "https://www.vectorlogo.zone/logos/dribbble/dribbble-icon.svg",
-          years: "2015-now",
-        },
-        {
-          role: "Designer",
-          name: "Pinterest",
-          logo: "https://www.vectorlogo.zone/logos/pinterest/pinterest-icon.svg",
-          years: "2012-2015",
-        },
-      ],
-      skills: ["UI design", "Illustration"],
-    },
-    {
-      name: "John Doe",
-      position: "Frontend Developer",
-      avatar2x: "https://i.pravatar.cc/80?img=8",
-      companyData: [
-        {
-          role: "UI Engineer",
-          name: "Google",
-          logo: "https://www.vectorlogo.zone/logos/google/google-icon.svg",
-          years: "2018-now",
-        },
-        {
-          role: "Frontend Developer",
-          name: "Amazon",
-          logo: "https://www.vectorlogo.zone/logos/amazon/amazon-icon.svg",
-          years: "2015-2018",
-        },
-      ],
-      skills: ["HTML", "CSS", "JavaScript"],
-    },
-    {
-      name: "Alice Johnson",
-      position: "Product Manager",
-      avatar2x: "https://i.pravatar.cc/80?img=9",
-      companyData: [
-        {
-          role: "Product Manager",
-          name: "Microsoft",
-          logo: "https://www.vectorlogo.zone/logos/microsoft/microsoft-icon.svg",
-          years: "2016-now",
-        },
-        {
-          role: "Product Analyst",
-          name: "IBM",
-          logo: "https://www.vectorlogo.zone/logos/ibm/ibm-icon.svg",
-          years: "2013-2016",
-        },
-      ],
-      skills: ["Product Management", "Market Analysis"],
-    },
-    {
-      name: "Eva Brown",
-      position: "Graphic Designer",
-      avatar2x: "https://i.pravatar.cc/80?img=10",
-      companyData: [
-        {
-          role: "Art Director",
-          name: "Adobe",
-          logo: "https://www.vectorlogo.zone/logos/adobe/adobe-icon.svg",
-          years: "2019-now",
-        },
-        {
-          role: "Graphic Designer",
-          name: "Apple",
-          logo: "https://www.vectorlogo.zone/logos/apple/apple-icon.svg",
-          years: "2016-2019",
-        },
-      ],
-      skills: ["Graphic Design", "Illustration"],
-    },
-  ];
-
+  const [usersList, setUsersList] = React.useState([]);
+  React.useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const data = await getUsers();
+        setUsersList(data);
+      } catch (error) {}
+    };
+    fetchUsers();
+  }, []);
   return (
     <>
       <Box
@@ -190,29 +116,19 @@ export default function Accounts() {
             <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
-                  Location
+                  License ID
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 1 }}>
-                  <Autocomplete
-                    size="sm"
-                    placeholder="Country, city, etc…"
-                    options={[
-                      // some of Thailand provinces
-                      "Antibes",
-                      "Marseille",
-                      "Paris",
-                      "Nantes",
-                    ]}
-                  />
+                  <Input size="sm" placeholder="License ID" />
                 </Box>
               </AccordionDetails>
             </Accordion>
             <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
-                  Job
+                  Role
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
@@ -249,7 +165,7 @@ export default function Accounts() {
           </AccordionGroup>
         </Layout.SidePane>
 
-        <UsersList />
+        <UsersList rows={usersList} />
       </Box>
     </>
   );
