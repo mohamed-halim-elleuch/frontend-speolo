@@ -238,24 +238,24 @@ export default function SensorTypes() {
       value: sensors[page * rowsPerPage + selectedRow]?.type || "Unnamed",
     },
     {
-      label: "Manufacturer",
+      label: `${t("Sensors.manufacturer")}`,
       value:
         sensors[page * rowsPerPage + selectedRow]?.manufacturer ||
         "Not defined",
     },
 
     {
-      label: "Is Default",
+      label: `${t("Sensors.is-default")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.isDefault
         ? "True"
         : "False",
     },
     {
-      label: "Author",
+      label: `${t("Sensors.author")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.user || "",
     },
     {
-      label: "Properties",
+      label: `${t("Sensors.properties")}`,
       value: getLabelForValue(
         sensors[page * rowsPerPage + selectedRow]?.properties
       ),
@@ -324,7 +324,7 @@ export default function SensorTypes() {
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
                 <Box gridColumn="span 9">
                   <FormControl sx={{ flex: 1 }} size="sm">
-                    <FormLabel>Search for Sensor Types</FormLabel>
+                    <FormLabel>{t("Sensors.search")}</FormLabel>
                     <Input
                       size="sm"
                       value={searchText}
@@ -346,7 +346,7 @@ export default function SensorTypes() {
 
                 <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Properties</FormLabel>
+                    <FormLabel>{t("Sensors.properties")}</FormLabel>
 
                     <Autocomplete
                       size="sm"
@@ -379,7 +379,7 @@ export default function SensorTypes() {
                 </Box>
                 <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Manufacturer</FormLabel>
+                    <FormLabel>{t("Sensors.manufacturer")}</FormLabel>
                     <Autocomplete
                       size="sm"
                       autoHighlight
@@ -466,7 +466,7 @@ export default function SensorTypes() {
         <Tabs>
           <TabList>
             <Tab sx={{ flexGrow: 1 }}>
-              <Typography level="title-sm">Details</Typography>
+              <Typography level="title-sm">{t("Sensors.details")}</Typography>
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ p: 0 }}>
@@ -552,7 +552,7 @@ export default function SensorTypes() {
                       color="primary"
                       variant="soft"
                     >
-                      Update
+                      {t("Obs.update")}
                     </Button>
 
                     <Button
@@ -560,7 +560,7 @@ export default function SensorTypes() {
                       color="warning"
                       variant="soft"
                     >
-                      Cancel
+                      {t("Settings.cancel")}
                     </Button>
                   </ButtonGroup>
                 </form>
@@ -575,7 +575,7 @@ export default function SensorTypes() {
                     startDecorator={<EditRoundedIcon />}
                     onClick={handleEditClick}
                   >
-                    Edit
+                    {t("Sensors.edit")}
                   </Button>
                   <Button
                     variant="plain"
@@ -584,7 +584,7 @@ export default function SensorTypes() {
                     onClick={() => setOpen(true)}
                     startDecorator={<DeleteIcon />}
                   >
-                    Delete
+                    {t("Sensors.delete")}
                   </Button>
                   <Modal open={open} onClose={() => setOpen(false)}>
                     <ModalDialog variant="outlined" role="alertdialog">
@@ -595,11 +595,11 @@ export default function SensorTypes() {
                       <Divider />
                       <DialogContent>
                         <div>
-                          Are you sure you want to delete{" "}
+                          {t("Sensors.delete-message")}{" "}
                           <strong>
                             {sensors[page * rowsPerPage + selectedRow]?.type}
                           </strong>{" "}
-                          sensor type?
+                          ?
                         </div>
                       </DialogContent>
                       <DialogActions>
@@ -611,14 +611,14 @@ export default function SensorTypes() {
                             setOpen(false);
                           }}
                         >
-                          Delete Sensor
+                          {t("Sensors.delete")}
                         </Button>
                         <Button
                           variant="plain"
                           color="neutral"
                           onClick={() => setOpen(false)}
                         >
-                          Cancel
+                          {t("Settings.cancel")}
                         </Button>
                       </DialogActions>
                     </ModalDialog>

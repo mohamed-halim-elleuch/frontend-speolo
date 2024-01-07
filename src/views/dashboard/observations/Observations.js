@@ -26,7 +26,6 @@ import Tabs from "@mui/joy/Tabs";
 import Typography from "@mui/joy/Typography";
 import { Autocomplete, TextField } from "@mui/material";
 import dateFormat from "dateformat";
-import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { getCaveById } from "../../../apis/CaveController.js";
 import {
@@ -243,26 +242,26 @@ export default function Observations() {
 
   const filedetails = [
     {
-      label: "File",
+      label: `${t("Obs.table.file-name")}`,
       value:
         observations[page * rowsPerPage + selectedRow]?.fileName || "Unnamed",
     },
     {
-      label: "Sensor",
+      label: `${t("Obs.table.sensor")}`,
       value:
         observations[page * rowsPerPage + selectedRow]?.sensor || "Not found",
     },
 
     {
-      label: "Location",
+      label: `${t("Obs.location")}`,
       value: observations[page * rowsPerPage + selectedRow]?.location || "",
     },
     {
-      label: "Owner",
+      label: `${t("Obs.author")}`,
       value: observations[page * rowsPerPage + selectedRow]?.user || "",
     },
     {
-      label: "Begin Date",
+      label: `${t("Obs.table.begin-date")}`,
       value:
         `${dateFormat(
           observations[page * rowsPerPage + selectedRow]?.beginDate,
@@ -273,7 +272,7 @@ export default function Observations() {
         )}` || "No date",
     },
     {
-      label: "End Date",
+      label: `${t("Obs.table.end-date")}`,
       value:
         `${dateFormat(
           observations[page * rowsPerPage + selectedRow]?.endDate,
@@ -284,7 +283,7 @@ export default function Observations() {
         )}` || "No date",
     },
     {
-      label: "Created",
+      label: `${t("Obs.added-date")}`,
       value: `${dateFormat(
         observations[page * rowsPerPage + selectedRow]?.createdAt,
         "ddd, mmm dS, yyyy"
@@ -487,7 +486,7 @@ export default function Observations() {
         <Tabs>
           <TabList>
             <Tab sx={{ flexGrow: 1 }}>
-              <Typography level="title-sm">Details</Typography>
+              <Typography level="title-sm">{t("Obs.details")}</Typography>
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ p: 0 }}>
@@ -524,7 +523,7 @@ export default function Observations() {
                 onClick={() => setOpen(true)}
                 endDecorator={<DeleteIcon />}
               >
-                Delete
+                {t("Sensors.delete")}
               </Button>
               <Modal open={open} onClose={() => setOpen(false)}>
                 <ModalDialog variant="outlined" role="alertdialog">
@@ -535,7 +534,7 @@ export default function Observations() {
                   <Divider />
                   <DialogContent>
                     <div>
-                      Are you sure you want to delete{" "}
+                      {t("Sensors.delete-message")}{" "}
                       <strong>
                         {
                           observations[page * rowsPerPage + selectedRow]
@@ -554,14 +553,14 @@ export default function Observations() {
                         setOpen(false);
                       }}
                     >
-                      Delete File
+                      {t("Sensors.delete")}
                     </Button>
                     <Button
                       variant="plain"
                       color="neutral"
                       onClick={() => setOpen(false)}
                     >
-                      Cancel
+                      {t("Settings.cancel")}
                     </Button>
                   </DialogActions>
                 </ModalDialog>

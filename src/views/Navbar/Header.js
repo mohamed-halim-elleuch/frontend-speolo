@@ -254,7 +254,7 @@ export default function Header() {
             <a href="/authenticate/dashboard" style={{ margin: 0 }}>
               <MenuItem onClick={() => handleItemClick("settings")}>
                 <SettingsRoundedIcon />
-                Settings
+                {t("Browse.settings")}
               </MenuItem>
             </a>
             <ListDivider />

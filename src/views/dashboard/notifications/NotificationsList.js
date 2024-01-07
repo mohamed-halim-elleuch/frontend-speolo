@@ -8,8 +8,10 @@ import Layout from "../../Navbar/Layout.tsx";
 import NotificationContent from "./NotificationContent.js";
 import Notifications from "./Notifications.js";
 import { getNotifications } from "../../../apis/NotificationController.js";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationsList() {
+  const { t } = useTranslation("translation");
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [page, setPage] = useState(0);
@@ -101,7 +103,7 @@ export default function NotificationsList() {
           <Input
             size="sm"
             variant="outlined"
-            placeholder="Search notification"
+            placeholder={t("Notifications.search")}
             startDecorator={<SearchRoundedIcon color="primary" />}
             sx={{
               alignSelf: "center",

@@ -6,8 +6,10 @@ import FormControl, { FormControlProps } from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import ListItemDecorator from "@mui/joy/ListItemDecorator";
 import Typography from "@mui/joy/Typography";
+import { useTranslation } from "react-i18next";
 
 export default function CountrySelector(props) {
+  const { t } = useTranslation("translation");
   const { initialValue, onChange, sx, ...other } = props;
   const [selectedCountry, setSelectedCountry] = useState(initialValue);
 
@@ -25,7 +27,7 @@ export default function CountrySelector(props) {
       {...other}
       sx={[{ display: { sm: "contents" } }, ...(Array.isArray(sx) ? sx : [sx])]}
     >
-      <FormLabel>Country</FormLabel>
+      <FormLabel>{t("Contribute.country")}</FormLabel>
       <Autocomplete
         size="sm"
         autoHighlight

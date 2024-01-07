@@ -6,7 +6,6 @@ import AccordionGroup from "@mui/joy/AccordionGroup";
 import AccordionSummary, {
   accordionSummaryClasses,
 } from "@mui/joy/AccordionSummary";
-import Autocomplete from "@mui/joy/Autocomplete";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import Radio from "@mui/joy/Radio";
@@ -15,12 +14,14 @@ import Slider from "@mui/joy/Slider";
 import Typography from "@mui/joy/Typography";
 import * as React from "react";
 
+import { Input } from "@mui/joy";
+import { getUsers } from "../../../apis/UserController.js";
 import Layout from "../../Navbar/Layout.tsx";
 import UsersList from "./UsersList.js";
-import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
-import { Input } from "@mui/joy";
+import { useTranslation } from "react-i18next";
 
 export default function Accounts() {
+  const { t } = useTranslation("translation");
   const [usersList, setUsersList] = React.useState([]);
   const [nameFilter, setNameFilter] = React.useState("");
   const [licenseFilter, setLicenseFilter] = React.useState("");
@@ -104,7 +105,7 @@ export default function Accounts() {
             }}
           >
             <Typography level="title-lg" textColor="text.secondary">
-              Member
+              {t("Accounts.member")}
             </Typography>
           </Box>
           <Box
@@ -115,7 +116,7 @@ export default function Accounts() {
               justifyContent: "space-between",
             }}
           >
-            <Typography level="title-md">Filters</Typography>
+            <Typography level="title-md">{t("Accounts.filters")}</Typography>
             <Button
               size="sm"
               variant="plain"
@@ -123,7 +124,7 @@ export default function Accounts() {
               onClick={handleSearchClick}
               disabled={searching}
             >
-              Search
+              {t("Accounts.search")}
             </Button>
           </Box>
           <AccordionGroup
@@ -139,14 +140,14 @@ export default function Accounts() {
             <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
-                  Search
+                  {t("Accounts.search")}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 2 }}>
                   <Input
                     size="sm"
-                    placeholder="Name, etc…"
+                    placeholder={t("Accounts.placeSearch")}
                     value={nameFilter}
                     onChange={(e) => setNameFilter(e.target.value)}
                   />
@@ -156,14 +157,14 @@ export default function Accounts() {
             <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
-                  License ID
+                  {t("Accounts.license")}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 1 }}>
                   <Input
                     size="sm"
-                    placeholder="License ID"
+                    placeholder={t("Accounts.license")}
                     value={licenseFilter}
                     onChange={(e) => setLicenseFilter(e.target.value)}
                   />
@@ -195,14 +196,16 @@ export default function Accounts() {
             <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
-                  Membership Duration
+                  {t("Accounts.membership")}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 2 }}>
                   <Slider
                     size="sm"
-                    valueLabelFormat={(value) => `${value} months`}
+                    valueLabelFormat={(value) =>
+                      `${value} ${t("Accounts.months")}`
+                    }
                     value={membershipDurationFilter}
                     onChange={(event, newValue) =>
                       setMembershipDurationFilter(newValue)

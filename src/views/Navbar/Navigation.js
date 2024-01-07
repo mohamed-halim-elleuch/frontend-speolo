@@ -15,7 +15,9 @@ import * as React from "react";
 import { useActiveContent } from "../../apis/ActiveContentContext";
 import { getNotifications } from "../../apis/NotificationController";
 import { fetchUserInfo } from "../../apis/UserController";
+import { useTranslation } from "react-i18next";
 export default function Navigation() {
+  const { t } = useTranslation("translation");
   const { activeContent, setNewActiveContent } = useActiveContent();
   const [unread, setUnread] = React.useState(null);
   const [role, setRole] = React.useState("");
@@ -53,7 +55,7 @@ export default function Navigation() {
     <List size="sm" sx={{ "--ListItem-radius": "8px", "--List-gap": "4px" }}>
       <ListItem nested>
         <ListSubheader sx={{ letterSpacing: "2px", fontWeight: "800" }}>
-          Browse
+          {t("Browse.browse")}
         </ListSubheader>
         <List
           aria-labelledby="nav-list-browse"
@@ -69,7 +71,7 @@ export default function Navigation() {
               <ListItemDecorator>
                 <AccountCircleIcon fontSize="small" />
               </ListItemDecorator>
-              <ListItemContent>Profil</ListItemContent>
+              <ListItemContent>{t("Browse.profil")}</ListItemContent>
             </ListItemButton>
           </ListItem>
           <ListItem>
@@ -80,7 +82,7 @@ export default function Navigation() {
               <ListItemDecorator>
                 <SettingsIcon fontSize="small" />
               </ListItemDecorator>
-              <ListItemContent>Settings</ListItemContent>
+              <ListItemContent>{t("Browse.settings")}</ListItemContent>
             </ListItemButton>
           </ListItem>
           {role === "admin" && (
@@ -92,7 +94,7 @@ export default function Navigation() {
                 <ListItemDecorator>
                   <PeopleAltIcon fontSize="small" />
                 </ListItemDecorator>
-                <ListItemContent>Managing accounts</ListItemContent>
+                <ListItemContent>{t("Browse.accounts")}</ListItemContent>
               </ListItemButton>
             </ListItem>
           )}
@@ -104,7 +106,7 @@ export default function Navigation() {
               <ListItemDecorator>
                 <FindInPageIcon fontSize="small" />
               </ListItemDecorator>
-              <ListItemContent>Observations</ListItemContent>
+              <ListItemContent>{t("Browse.observations")}</ListItemContent>
             </ListItemButton>
           </ListItem>
           <ListItem>
@@ -115,7 +117,7 @@ export default function Navigation() {
               <ListItemDecorator>
                 <SensorsIcon fontSize="small" />
               </ListItemDecorator>
-              <ListItemContent>Sensor Types</ListItemContent>
+              <ListItemContent>{t("Browse.sensors")}</ListItemContent>
             </ListItemButton>
           </ListItem>
           {role === "admin" && (
@@ -127,7 +129,7 @@ export default function Navigation() {
                 <ListItemDecorator>
                   <NotificationsActiveIcon fontSize="small" />
                 </ListItemDecorator>
-                <ListItemContent>Notifications</ListItemContent>
+                <ListItemContent>{t("Browse.notifications")}</ListItemContent>
                 <Chip variant="soft" color="warning" size="sm">
                   {unread}
                 </Chip>

@@ -17,8 +17,10 @@ import dateFormat from "dateformat";
 import React, { useEffect, useState } from "react";
 import { fetchUserInfo, updateUser } from "../../../apis/UserController";
 import ShowMessage from "../../common/ShowMessage";
+import { useTranslation } from "react-i18next";
 
 export default function ProfileUpdate() {
+  const { t } = useTranslation("translation");
   const [selectedImage, setSelectedImage] = React.useState(null);
   const [updateMessage, setUpdateMessage] = useState(null);
   const [formData, setFormData] = useState({
@@ -114,13 +116,14 @@ export default function ProfileUpdate() {
       >
         <Card>
           <Box>
-            <Typography level="title-md">Personal info</Typography>
+            <Typography level="title-md">{t("Settings.title")}</Typography>
             <div style={{ fontSize: "14px", color: "#555E70" }}>
-              This account was created on{" "}
+              {t("Settings.subtitle1")}{" "}
               <strong>
                 {dateFormat(formData.createdAt, "dddd, mmmm dS, yyyy")}
               </strong>{" "}
-              at <strong>{dateFormat(formData.createdAt, "h:MM:ss TT")}</strong>
+              {t("Settings.subtitle2")}{" "}
+              <strong>{dateFormat(formData.createdAt, "h:MM:ss TT")}</strong>
             </div>
           </Box>
           <Divider />
@@ -173,7 +176,7 @@ export default function ProfileUpdate() {
             </Stack>
             <Stack spacing={2} sx={{ flexGrow: 1 }}>
               <Stack spacing={1}>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("Settings.name")}</FormLabel>
                 <Box
                   sx={{
                     display: { sm: "flex-column", md: "inline-flex" },
@@ -183,7 +186,7 @@ export default function ProfileUpdate() {
                   <FormControl sx={{ width: "50%" }}>
                     <Input
                       size="sm"
-                      placeholder="First Name"
+                      placeholder={t("Settings.placeName1")}
                       value={formData.firstName}
                       onChange={(e) =>
                         handleInputChange("firstName", e.target.value)
@@ -193,7 +196,7 @@ export default function ProfileUpdate() {
                   <FormControl sx={{ width: "50%" }}>
                     <Input
                       size="sm"
-                      placeholder="Last Name"
+                      placeholder={t("Settings.placeName2")}
                       value={formData.lastName}
                       onChange={(e) =>
                         handleInputChange("lastName", e.target.value)
@@ -223,7 +226,7 @@ export default function ProfileUpdate() {
               </Stack>
               <div>
                 <FormControl>
-                  <FormLabel>License</FormLabel>
+                  <FormLabel>{t("Settings.license")}</FormLabel>
                   <Input
                     readOnly
                     size="sm"
@@ -236,7 +239,7 @@ export default function ProfileUpdate() {
               </div>
               <div>
                 <FormControl>
-                  <FormLabel>Address</FormLabel>
+                  <FormLabel>{t("Settings.address")}</FormLabel>
                   <Input
                     size="sm"
                     value={formData.address}
@@ -285,7 +288,7 @@ export default function ProfileUpdate() {
                 </IconButton>
               </Stack>
               <Stack spacing={1} sx={{ flexGrow: 1 }}>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("Settings.name")}</FormLabel>
                 <FormControl
                   sx={{
                     display: {
@@ -332,7 +335,7 @@ export default function ProfileUpdate() {
             </FormControl>
             <div>
               <FormControl>
-                <FormLabel>License</FormLabel>
+                <FormLabel>{t("Settings.license")}</FormLabel>
                 <Input
                   size="sm"
                   value={formData.license}
@@ -342,7 +345,7 @@ export default function ProfileUpdate() {
             </div>
             <div>
               <FormControl>
-                <FormLabel>Address</FormLabel>
+                <FormLabel>{t("Settings.address")}</FormLabel>
                 <Input
                   size="sm"
                   value={formData.address}
@@ -354,10 +357,10 @@ export default function ProfileUpdate() {
           <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
             <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>
               <Button size="sm" variant="outlined" color="neutral">
-                Cancel
+                {t("Settings.cancel")}
               </Button>
               <Button size="sm" variant="solid" onClick={handleSaveButtonClick}>
-                Save
+                {t("Settings.save")}
               </Button>
             </CardActions>
           </CardOverflow>

@@ -11,11 +11,11 @@ import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import * as React from "react";
 import { getUsers } from "../../../apis/UserController";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationContent({ selectedNotification }) {
   const [open, setOpen] = React.useState([false, false, false]);
-  React.useEffect(() => {}, []);
-
+  const { t } = useTranslation("translation");
   const handleSnackbarOpen = async (index) => {
     //try {
     //await deleteNotification(selectedNotificationId);
@@ -76,8 +76,8 @@ export default function NotificationContent({ selectedNotification }) {
       if (itemType === "Observation" && caveId) {
         message = (
           <div>
-            The observation file <strong>{fileName}</strong> has been
-            soft-deleted by{" "}
+            {t("Notifications.content-obs1")} <strong>{fileName}</strong>{" "}
+            {t("Notifications.content-obs2")}{" "}
             <strong>
               {firstName} {lastName}
             </strong>
@@ -86,22 +86,23 @@ export default function NotificationContent({ selectedNotification }) {
         );
         additionalDescription = (
           <div>
-            This file was added by <strong>{author || "user1"}</strong> at{" "}
+            {t("Notifications.content-obs3")}{" "}
+            <strong>{author || "user1"}</strong>{" "}
+            {t("Notifications.content-obs4")}{" "}
             <strong>
               {dayjs(caveObservation?.createdAt).format("MMM D, YYYY hh:mm")}
             </strong>
             .<br />
-            <br /> It was associated with the cave <strong>
-              {caveId}
-            </strong>{" "}
-            located in <strong>{caveObservation?.timeZone}</strong>.
+            <br /> {t("Notifications.content-obs5")} <strong>{caveId}</strong>{" "}
+            {t("Notifications.content-obs6")}{" "}
+            <strong>{caveObservation?.timeZone}</strong>.
             <br />
             <br />
-            It contained information recorded from{" "}
+            {t("Notifications.content-obs7")}{" "}
             <strong>
               {dayjs(beginDate).format("MMM D, YYYY hh:mm") || "no_date"}
             </strong>{" "}
-            to{" "}
+            {t("Notifications.content-obs8")}{" "}
             <strong>
               {dayjs(endDate).format("MMM D, YYYY hh:mm") || "no_date"}
             </strong>
@@ -111,7 +112,8 @@ export default function NotificationContent({ selectedNotification }) {
       } else if (itemType === "SensorType" && type) {
         message = (
           <div>
-            The sensor type <strong>"{type}"</strong> has been soft-deleted by{" "}
+            {t("Notifications.content-sensor1")} <strong>"{type}"</strong>{" "}
+            {t("Notifications.content-sensor2")}{" "}
             <strong>
               {firstName} {lastName}
             </strong>
@@ -120,24 +122,24 @@ export default function NotificationContent({ selectedNotification }) {
         );
         additionalDescription = (
           <div>
-            Additional information about the deleted sensor type:
+            {t("Notifications.content-sensor3")}
             <table>
               <tbody>
                 <tr>
                   <td style={{ paddingLeft: "30px" }}>
-                    <strong>Properties:</strong>
+                    <strong>{t("Notifications.content-sensor4")}</strong>
                   </td>
                   <td>{properties ? properties.join(", ") : "N/A"}</td>
                 </tr>
                 <tr>
                   <td style={{ paddingLeft: "30px" }}>
-                    <strong>Creator:</strong>
+                    <strong>{t("Notifications.content-sensor5")}</strong>
                   </td>
                   <td>{author || "N/A"}</td>
                 </tr>
                 <tr>
                   <td style={{ paddingLeft: "30px" }}>
-                    <strong>Manufacturer:</strong>
+                    <strong>{t("Notifications.content-sensor6")}</strong>
                   </td>
                   <td>{manufacturer || "N/A"}</td>
                 </tr>
@@ -213,7 +215,7 @@ export default function NotificationContent({ selectedNotification }) {
             startDecorator={<DeleteRoundedIcon />}
             onClick={() => handleSnackbarOpen(2)}
           >
-            Delete
+            {t("User.delete")}
           </Button>
           <Snackbar
             color="danger"

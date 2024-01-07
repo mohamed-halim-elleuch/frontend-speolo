@@ -80,16 +80,18 @@ export default function TableFiles({
           <TableHead sx={{ overflow: "hidden" }}>
             <TableRow>
               <TableCell style={{ width: "40%" }}>
-                <Typography level="title-sm">{t("Files")}</Typography>
+                <Typography level="title-sm">
+                  {t("Obs.table.file-name")}
+                </Typography>
               </TableCell>
               <TableCell style={{ width: "23%" }}>
-                <Typography level="title-sm">{t("Added date")}</Typography>
+                <Typography level="title-sm">{t("Obs.added-date")}</Typography>
               </TableCell>
               <TableCell style={{ width: "17%" }}>
-                <Typography level="title-sm">{t("Author")}</Typography>
+                <Typography level="title-sm">{t("Obs.author")}</Typography>
               </TableCell>
               <TableCell style={{ width: "20%" }}>
-                <Typography level="title-sm">{t("Cave")}</Typography>
+                <Typography level="title-sm">{t("Obs.table.cave")}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>

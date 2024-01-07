@@ -9,7 +9,9 @@ import { Box } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { searchObservations } from "../../../apis/CaveObservationController";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 function Row({ dataRow, initialOpen }) {
+  const { t } = useTranslation("translation");
   const [open, setOpen] = useState(initialOpen || false);
   const [row, setRow] = useState(dataRow);
   const downloadFile = (row) => {
@@ -95,7 +97,7 @@ function Row({ dataRow, initialOpen }) {
                 }}
               >
                 <Typography level="body-lg" component="div">
-                  Details
+                  {t("Accounts.details")}
                 </Typography>
               </Box>
               <Table
@@ -111,9 +113,11 @@ function Row({ dataRow, initialOpen }) {
               >
                 <thead>
                   <tr>
-                    <th style={{ width: "25%" }}>Account Creation Date</th>
-                    <th style={{ width: "25%" }}>License Id</th>
-                    <th style={{ width: "50%" }}>Last added observation</th>
+                    <th style={{ width: "25%" }}>
+                      {t("Accounts.account-creation")}
+                    </th>
+                    <th style={{ width: "25%" }}>{t("Accounts.license")}</th>
+                    <th style={{ width: "50%" }}>{t("Accounts.last-added")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -145,18 +149,9 @@ function Row({ dataRow, initialOpen }) {
 }
 
 function UsersList({ rows }) {
+  const { t } = useTranslation("translation");
   return (
     <div>
-      <div
-        style={{
-          fontSize: "16px",
-          color: "#555E68",
-          textAlign: "center",
-          margin: 2,
-        }}
-      >
-        Selected Users
-      </div>
       <Sheet
         sx={{
           "--TableCell-height": "40px",
@@ -199,10 +194,10 @@ function UsersList({ rows }) {
           <thead>
             <tr>
               <th style={{ width: 40 }} aria-label="empty" />
-              <th style={{ width: "20%" }}>Full Name</th>
+              <th style={{ width: "20%" }}>{t("Accounts.name")}</th>
               <th style={{ width: "10%" }}>Role</th>
               <th style={{ width: "25%" }}>Email</th>
-              <th style={{ width: "40%" }}>Address</th>
+              <th style={{ width: "40%" }}>{t("Accounts.address")}</th>
             </tr>
           </thead>
           <tbody>

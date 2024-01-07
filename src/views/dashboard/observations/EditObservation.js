@@ -82,11 +82,11 @@ export default function EditObservation({ setNewSensorAdd }) {
         endDecorator={<EditRoundedIcon />}
         onClick={() => setOpen(true)}
       >
-        {t("Edit")}
+        {t("Sensors.edit")}
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
-          <DialogTitle>{t("Update observation")}</DialogTitle>
+          <DialogTitle>{t("Obs.titleUpdate")}</DialogTitle>
 
           <form
             style={{ padding: 0, display: "initial" }}
@@ -103,7 +103,7 @@ export default function EditObservation({ setNewSensorAdd }) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>{t("Sensor Type")}</FormLabel>
+                <FormLabel>{t("Obs.table.sensor")}</FormLabel>
 
                 <Autocomplete
                   sx={{
@@ -152,7 +152,7 @@ export default function EditObservation({ setNewSensorAdd }) {
                   color="primary"
                   variant="soft"
                 >
-                  Update
+                  {t("Obs.update")}
                 </Button>
 
                 <Button
@@ -160,7 +160,7 @@ export default function EditObservation({ setNewSensorAdd }) {
                   color="warning"
                   variant="soft"
                 >
-                  Cancel
+                  {t("Settings.cancel")}
                 </Button>
               </ButtonGroup>
             </Stack>

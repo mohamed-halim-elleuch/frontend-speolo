@@ -58,7 +58,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
         startDecorator={<Add />}
         onClick={() => setOpen(true)}
       >
-        {t("Create")}
+        {t("Sensors.create")}
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog>
