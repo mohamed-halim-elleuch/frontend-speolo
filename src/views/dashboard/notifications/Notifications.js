@@ -13,22 +13,57 @@ import { markAsReadNotification } from "../../../apis/NotificationController";
 
 const getInitials = (name) => {
   const names = name.split(" ");
-  return names.map((word) => word[0]).join("");
+  return names.map((word) => word[0].toUpperCase()).join("");
 };
 
 export default function Notification({ notifications, onNotificationSelect }) {
   const [selectedNotificationIndex, setSelectedNotificationIndex] =
     React.useState(0);
-  const [message, setMessage] = React.useState("");
+  const [resMessage, setResMessage] = React.useState("");
+
+  const generateMessages = (notifications) => {
+    return notifications.map((notification) => {
+      const {
+        notificationType,
+        itemType,
+        caveObservation,
+        sensorType,
+        deletedBy,
+      } = notification;
+      const { caveId } = caveObservation || {};
+      const { type } = sensorType || {};
+      const firstName = deletedBy?.firstName || "Unknown";
+      const lastName = deletedBy?.lastName || "";
+
+      let message;
+
+      if (notificationType === "SoftDelete") {
+        if (itemType === "Observation" && caveId) {
+          message = `Soft delete of an Observation in the cave ${caveId}`;
+        } else if (itemType === "SensorType" && type) {
+          message = `Soft delete of a SensorType (${type})`;
+        } else {
+          message = `Soft delete of an ${itemType}`;
+        }
+      } else {
+        // Handle other notification types or customize the message for non-SoftDelete types
+        message = `Soft delete notification for ${itemType}`;
+      }
+
+      return `${message} by ${firstName} ${lastName}`;
+    });
+  };
+
+  const notificationMessages = generateMessages(notifications);
 
   const handleNotificationClick = async (index) => {
     setSelectedNotificationIndex(index);
-    onNotificationSelect(notifications[index]._id);
+    onNotificationSelect(notifications[index]);
     try {
       const resNotifications = await markAsReadNotification(
         notifications[index]._id
       );
-      setMessage(resNotifications.message);
+      setResMessage(resNotifications.message);
     } catch (error) {
       console.error("Error updating Notifications :", error);
     }
@@ -88,7 +123,11 @@ export default function Notification({ notifications, onNotificationSelect }) {
                 }}
               >
                 <Avatar alt="" sx={{ backgroundColor: "#a9a9ff70" }}>
-                  {/*getInitials(item?.name)*/ "me"}
+                  {getInitials(
+                    `${item?.deletedBy?.firstName || "undefined"} ${
+                      item?.deletedBy?.lastName
+                    }`
+                  )}
                 </Avatar>
               </ListItemDecorator>
               <Box sx={{ pl: 2, width: "100%" }}>
@@ -109,7 +148,10 @@ export default function Notification({ notifications, onNotificationSelect }) {
                       width: "32%",
                     }}
                   >
-                    <Typography level="body-xs">{item?.name}</Typography>
+                    <Typography level="body-xs">
+                      {item?.deletedBy?.firstName || "undefined"}{" "}
+                      {item?.deletedBy?.lastName}
+                    </Typography>
                     {!item?.isRead && (
                       <Box
                         sx={{
@@ -152,7 +194,7 @@ export default function Notification({ notifications, onNotificationSelect }) {
                       width: "26vw",
                     }}
                   >
-                    {item?.description}
+                    {notificationMessages[index]}
                   </div>
                 </div>
               </Box>

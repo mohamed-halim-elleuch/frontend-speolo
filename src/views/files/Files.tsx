@@ -29,10 +29,6 @@ const useEnhancedEffect =
 export default function ObservationFiles() {
   
   const { id } = useParams();
-  const [sensorType,setSensorType] = React.useState(null);
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
   const [rows,setRows] = React.useState([{id: '',fileName:'',sensor_type:'',beginDate: '',endDate: '',customer: {  initial: '',  name: '',  email: '',},}]);
 
   React.useEffect(() => {
@@ -41,17 +37,17 @@ export default function ObservationFiles() {
         const data = await searchObservations(`{"caveId":"${id}"}`);
         const responses = await Promise.all(data.map(async (item) => {
        
-          const formattedBeginDate = item?.beginDate ? dayjs(item.beginDate).format('MMM DD, YYYY') : 'no_date';
-          const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
+          const formattedBeginDate = item?.beginDate ? dayjs(item?.beginDate).format('MMM DD, YYYY') : 'no_date';
+          const formattedEndDate = item?.endDate ? dayjs(item?.endDate).format('MMM DD, YYYY') : 'no_date';
           const fileName = item?.fileName || 'file.csv';
-          const resUser = await getUsers(`{"_id":"${item.createdBy}"}`);
+          const resUser = await getUsers(`{"_id":"${item?.createdBy}"}`);
           
           const sensorID = item.sensorId || '';
           const resSensor = await getSensorTypeById(sensorID);
           
         
           
-          return { ...item,"sensor_type":resSensor?.data?.type ,"beginDate":formattedBeginDate,"endDate":formattedEndDate, "fileName": fileName ,"customer": {  "initial": resUser[0].lastName.charAt(0).toUpperCase(),  "name":`${resUser[0].firstName} ${resUser[0].lastName}`, "email": resUser[0].email,} };
+          return { ...item,"sensor_type":resSensor?.data?.type ,"beginDate":formattedBeginDate,"endDate":formattedEndDate, "fileName": fileName ,"customer": {  "initial": resUser[0]?.lastName.charAt(0).toUpperCase(),  "name":`${resUser[0]?.firstName} ${resUser[0]?.lastName || ""}`} };
         }));     
         setRows(responses);
 

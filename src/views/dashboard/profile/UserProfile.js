@@ -10,21 +10,12 @@ import {
   Container,
   Divider,
   Grid,
-  IconButton,
   List,
   ListItem,
   ListItemText,
   Typography,
 } from "@mui/material";
-import Button from "@mui/joy/Button";
-import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
-import Modal from "@mui/joy/Modal";
-import DialogActions from "@mui/joy/DialogActions";
-import DialogContent from "@mui/joy/DialogContent";
-import DialogTitle from "@mui/joy/DialogTitle";
-import ModalDialog from "@mui/joy/ModalDialog";
 import ListItemButton from "@mui/material/ListItemButton";
-import { GridDeleteIcon } from "@mui/x-data-grid";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -38,7 +29,6 @@ import { getSensorTypeById } from "../../../apis/SensorTypeController";
 import { fetchUserInfo } from "../../../apis/UserController";
 
 export default function UserProfile() {
-  const email = localStorage.getItem("email");
   const { t } = useTranslation("translation");
   const [index, setIndex] = React.useState(0);
   const [open, setOpen] = React.useState(false);
@@ -46,7 +36,7 @@ export default function UserProfile() {
     _id: "",
     firstName: "",
     lastName: "",
-    email: email,
+    email: "",
     license: "",
     createdAt: "",
   });
@@ -75,7 +65,7 @@ export default function UserProfile() {
           firstName: userData.firstName,
           lastName: userData.lastName,
           role: userData.role,
-          email: email,
+          email: userData.email,
           address: userData.address,
           country: userData.country,
           license: userData.license,

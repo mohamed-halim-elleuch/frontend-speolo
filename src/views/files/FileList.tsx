@@ -48,10 +48,10 @@ export default function FileList({listItems}) {
               </ListItemDecorator>
               <div>
                 <Typography fontWeight={600} gutterBottom>
-                {listItem.fileName}
+                {listItem?.fileName}
                 </Typography>
                 <Typography level="body-xs" gutterBottom>
-                {listItem.customer.name}
+                {listItem?.customer.name}
                 </Typography>
                 <Box
                   sx={{
@@ -62,9 +62,9 @@ export default function FileList({listItems}) {
                     mb: 1,
                   }}
                 >
-                  <Typography level="body-xs">{listItem.beginDate}</Typography>
-                  <Typography level="body-xs">{listItem.endDate}</Typography>
-                  <Typography level="body-xs">{listItem.sensor_type}</Typography>
+                  <Typography level="body-xs">{listItem?.beginDate}</Typography>
+                  <Typography level="body-xs">{listItem?.endDate}</Typography>
+                  <Typography level="body-xs">{listItem?.sensor_type}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <Link level="body-sm" component="button" onClick={() =>downloadFile(listItem)}>
@@ -94,7 +94,7 @@ export default function FileList({listItems}) {
           <KeyboardArrowLeftIcon />
         </IconButton>
         <Typography level="body-sm" mx="auto">
-          Page 1 of 6
+          Page 1 of 2
         </Typography>
         <IconButton
           aria-label="next page"

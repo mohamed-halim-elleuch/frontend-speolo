@@ -20,7 +20,7 @@ const renderMenuItem = (title, content, unread) => (
       </Typography>
       <div
         style={{
-          fontSize: "14px",
+          fontSize: "13px",
           color: "#555E70",
           whiteSpace: "nowrap",
           overflow: "hidden",
@@ -106,7 +106,7 @@ function NotificationsHeader() {
         {notifications?.map((menuItem, index) =>
           renderMenuItem(
             menuItem?.title,
-            menuItem?.description,
+            `${menuItem?.notificationType}: ${menuItem?.itemType}`,
             !menuItem?.isRead
           )
         )}

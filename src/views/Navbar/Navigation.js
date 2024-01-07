@@ -14,9 +14,12 @@ import ListSubheader from "@mui/joy/ListSubheader";
 import * as React from "react";
 import { useActiveContent } from "../../apis/ActiveContentContext";
 import { getNotifications } from "../../apis/NotificationController";
+import { fetchUserInfo } from "../../apis/UserController";
 export default function Navigation() {
   const { activeContent, setNewActiveContent } = useActiveContent();
   const [unread, setUnread] = React.useState(null);
+  const [role, setRole] = React.useState("");
+
   const handleItemClick = (content) => {
     setNewActiveContent(content);
   };
@@ -31,6 +34,19 @@ export default function Navigation() {
     };
 
     fetchNotification();
+  }, []);
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const userData = await fetchUserInfo();
+        setRole(userData.role);
+      } catch (error) {
+        console.error("Error fetching user information", error);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   return (
@@ -67,17 +83,19 @@ export default function Navigation() {
               <ListItemContent>Settings</ListItemContent>
             </ListItemButton>
           </ListItem>
-          <ListItem>
-            <ListItemButton
-              selected={activeContent === "accounts"}
-              onClick={() => handleItemClick("accounts")}
-            >
-              <ListItemDecorator>
-                <PeopleAltIcon fontSize="small" />
-              </ListItemDecorator>
-              <ListItemContent>Managing accounts</ListItemContent>
-            </ListItemButton>
-          </ListItem>
+          {role === "admin" && (
+            <ListItem>
+              <ListItemButton
+                selected={activeContent === "accounts"}
+                onClick={() => handleItemClick("accounts")}
+              >
+                <ListItemDecorator>
+                  <PeopleAltIcon fontSize="small" />
+                </ListItemDecorator>
+                <ListItemContent>Managing accounts</ListItemContent>
+              </ListItemButton>
+            </ListItem>
+          )}
           <ListItem>
             <ListItemButton
               selected={activeContent === "observations"}
@@ -100,20 +118,22 @@ export default function Navigation() {
               <ListItemContent>Sensor Types</ListItemContent>
             </ListItemButton>
           </ListItem>
-          <ListItem>
-            <ListItemButton
-              selected={activeContent === "notifications"}
-              onClick={() => handleItemClick("notifications")}
-            >
-              <ListItemDecorator>
-                <NotificationsActiveIcon fontSize="small" />
-              </ListItemDecorator>
-              <ListItemContent>Notifications</ListItemContent>
-              <Chip variant="soft" color="warning" size="sm">
-                {unread}
-              </Chip>
-            </ListItemButton>
-          </ListItem>
+          {role === "admin" && (
+            <ListItem>
+              <ListItemButton
+                selected={activeContent === "notifications"}
+                onClick={() => handleItemClick("notifications")}
+              >
+                <ListItemDecorator>
+                  <NotificationsActiveIcon fontSize="small" />
+                </ListItemDecorator>
+                <ListItemContent>Notifications</ListItemContent>
+                <Chip variant="soft" color="warning" size="sm">
+                  {unread}
+                </Chip>
+              </ListItemButton>
+            </ListItem>
+          )}
         </List>
       </ListItem>
     </List>

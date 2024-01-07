@@ -17,20 +17,68 @@ import * as React from "react";
 
 import Layout from "../../Navbar/Layout.tsx";
 import UsersList from "./UsersList.js";
-import { getUsers } from "../../../apis/UserController.js";
+import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
 import { Input } from "@mui/joy";
 
 export default function Accounts() {
   const [usersList, setUsersList] = React.useState([]);
+  const [nameFilter, setNameFilter] = React.useState("");
+  const [licenseFilter, setLicenseFilter] = React.useState("");
+  const [roleFilter, setRoleFilter] = React.useState("any");
+  const [searching, setSearching] = React.useState(false);
+  const [membershipDurationFilter, setMembershipDurationFilter] =
+    React.useState([0, 12]);
   React.useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getUsers();
-        setUsersList(data);
-      } catch (error) {}
-    };
     fetchUsers();
   }, []);
+  const fetchUsers = async () => {
+    try {
+      let data = await getUsers();
+
+      data = applyFilters(
+        data,
+        nameFilter,
+        licenseFilter,
+        roleFilter,
+        membershipDurationFilter
+      );
+
+      setUsersList(data);
+      setSearching(false);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
+  const handleSearchClick = () => {
+    setSearching(true);
+
+    fetchUsers();
+  };
+  const applyFilters = (data, name, license, role, membershipDuration) => {
+    // Implement filtering logic based on the provided filters
+    return data.filter((user) => {
+      const nameMatch =
+        (user?.firstName &&
+          user.firstName.toLowerCase().includes(name.toLowerCase())) ||
+        (user?.lastName &&
+          user.lastName.toLowerCase().includes(name.toLowerCase()));
+      const licenseMatch = user?.license.includes(license);
+      const roleMatch = role === "any" || user?.role === role;
+
+      // const createdAt = new Date(user.createdAt); // Assuming createdAt is a valid date field
+      // const currentDate = new Date();
+      // const startDate = currentDate.setMonth(
+      //   currentDate.getMonth() - membershipDuration[1]
+      // );
+      // const endDate = currentDate.setMonth(
+      //   currentDate.getMonth() - membershipDuration[0]
+      // );
+      // const membershipDurationMatch =
+      //   createdAt >= new Date(startDate) && createdAt <= new Date(endDate);
+      return nameMatch && licenseMatch && roleMatch; //&& membershipDurationMatch;
+    });
+  };
+
   return (
     <>
       <Box
@@ -56,7 +104,7 @@ export default function Accounts() {
             }}
           >
             <Typography level="title-lg" textColor="text.secondary">
-              People
+              Member
             </Typography>
           </Box>
           <Box
@@ -68,8 +116,14 @@ export default function Accounts() {
             }}
           >
             <Typography level="title-md">Filters</Typography>
-            <Button size="sm" variant="plain" sx={{ textTransform: "none" }}>
-              Clear
+            <Button
+              size="sm"
+              variant="plain"
+              sx={{ textTransform: "none" }}
+              onClick={handleSearchClick}
+              disabled={searching}
+            >
+              Search
             </Button>
           </Box>
           <AccordionGroup
@@ -90,25 +144,11 @@ export default function Accounts() {
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 2 }}>
-                  <Autocomplete
+                  <Input
                     size="sm"
-                    placeholder="Name, Email, etc…"
-                    options={[
-                      {
-                        category: "Job",
-                        title: "Speleologist",
-                      },
-                      {
-                        category: "Job",
-                        title: "Professor",
-                      },
-                      {
-                        category: "Job",
-                        title: "Developer",
-                      },
-                    ]}
-                    groupBy={(option) => option.category}
-                    getOptionLabel={(option) => option.title}
+                    placeholder="Name, etc…"
+                    value={nameFilter}
+                    onChange={(e) => setNameFilter(e.target.value)}
                   />
                 </Box>
               </AccordionDetails>
@@ -121,19 +161,29 @@ export default function Accounts() {
               </AccordionSummary>
               <AccordionDetails>
                 <Box sx={{ my: 1 }}>
-                  <Input size="sm" placeholder="License ID" />
+                  <Input
+                    size="sm"
+                    placeholder="License ID"
+                    value={licenseFilter}
+                    onChange={(e) => setLicenseFilter(e.target.value)}
+                  />
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion defaultExpanded>
+            <Accordion defaultExpanded disabled>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
                   Role
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails disabled>
                 <Box sx={{ my: 2 }}>
-                  <RadioGroup name="job" defaultValue="any">
+                  <RadioGroup
+                    name="role"
+                    defaultValue=""
+                    value={roleFilter}
+                    onChange={(e) => setRoleFilter(e.target.value)}
+                  >
                     <Radio label="Any" value="any" size="sm" />
                     <Radio label="User" value="user" size="sm" />
                     <Radio label="Admin" value="admin" size="sm" />
@@ -153,6 +203,10 @@ export default function Accounts() {
                   <Slider
                     size="sm"
                     valueLabelFormat={(value) => `${value} months`}
+                    value={membershipDurationFilter}
+                    onChange={(event, newValue) =>
+                      setMembershipDurationFilter(newValue)
+                    }
                     defaultValue={[5, 10]}
                     step={1}
                     min={0}

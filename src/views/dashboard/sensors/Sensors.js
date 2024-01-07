@@ -50,6 +50,7 @@ export default function SensorTypes() {
   const [open, setOpen] = React.useState(false);
   const [uniqueManufacturers, setUniqueManufacturers] = React.useState([]);
   const [isEditing, setIsEditing] = React.useState(false);
+
   const properties = [
     { value: "Encoding", label: "ENCODING" },
     { value: "AAAA", label: "YEAR" },
@@ -137,10 +138,58 @@ export default function SensorTypes() {
     }
   }, [rowsPerPage, page, open, isEditing, newSensorAdd]);
 
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
-  };
+  const [searchText, setSearchText] = useState("");
+  const [selectedPropertyValue, setSelectedPropertyValue] = useState(null);
+  const [selectedManufacturer, setSelectedManufacturer] = useState(null);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    // Use the searchText, selectedPropertyValue, and selectedUserNameId values for your search logic
+    console.log("Search Text:", searchText);
+    console.log("Selected Sensor ID:", selectedPropertyValue);
+    console.log("Selected User Name ID:", selectedManufacturer);
+
+    try {
+      const queryObject = {};
+
+      if (searchText) {
+        queryObject.type = searchText;
+      }
+
+      if (selectedPropertyValue !== null) {
+        queryObject.properties = selectedPropertyValue;
+      }
+
+      if (selectedManufacturer !== null) {
+        queryObject.manufacturer = selectedManufacturer;
+      }
+      const queryString = JSON.stringify(queryObject);
+      console.log("query", queryString);
+      // Make the API request using Axios with the constructed query object
+      const response = await getSensorTypes(queryString);
+      setDataLength(response.length);
+      const additionalRequests = response.map(async (row) => {
+        const firstAdditionalInfo = await getUsers(
+          `{"_id":"${row?.createdBy}"}`
+        ); // Replace with your actual method
+
+        return {
+          ...row,
+          user: `${firstAdditionalInfo[0]?.firstName} ${
+            firstAdditionalInfo[0]?.lastName || ""
+          }`,
+        };
+      });
+
+      // Wait for all additional requests to complete
+      const additionalResults = await Promise.all(additionalRequests);
+      console.log("row?.createdBy", additionalResults);
+      setSensors(additionalResults);
+    } catch (error) {
+      setSensors([]);
+      console.error("Error fetching :", error);
+    }
+  };
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({
@@ -270,7 +319,7 @@ export default function SensorTypes() {
             },
           }}
         >
-          <form onSubmit={handleSubmit(onSubmit)} style={{ padding: "0px" }}>
+          <form onSubmit={handleSearch} style={{ padding: "0px" }}>
             <Box sx={{ width: 1 }}>
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
                 <Box gridColumn="span 9">
@@ -278,6 +327,8 @@ export default function SensorTypes() {
                     <FormLabel>Search for Sensor Types</FormLabel>
                     <Input
                       size="sm"
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
                       placeholder={t("Obs.search")}
                       startDecorator={<SearchIcon />}
                     />
@@ -299,9 +350,20 @@ export default function SensorTypes() {
 
                     <Autocomplete
                       size="sm"
+                      disabled
                       autoHighlight
                       {...register("properties")}
-                      options={properties.map((option) => option)}
+                      options={properties} // Assuming sensorOptions is an array of objects with id and type properties
+                      getOptionLabel={(option) => option.label}
+                      getOptionValue={(option) => option.value} // Assuming id is the property you want to capture
+                      value={
+                        properties.find(
+                          (option) => option.value === selectedPropertyValue
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        setSelectedPropertyValue(newValue?.id || null)
+                      }
                       placeholder={t("Obs.all")}
                       renderInput={(params) => (
                         <TextField
@@ -322,7 +384,17 @@ export default function SensorTypes() {
                       size="sm"
                       autoHighlight
                       {...register("manufacturer")}
-                      options={uniqueManufacturers.map((option) => option)}
+                      options={uniqueManufacturers}
+                      getOptionLabel={(option) => option}
+                      getOptionValue={(option) => option}
+                      value={
+                        uniqueManufacturers.find(
+                          (option) => option === selectedManufacturer
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        setSelectedManufacturer(newValue || null)
+                      }
                       placeholder={t("Obs.all")}
                       renderInput={(params) => (
                         <TextField

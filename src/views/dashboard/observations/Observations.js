@@ -54,16 +54,7 @@ export default function Observations() {
   const [open, setOpen] = React.useState(false);
   const [sensorOptions, setSensorOptions] = useState([]); // Separate state for sensor options
   const [userNameOptions, setUserNameOptions] = useState([]); // Separate state for user name options
-
-  const {
-    handleSubmit,
-    register,
-    setValue,
-    getValues,
-    control,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const [auxDeleteFile, setAuxDeleteFile] = useState(0);
   const fetchUserName = async () => {
     try {
       const responseUserNames = await getUsers(); // Assuming there's a function to fetch user names
@@ -102,12 +93,12 @@ export default function Observations() {
     fetchSensorType();
     fetchUserName();
     console.log("sensorOptions", sensorOptions);
-  }, [selectedRow]);
+  }, [auxDeleteFile]);
   const [prevPage, setPrevPage] = useState(0);
 
   useEffect(() => {
     setPrevPage((prev) => Math.max(prev, page));
-  }, [page, selectedRow]);
+  }, [page]);
 
   useEffect(() => {
     const fetchObservations = async () => {
@@ -150,10 +141,58 @@ export default function Observations() {
     ) {
       fetchObservations();
     }
-  }, [rowsPerPage, page, selectedRow]);
+  }, [rowsPerPage, page]);
 
-  const onSubmit = (data) => {
-    console.log("Form data:", data);
+  const [searchText, setSearchText] = useState("");
+  const [selectedSensorId, setSelectedSensorId] = useState(null);
+  const [selectedUserNameId, setSelectedUserNameId] = useState(null);
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    // Use the searchText, selectedSensorId, and selectedUserNameId values for your search logic
+    console.log("Search Text:", searchText);
+    console.log("Selected Sensor ID:", selectedSensorId);
+    console.log("Selected User Name ID:", selectedUserNameId);
+
+    try {
+      const queryObject = {};
+
+      if (searchText) {
+        queryObject.fileName = searchText;
+      }
+
+      if (selectedSensorId !== null) {
+        queryObject.sensorId = selectedSensorId;
+      }
+
+      if (selectedUserNameId !== null) {
+        queryObject.createdBy = selectedUserNameId;
+      }
+      const queryString = JSON.stringify(queryObject);
+      console.log("query", queryString);
+      // Make the API request using Axios with the constructed query object
+      const response = await searchObservations(queryString);
+      setDataLength(response.length);
+      const additionalRequests = response.map(async (row) => {
+        const firstAdditionalInfo = await getUsers(
+          `{"_id":"${row.createdBy}"}`
+        ); // Replace with your actual method
+
+        return {
+          ...row,
+          user: `${firstAdditionalInfo[0]?.firstName} ${
+            firstAdditionalInfo[0]?.lastName || ""
+          }`,
+        };
+      });
+
+      // Wait for all additional requests to complete
+      const additionalResults = await Promise.all(additionalRequests);
+      setObservations(additionalResults);
+    } catch (error) {
+      setObservations([]);
+      console.error("Error fetching observations:", error);
+    }
   };
 
   useEffect(() => {
@@ -265,7 +304,7 @@ export default function Observations() {
           (observation) => observation.id !== observationIdToDelete
         );
       });
-
+      setAuxDeleteFile((prevAuxDeleteFile) => prevAuxDeleteFile + 1);
       // Update the selected row
       setSelectedRow((prevSelectedRow) => Math.max(prevSelectedRow - 1, 0));
     } catch (error) {
@@ -306,7 +345,7 @@ export default function Observations() {
             },
           }}
         >
-          <form onSubmit={handleSubmit(onSubmit)} style={{ padding: "0px" }}>
+          <form onSubmit={handleSearch} style={{ padding: "0px" }}>
             <Box sx={{ width: 1 }}>
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
                 <Box gridColumn="span 9">
@@ -316,6 +355,8 @@ export default function Observations() {
                       size="sm"
                       placeholder={t("Obs.search")}
                       startDecorator={<SearchIcon />}
+                      value={searchText}
+                      onChange={(e) => setSearchText(e.target.value)}
                     />
                   </FormControl>
                 </Box>
@@ -334,8 +375,17 @@ export default function Observations() {
                     <Autocomplete
                       size="small"
                       autoHighlight
-                      {...register("sensorId")}
-                      options={sensorOptions.map((option) => option.type)}
+                      options={sensorOptions} // Assuming sensorOptions is an array of objects with id and type properties
+                      getOptionLabel={(option) => option.type}
+                      getOptionValue={(option) => option.id} // Assuming id is the property you want to capture
+                      value={
+                        sensorOptions.find(
+                          (option) => option.id === selectedSensorId
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        setSelectedSensorId(newValue?.id || null)
+                      }
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -352,11 +402,20 @@ export default function Observations() {
                   <FormControl size="sm">
                     <Autocomplete
                       size="small"
-                      {...register("userName")}
                       autoHighlight
-                      id="userName"
-                      options={userNameOptions.map((option) => option.name)}
+                      id="createdBy"
+                      options={userNameOptions} // Assuming userNameOptions is an array of objects with id and name properties
+                      getOptionLabel={(option) => option.name}
+                      getOptionValue={(option) => option.id} // Assuming id is the property you want to capture
+                      value={
+                        userNameOptions.find(
+                          (option) => option.id === selectedUserNameId
+                        ) || null
+                      }
                       sx={{ width: "100%" }}
+                      onChange={(e, newValue) =>
+                        setSelectedUserNameId(newValue?.id || null)
+                      }
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -448,9 +507,9 @@ export default function Observations() {
             >
               {filedetails.map((item, index) => (
                 <React.Fragment key={index}>
-                  <Typography level="title-sm">{item.label}</Typography>
+                  <Typography level="title-sm">{item?.label}</Typography>
                   <div style={{ fontSize: "14px", color: "#171A1C" }}>
-                    {item.value}
+                    {item?.value}
                   </div>
                 </React.Fragment>
               ))}

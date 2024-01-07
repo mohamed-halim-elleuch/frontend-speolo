@@ -26,7 +26,7 @@ export const getSensorTypes = async (filter, skip, take, sortBy) => {
     console.log(response.data.data);
     return response.data.data;
   } catch (error) {
-    console.error("Error fetching sensor types:", error);
+    console.error("Error fetching sensor types 2:", error);
     throw error;
   }
 };

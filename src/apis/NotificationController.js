@@ -17,12 +17,15 @@ export const getNotificationById = async (id) => {
 
 export const getNotifications = async (filter, skip, take, sortBy) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/notification`, {
-      params: { filter, skip, take, sortBy },
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}/api/notification?sortBy=-createdAt`,
+      {
+        params: { filter, skip, take, sortBy },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching notifications:", error);

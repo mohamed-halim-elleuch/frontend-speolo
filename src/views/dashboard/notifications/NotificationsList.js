@@ -2,33 +2,84 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import Box from "@mui/joy/Box";
 import IconButton from "@mui/joy/IconButton";
 import Input from "@mui/joy/Input";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
+
 import Layout from "../../Navbar/Layout.tsx";
 import NotificationContent from "./NotificationContent.js";
 import Notifications from "./Notifications.js";
 import { getNotifications } from "../../../apis/NotificationController.js";
 
 export default function NotificationsList() {
-  const [notifications, setNotifications] = React.useState([]);
-  const [selectedNotificationId, setSelectedNotificationId] =
-    React.useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [page, setPage] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
 
-  const handleNotificationSelect = (id) => {
-    setSelectedNotificationId(id);
+  const handleNotificationSelect = (notification) => {
+    setSelectedNotification(notification);
   };
-  React.useEffect(() => {
-    const fetchNotification = async () => {
-      try {
-        const responseNotifications = await getNotifications();
-        setNotifications(responseNotifications.data);
-        console.log(notifications);
-      } catch (error) {
-        console.error("Error fetching Notifications :", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchNotification = async () => {
+  //     try {
+  //       const responseNotifications = await getNotifications();
+  //       setNotifications(responseNotifications.data);
+  //       handleNotificationSelect(responseNotifications.data[0]);
+  //       console.log(notifications);
+  //     } catch (error) {
+  //       console.error("Error fetching Notifications :", error);
+  //     }
+  //   };
 
-    fetchNotification();
-  }, [selectedNotificationId]);
+  //   fetchNotification();
+  // }, []);
+  const fetchData = async () => {
+    try {
+      const response = await getNotifications("", page * 15, 15);
+      const newData = response.data;
+      if (page === 0) {
+        handleNotificationSelect(newData[0]);
+        setNotifications(newData);
+      } else {
+        setNotifications((prevData) => [...prevData, ...newData]);
+      }
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [page]);
+
+  useEffect(() => {
+    const filterData = (notifications) => {
+      console.log(notifications);
+      return notifications.filter((notification) => {
+        const matchesNotificationType = notification?.itemType
+          ?.toLowerCase()
+          .includes(searchInput.toLowerCase());
+
+        const matchesSearchInput = notification?.notificationType
+          ?.toLowerCase()
+          .includes(searchInput.toLowerCase());
+
+        return matchesNotificationType || matchesSearchInput;
+      });
+    };
+    console.log(searchInput);
+    if (searchInput === "") {
+      setPage(0);
+      fetchData();
+    } else {
+      const filterdata = filterData(notifications);
+      setNotifications(filterdata);
+    }
+  }, [searchInput]);
+  const handleSearchChange = (event) => {
+    const inputValue = event.target.value;
+    setSearchInput(inputValue);
+    // You can optionally fetch data here if you want to update results immediately
+  };
 
   return (
     <Box
@@ -59,6 +110,8 @@ export default function NotificationsList() {
                 sm: "flex",
               },
             }}
+            value={searchInput}
+            onChange={handleSearchChange}
           />
           <IconButton
             size="sm"
@@ -78,7 +131,7 @@ export default function NotificationsList() {
         />
       </Layout.SidePane>
       <Layout.Main>
-        <NotificationContent selectedNotificationId={selectedNotificationId} />
+        <NotificationContent selectedNotification={selectedNotification} />
       </Layout.Main>
     </Box>
   );

@@ -79,16 +79,16 @@ export default function TableFiles({
         >
           <TableHead sx={{ overflow: "hidden" }}>
             <TableRow>
-              <TableCell style={{ width: "40%" }}>
+              <TableCell style={{ width: "30%" }}>
                 <Typography level="title-sm">{t("Sensors")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "23%" }}>
+              <TableCell style={{ width: "20%" }}>
                 <Typography level="title-sm">{t("Is Default")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "17%" }}>
+              <TableCell style={{ width: "27%" }}>
                 <Typography level="title-sm">{t("Author")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "20%" }}>
+              <TableCell style={{ width: "23%" }}>
                 <Typography level="title-sm">{t("Manufacturer")}</Typography>
               </TableCell>
             </TableRow>

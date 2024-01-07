@@ -20,13 +20,12 @@ import ShowMessage from "../../common/ShowMessage";
 
 export default function ProfileUpdate() {
   const [selectedImage, setSelectedImage] = React.useState(null);
-  const email = localStorage.getItem("email");
   const [updateMessage, setUpdateMessage] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     role: "",
-    email: email,
+    email: "",
     address: "",
     license: "",
     createdAt: "",
@@ -42,7 +41,7 @@ export default function ProfileUpdate() {
             firstName: userData.firstName,
             lastName: userData.lastName,
             role: userData.role,
-            //email: userData.email,
+            email: userData.email,
             address: userData.address,
             license: userData.license,
             createdAt: userData.createdAt,
@@ -226,6 +225,7 @@ export default function ProfileUpdate() {
                 <FormControl>
                   <FormLabel>License</FormLabel>
                   <Input
+                    readOnly
                     size="sm"
                     value={formData.license}
                     onChange={(e) =>

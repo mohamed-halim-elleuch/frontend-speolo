@@ -18,7 +18,7 @@ i18next
   .init({
     debug: true,
     interpolation: { escapeValue: false }, // React already does escaping
-    //lng: 'en', // language to use
+    //lng: "fr", // language to use
     fallbackLng: "en",
     saveMissing: true, // If translation key is missing, which lang use instead
     resources: {
@@ -30,7 +30,6 @@ i18next
       },
     },
     detection: {
-      order: ["querystring", "navigator"],
       lookupQuerystring: "lng",
     },
   });
