@@ -17,6 +17,7 @@ import Home from "./incomplete/Home.js";
 import NoPage from "./incomplete/NoPage.js";
 import Contact from "./incomplete/contact.js";
 import SearchPage from "./search/SearchPage.js";
+import Map from "./Map/map.js";
 function App() {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -75,6 +76,7 @@ function App() {
                   />
                   <PrivateRoute index path="contact" element={<Contact />} />
                   <PrivateRoute index path="no-page" element={<NoPage />} />
+                  <PrivateRoute index path="map" element={<Map />} />
                   <PrivateRoute
                     index
                     path="search-page"

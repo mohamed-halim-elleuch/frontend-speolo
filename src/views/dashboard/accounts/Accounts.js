@@ -171,13 +171,13 @@ export default function Accounts() {
                 </Box>
               </AccordionDetails>
             </Accordion>
-            <Accordion defaultExpanded disabled>
+            <Accordion defaultExpanded>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
                   Role
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails disabled>
+              <AccordionDetails>
                 <Box sx={{ my: 2 }}>
                   <RadioGroup
                     name="role"
@@ -193,7 +193,7 @@ export default function Accounts() {
               </AccordionDetails>
             </Accordion>
 
-            <Accordion defaultExpanded>
+            <Accordion disabled>
               <AccordionSummary>
                 <Typography level="title-sm" sx={{ textTransform: "none" }}>
                   {t("Accounts.membership")}

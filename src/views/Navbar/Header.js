@@ -76,6 +76,8 @@ export default function Header() {
       setPressedButton("contribute");
     } else if (currentRoute === "/authenticate/dashboard") {
       setPressedButton("dashboard");
+    } else if (currentRoute === "/authenticate/map") {
+      setPressedButton("map");
     } else if (currentRoute === "/authenticate/home") {
       setPressedButton("home");
     } else {
@@ -163,6 +165,18 @@ export default function Header() {
           onClick={() => handleButtonClick("search")}
         >
           {t("Navbar.search")}
+        </Button>
+        <Button
+          variant="plain"
+          color="neutral"
+          component="a"
+          href="/authenticate/map"
+          size="sm"
+          sx={{ alignSelf: "center" }}
+          aria-pressed={pressedButton === "map"}
+          onClick={() => handleButtonClick("map")}
+        >
+          {t("Navbar.map")}
         </Button>
       </Stack>
       <Box sx={{ display: { xs: "inline-flex", sm: "none" } }}>

@@ -11,26 +11,32 @@ import Stack from "@mui/joy/Stack";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { createSensorType } from "../../../apis/SensorTypeController";
 import CountrySelector from "../settings/CountrySelector";
-export default function EditObservation({ setNewSensorAdd }) {
+
+export default function EditObservation({ obsvalue, setNewSensorAdd }) {
   const { t } = useTranslation("translation");
   const [open, setOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({
-    type: "",
-    properties: [],
-    manufacturer: "",
-  });
-
+  const [formData, setFormData] = React.useState(obsvalue);
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      caveId: obsvalue?.caveId,
+      sensor: obsvalue?.sensor,
+      sensorId: obsvalue?.sensorId,
+      timeZone: obsvalue?.timeZone,
+      beginDate: obsvalue?.beginDate.slice(0, -5),
+      endDate: obsvalue?.endDate.slice(0, -5),
+    }));
+  }, [obsvalue]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     const valuesList = formData.properties.map((item) => item.value);
     formData.properties = valuesList;
-    const response = await createSensorType(formData);
+    //const response = await createSensorType(formData);
 
-    setNewSensorAdd(response);
+    //setNewSensorAdd(response);
     try {
       // Assuming you have an API endpoint for adding a new sensor
     } catch (error) {
@@ -48,6 +54,7 @@ export default function EditObservation({ setNewSensorAdd }) {
   };
 
   const handleSaveClick = async () => {
+    console.log("obsvalue", obsvalue);
     console.log("Form Data on Save:", formData);
     // try {
     //   const res = await updateSensorType(
@@ -96,16 +103,18 @@ export default function EditObservation({ setNewSensorAdd }) {
               <FormControl>
                 <FormLabel>{t("Contribute.cave-id")}</FormLabel>
                 <Input
+                  readOnly
                   autoFocus
                   name="caveId"
-                  value={formData.caveId}
+                  value={formData?.caveId}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>{t("Obs.table.sensor")}</FormLabel>
 
-                <Autocomplete
+                <Input
+                  autoFocus
                   sx={{
                     height: "41.6px",
                     minWidth: "25rem",
@@ -113,23 +122,17 @@ export default function EditObservation({ setNewSensorAdd }) {
                   }}
                   multiple
                   id="properties"
-                  options={properties}
-                  value={formData.properties}
-                  onChange={(event, newValue) => {
-                    setFormData({
-                      ...formData,
-                      properties: newValue,
-                    });
-                  }}
+                  value={formData?.sensor}
+                  onChange={handleChange}
                 />
               </FormControl>
-              <CountrySelector />
+              <CountrySelector initialValue={formData?.timeZone} />
               <FormControl>
                 <FormLabel>{t("Contribute.begin-date")}</FormLabel>
                 <Input
                   name="beginDate"
                   type="datetime-local"
-                  value={formData.beginDate}
+                  value={formData?.beginDate}
                   onChange={handleChange}
                 />
               </FormControl>
@@ -138,7 +141,7 @@ export default function EditObservation({ setNewSensorAdd }) {
                 <Input
                   name="endDate"
                   type="datetime-local"
-                  value={formData.endDate}
+                  value={formData?.endDate}
                   onChange={handleChange}
                 />
               </FormControl>

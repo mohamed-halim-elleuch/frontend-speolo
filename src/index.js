@@ -11,7 +11,7 @@ import translation_en from "./translations/en.json";
 import Backend from "i18next-http-backend";
 import { StyledEngineProvider } from "@mui/joy/styles";
 import { ActiveContentProvider } from "./apis/ActiveContentContext";
-
+import "leaflet/dist/leaflet.css";
 i18next
   .use(LngDetector)
   .use(Backend)

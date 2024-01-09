@@ -515,7 +515,9 @@ export default function Observations() {
             </Box>
             <Divider />
             <Box sx={{ py: 2, px: 1 }}>
-              <EditObservation />
+              <EditObservation
+                obsvalue={observations[page * rowsPerPage + selectedRow]}
+              />
               <Button
                 variant="plain"
                 color="warning"

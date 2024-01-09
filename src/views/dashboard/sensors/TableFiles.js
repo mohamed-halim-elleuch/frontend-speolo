@@ -1,4 +1,5 @@
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
+import SensorsIcon from "@mui/icons-material/Sensors";
 import { Divider, Sheet, Table, Typography } from "@mui/joy";
 import {
   TableBody,
@@ -109,7 +110,7 @@ export default function TableFiles({
                   <TableCell>
                     <Typography
                       level="title-sm"
-                      startDecorator={<TextSnippetIcon color="primary" />}
+                      startDecorator={<SensorsIcon color="primary" />}
                       sx={{ alignItems: "flex-start" }}
                     >
                       {row.type}
