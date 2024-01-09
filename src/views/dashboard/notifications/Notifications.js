@@ -13,7 +13,7 @@ import { markAsReadNotification } from "../../../apis/NotificationController";
 
 const getInitials = (name) => {
   const names = name.split(" ");
-  return names.map((word) => word[0].toUpperCase()).join("");
+  return names.map((word) => word[0]?.toUpperCase()).join("");
 };
 
 export default function Notification({ notifications, onNotificationSelect }) {
