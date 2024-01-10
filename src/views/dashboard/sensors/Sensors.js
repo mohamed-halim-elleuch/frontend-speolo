@@ -87,7 +87,6 @@ export default function SensorTypes() {
 
   useEffect(() => {
     fetchSensorType();
-    console.log("sensors", sensors);
   }, [open, newSensorAdd]);
   const [prevPage, setPrevPage] = useState(0);
 
@@ -144,10 +143,6 @@ export default function SensorTypes() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
-    // Use the searchText, selectedPropertyValue, and selectedUserNameId values for your search logic
-    console.log("Search Text:", searchText);
-    console.log("Selected Sensor ID:", selectedPropertyValue);
-    console.log("Selected User Name ID:", selectedManufacturer);
 
     try {
       const queryObject = {};
@@ -164,7 +159,6 @@ export default function SensorTypes() {
         queryObject.manufacturer = selectedManufacturer;
       }
       const queryString = JSON.stringify(queryObject);
-      console.log("query", queryString);
       // Make the API request using Axios with the constructed query object
       const response = await getSensorTypes(queryString);
       setDataLength(response.length);
@@ -183,7 +177,6 @@ export default function SensorTypes() {
 
       // Wait for all additional requests to complete
       const additionalResults = await Promise.all(additionalRequests);
-      console.log("row?.createdBy", additionalResults);
       setSensors(additionalResults);
     } catch (error) {
       setSensors([]);
@@ -199,7 +192,6 @@ export default function SensorTypes() {
   };
 
   const handleSaveClick = async () => {
-    console.log("Form Data on Save:", formData);
     try {
       const res = await updateSensorType(
         sensors[page * rowsPerPage + selectedRow]?._id,
@@ -210,7 +202,6 @@ export default function SensorTypes() {
           // Include any other properties you want to update
         }
       );
-      console.log(res);
       // Reset the state and hide the form
       setIsEditing(false);
     } catch (error) {
@@ -225,7 +216,6 @@ export default function SensorTypes() {
         sensors[page * rowsPerPage + selectedRow]?._id
       );
 
-      console.log(response.data);
       setSelectedRow(0);
     } catch (error) {
       console.error("Error deleting sensor type:", error);

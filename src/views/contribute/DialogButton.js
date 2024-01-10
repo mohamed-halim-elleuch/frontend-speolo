@@ -28,11 +28,6 @@ export default function BasicModalDialog({ setNewSensorAdd }) {
     const response = await createSensorType(formData);
 
     setNewSensorAdd(response);
-    try {
-      // Assuming you have an API endpoint for adding a new sensor
-    } catch (error) {
-      console.error("Error adding sensor:", error.message);
-    }
 
     setOpen(false);
   };

@@ -17,14 +17,9 @@ export default function NotificationContent({ selectedNotification }) {
   const [open, setOpen] = React.useState([false, false, false]);
   const { t } = useTranslation("translation");
   const handleSnackbarOpen = async (index) => {
-    //try {
-    //await deleteNotification(selectedNotificationId);
     const updatedOpen = [...open];
     updatedOpen[index] = true;
     setOpen(updatedOpen);
-    // } catch (error) {
-    //   console.error("Error deleting Notification:", error);
-    // }
   };
 
   const handleSnackbarClose = (index) => {
@@ -36,6 +31,16 @@ export default function NotificationContent({ selectedNotification }) {
   const [author, setAuthor] = React.useState("user1");
 
   React.useEffect(() => {
+    if (
+      (selectedNotification?.itemType === "Observation" &&
+        !selectedNotification?.caveObservation?.createdBy) ||
+      (selectedNotification?.itemType === "SensorType" &&
+        !selectedNotification?.sensorType?.createdBy)
+    ) {
+      // If it doesn't exist, you can return early or handle it as per your requirement.
+      console.log("createdBy does not exist. Skipping request.");
+      return;
+    }
     const fetchAuthor = async () => {
       let res;
       try {

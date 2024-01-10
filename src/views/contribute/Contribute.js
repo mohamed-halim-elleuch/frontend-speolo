@@ -65,7 +65,7 @@ export default function Contribute() {
     setShowMessage(false);
     try {
       const response = await createObservation(data);
-      console.log("add", response);
+
       setValue("filePath", response.filePath);
       setShowMessage(true);
     } catch (error) {

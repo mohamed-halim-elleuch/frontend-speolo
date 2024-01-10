@@ -23,23 +23,30 @@ function Row({ dataRow, initialOpen }) {
     //window.open("http://127.0.0.1:8083/uploads/" + fileName, "_blank");
   };
   useEffect(() => {
+    // Check if dataRow?._id exists
+    if (!dataRow?._id) {
+      // If it doesn't exist, you can return early or handle it as per your requirement.
+      console.log("dataRow._id does not exist. Skipping request.");
+      return;
+    }
+
     const fetchUserDetails = async () => {
       try {
         const responseDetails = await searchObservations(
-          `{"createdBy":"${dataRow?._id}"}`,
+          `{"createdBy":"${dataRow._id}"}`,
           0,
           1
         );
 
         setRow((prevRow) => ({ ...prevRow, details: responseDetails }));
-        console.log("details", row);
       } catch (error) {
         setRow((prevRow) => ({ ...prevRow, details: [""] }));
         console.error("Error fetching Notification:", error);
       }
     };
+
     fetchUserDetails();
-  }, [open]);
+  }, [open, dataRow?._id]);
 
   return (
     <>

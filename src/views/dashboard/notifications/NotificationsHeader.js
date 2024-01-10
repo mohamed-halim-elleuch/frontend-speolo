@@ -43,7 +43,6 @@ function NotificationsHeader() {
         const responseNotifications = await getNotifications("", 0, 20);
         setNotifications(responseNotifications.data);
         setUnread(responseNotifications?.unreadCount);
-        console.log(notifications);
       } catch (error) {
         console.error("Error fetching Notifications :", error);
       }

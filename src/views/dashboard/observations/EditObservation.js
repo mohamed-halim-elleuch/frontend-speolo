@@ -54,8 +54,6 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
   };
 
   const handleSaveClick = async () => {
-    console.log("obsvalue", obsvalue);
-    console.log("Form Data on Save:", formData);
     // try {
     //   const res = await updateSensorType(
     //     sensors[page * rowsPerPage + selectedRow]?._id,

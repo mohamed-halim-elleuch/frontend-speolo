@@ -91,7 +91,6 @@ export default function Observations() {
     fetchObservations();
     fetchSensorType();
     fetchUserName();
-    console.log("sensorOptions", sensorOptions);
   }, [auxDeleteFile]);
   const [prevPage, setPrevPage] = useState(0);
 
@@ -149,9 +148,6 @@ export default function Observations() {
   const handleSearch = async (e) => {
     e.preventDefault();
     // Use the searchText, selectedSensorId, and selectedUserNameId values for your search logic
-    console.log("Search Text:", searchText);
-    console.log("Selected Sensor ID:", selectedSensorId);
-    console.log("Selected User Name ID:", selectedUserNameId);
 
     try {
       const queryObject = {};
@@ -168,7 +164,6 @@ export default function Observations() {
         queryObject.createdBy = selectedUserNameId;
       }
       const queryString = JSON.stringify(queryObject);
-      console.log("query", queryString);
       // Make the API request using Axios with the constructed query object
       const response = await searchObservations(queryString);
       setDataLength(response.length);
@@ -204,16 +199,16 @@ export default function Observations() {
         // Wrap the sensor request in a try-catch block
         let sensor;
         try {
-          sensor = await getSensorTypeById(
-            observations[page * rowsPerPage + selectedRow]?.sensorId
-          );
+          if (observations[page * rowsPerPage + selectedRow]?.sensorId) {
+            sensor = await getSensorTypeById(
+              observations[page * rowsPerPage + selectedRow]?.sensorId
+            );
+          }
         } catch (sensorError) {
           console.error("Error fetching sensor details", sensorError);
           // Handle sensor request error
           sensor = { data: { type: "Not found" } }; // Provide a default value
         }
-
-        console.log(sensor);
 
         setObservations((prevObservations) => {
           const updatedObservations = [...prevObservations];
@@ -237,7 +232,6 @@ export default function Observations() {
     };
 
     fetchObservationDetails();
-    console.log("New data", observations);
   }, [selectedRow, page, rowsPerPage]);
 
   const filedetails = [

@@ -55,7 +55,6 @@ export default function NotificationsList() {
 
   useEffect(() => {
     const filterData = (notifications) => {
-      console.log(notifications);
       return notifications.filter((notification) => {
         const matchesNotificationType = notification?.itemType
           ?.toLowerCase()
@@ -68,7 +67,7 @@ export default function NotificationsList() {
         return matchesNotificationType || matchesSearchInput;
       });
     };
-    console.log(searchInput);
+
     if (searchInput === "") {
       setPage(0);
       fetchData();

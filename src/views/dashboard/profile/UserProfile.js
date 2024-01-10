@@ -80,7 +80,7 @@ export default function UserProfile() {
     const fetchUserObs = async () => {
       try {
         const originalData = await searchObservations(
-          `{"createdBy":"${user._id}"}`
+          `{"createdBy":"${user?._id}"}`
         );
 
         // Group the data by caveId
