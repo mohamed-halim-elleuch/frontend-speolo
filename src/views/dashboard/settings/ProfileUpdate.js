@@ -69,7 +69,6 @@ export default function ProfileUpdate() {
     try {
       const updatedUser = await updateUser(formData);
 
-      console.log("User updated successfully:", updatedUser);
       setUpdateMessage({
         open: true,
         message: "User updated successfully!",

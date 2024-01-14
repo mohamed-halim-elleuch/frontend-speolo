@@ -38,7 +38,7 @@ const ChangeSkin = ({ currentTileLayer, onChangeTileLayer }) => {
           sx={{
             borderRadius: 40,
             position: "absolute",
-            top: "18vh",
+            top: "12vh",
             left: "10px",
             zIndex: 1000,
 

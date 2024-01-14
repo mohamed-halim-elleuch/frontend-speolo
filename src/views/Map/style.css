@@ -1,0 +1,11 @@
+.leaflet-control-zoom a{
+    margin: 0px
+}
+
+.leaflet-draw a{
+    margin: 0px
+}
+
+.leaflet-draw-edit-edit{
+    display: none;
+}
