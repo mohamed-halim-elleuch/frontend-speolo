@@ -69,6 +69,7 @@ export default function UserProfile() {
           address: userData.address,
           country: userData.country,
           license: userData.license,
+          profileImage: userData.profileImage,
           createdAt: userData.createdAt,
         });
       } catch (error) {
@@ -133,10 +134,7 @@ export default function UserProfile() {
       data.map(async (item) => {
         //const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
 
-        const sensorID = item?.sensorId || "";
-        const resSensor = await getSensorTypeById(sensorID);
-
-        return { ...item, sensor_type: resSensor?.data?.type };
+        return { ...item, sensor_type: item?.isObservedBy?.name };
       })
     );
     return responses;
@@ -161,7 +159,10 @@ export default function UserProfile() {
             >
               <Avatar
                 alt={`${user.firstName} ${user.lastName}`}
-                src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                src={
+                  user.profileImage ||
+                  "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                }
                 sx={{ width: 150, height: 150 }}
               />
               <CardContent
@@ -359,7 +360,7 @@ export default function UserProfile() {
                           <thead>
                             <tr>
                               <th style={{ width: 50 }}>{t("User.row")}</th>
-                              <th style={{ width: 125 }}>{t("User.sensor")}</th>
+                              <th style={{ width: 125 }}>Sensor</th>
                               <th style={{ width: 155 }}>{t("User.added")}</th>
                               <th style={{ width: 260 }}>
                                 {t("User.file-name")}

@@ -111,13 +111,24 @@ export default function Navigation() {
           </ListItem>
           <ListItem>
             <ListItemButton
+              selected={activeContent === "sensorTypes"}
+              onClick={() => handleItemClick("sensorTypes")}
+            >
+              <ListItemDecorator>
+                <SensorsIcon fontSize="small" />
+              </ListItemDecorator>
+              <ListItemContent>{t("Browse.sensors")}</ListItemContent>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton
               selected={activeContent === "sensors"}
               onClick={() => handleItemClick("sensors")}
             >
               <ListItemDecorator>
                 <SensorsIcon fontSize="small" />
               </ListItemDecorator>
-              <ListItemContent>{t("Browse.sensors")}</ListItemContent>
+              <ListItemContent>Sensors</ListItemContent>
             </ListItemButton>
           </ListItem>
           {role === "admin" && (

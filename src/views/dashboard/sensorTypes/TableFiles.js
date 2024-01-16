@@ -81,16 +81,20 @@ export default function TableFiles({
           <TableHead sx={{ overflow: "hidden" }}>
             <TableRow>
               <TableCell style={{ width: "30%" }}>
-                <Typography level="title-sm">Sensor</Typography>
+                <Typography level="title-sm">{t("Obs.sensor")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "22%" }}>
-                <Typography level="title-sm">Serial No</Typography>
+              <TableCell style={{ width: "20%" }}>
+                <Typography level="title-sm">
+                  {t("Sensors.is-default")}
+                </Typography>
               </TableCell>
-              <TableCell style={{ width: "25%" }}>
-                <Typography level="title-sm">Observes</Typography>
+              <TableCell style={{ width: "27%" }}>
+                <Typography level="title-sm">{t("Sensors.author")}</Typography>
               </TableCell>
               <TableCell style={{ width: "23%" }}>
-                <Typography level="title-sm">{t("User.sensor")}</Typography>
+                <Typography level="title-sm">
+                  {t("Sensors.manufacturer")}
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -109,22 +113,22 @@ export default function TableFiles({
                       startDecorator={<SensorsIcon color="primary" />}
                       sx={{ alignItems: "flex-start" }}
                     >
-                      {row.name}
+                      {row.type}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.serialNo}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.sensorTypeId?.type}
+                      {row.isDefault ? "True" : "False"}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
                       {row.user}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div style={{ fontSize: "14px", color: "#555E70" }}>
+                      {row.manufacturer}
                     </div>
                   </TableCell>
                 </TableRow>

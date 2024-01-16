@@ -34,11 +34,12 @@ export default function Header() {
   const { t } = useTranslation("translation");
   const checkAuthentication = useCheckAuthentication();
   const logout = useLogout();
-  const email = localStorage.getItem("email");
+
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
-    email: email,
+    email: "",
+    profileImage: "",
   });
 
   useEffect(() => {
@@ -48,6 +49,8 @@ export default function Header() {
         setUserData({
           firstName: userData.firstName,
           lastName: userData.lastName,
+          email: userData.email,
+          profileImage: userData.profileImage,
         });
       } catch (error) {
         console.error("Error fetching user information", error);
@@ -221,7 +224,10 @@ export default function Header() {
             }}
           >
             <Avatar
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+              src={
+                userData.profileImage ||
+                "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+              }
               sx={{ maxWidth: "32px", maxHeight: "32px" }}
             />
           </MenuButton>
@@ -244,7 +250,10 @@ export default function Header() {
                   }}
                 >
                   <Avatar
-                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                    src={
+                      userData?.profileImage ||
+                      "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                    }
                     sx={{ borderRadius: "50%" }}
                   />
                   <Box sx={{ ml: 1.5 }}>
@@ -252,7 +261,7 @@ export default function Header() {
                       {userData.firstName} {userData.lastName}
                     </Typography>
                     <Typography level="body-xs" textColor="text.tertiary">
-                      {email}
+                      {userData.email}
                     </Typography>
                   </Box>
                 </Box>

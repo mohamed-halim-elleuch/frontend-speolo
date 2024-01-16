@@ -2,8 +2,10 @@
 import { Icon } from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "leaflet/dist/leaflet.css";
-import React, { useEffect, useState } from "react";
+import "react-leaflet-supercluster/src/styles.css";
+import React, { useEffect, useRef, useState } from "react";
 import "./style.css";
+import L from "leaflet";
 import {
   FeatureGroup,
   MapContainer,
@@ -16,6 +18,7 @@ import { EditControl } from "react-leaflet-draw";
 import MapLogic from "./MapLogic";
 import ChangeSkin from "./changeSkin";
 import { SetBoundsRectangles } from "./viewbounds";
+import { SuperClustering } from "react-leaflet-supercluster";
 
 const Map = () => {
   const {
@@ -27,6 +30,7 @@ const Map = () => {
     _onDeleted,
     markerClick,
     caveInfo,
+    isLoading,
   } = MapLogic();
   const drawControlOptions = {
     polygon: {
@@ -89,7 +93,7 @@ const Map = () => {
             ...drawControlOptions,
             polyline: false,
             marker: false,
-            circle: false,
+            circle: true,
             circlemarker: false,
           }}
         />
@@ -98,7 +102,7 @@ const Map = () => {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <MarkerClusterGroup chunkedLoading>
+        <MarkerClusterGroup>
           {caves?.map((item, index) => (
             <Marker
               key={index}
@@ -106,7 +110,7 @@ const Map = () => {
               icon={customIcon}
               eventHandlers={{ click: () => markerClick(item) }}
             >
-              <CustomPopup data={caveInfo} />
+              <CustomPopup data={caveInfo} isLoading={isLoading} />
             </Marker>
           ))}
         </MarkerClusterGroup>
@@ -117,40 +121,44 @@ const Map = () => {
 
 export default Map;
 
-const CustomPopup = ({ data }) => (
+const CustomPopup = ({ data, isLoading }) => (
   <Popup>
-    <div>
-      <div
-        style={{
-          color: "blue",
-          fontSize: "16px",
-          marginBottom: "-10px",
-          textAlign: "center",
-        }}
-      >
-        {data?.caveName}
+    {isLoading ? (
+      <p>Loading...</p>
+    ) : (
+      <div>
+        <div
+          style={{
+            color: "blue",
+            fontSize: "16px",
+            marginBottom: "-10px",
+            textAlign: "center",
+          }}
+        >
+          {data?.caveName}
+        </div>
+        <br />
+        <strong>Cave ID:</strong> {data?.caveId || "No_data"}
+        <br />
+        <strong>City:</strong> {data?.city || "No_data"}
+        <br />
+        <strong>Region:</strong> {data?.region || "No_data"}
+        <br />
+        <strong>Depth:</strong> {data?.depth || "No_data"}
+        <br />
+        <strong>Length:</strong> {data?.length || "No_data"}
+        <br />
+        <strong>Coordinates:</strong> {data?.latitude?.toFixed(4)}{" "}
+        <strong>,</strong> {data?.longitude?.toFixed(4)}
+        <br />
+        <strong>Quality:</strong> {data?.quality || "No_data"}
+        <br />
+        <strong>Observations:</strong>{" "}
+        <a href={`caves/${data?.caveId}`} target="_blank" rel="noopener">
+          Open in new tab
+        </a>
+        <br />
       </div>
-      <br />
-      <strong>Cave ID:</strong> {data?.caveId || "No_data"}
-      <br />
-      <strong>City:</strong> {data?.city || "No_data"}
-      <br />
-      <strong>Region:</strong> {data?.region || "No_data"}
-      <br />
-      <strong>Depth:</strong> {data?.depth || "No_data"}
-      <br />
-      <strong>Length:</strong> {data?.length || "No_data"}
-      <br />
-      <strong>Coordinates:</strong> {data?.latitude?.toFixed(4)}{" "}
-      <strong>,</strong> {data?.longitude?.toFixed(4)}
-      <br />
-      <strong>Quality:</strong> {data?.quality || "No_data"}
-      <br />
-      <strong>Observations:</strong>{" "}
-      <a href={`caves/${data?.caveId}`} target="_blank" rel="noopener">
-        Open in new tab
-      </a>
-      <br />
-    </div>
+    )}
   </Popup>
 );

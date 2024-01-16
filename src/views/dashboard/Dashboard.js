@@ -7,7 +7,8 @@ import Accounts from "./accounts/Accounts";
 import NotificationsList from "./notifications/NotificationsList";
 import Observations from "./observations/Observations";
 import ProfileUpdate from "./settings/ProfileUpdate";
-import SensorTypes from "./sensors/Sensors";
+import SensorTypes from "./sensorTypes/SensorTypes";
+import Sensors from "./sensors/Sensors";
 
 const Dashboard = () => {
   const { activeContent, setNewActiveContent } = useActiveContent();
@@ -21,8 +22,9 @@ const Dashboard = () => {
       {activeContent == "settings" && <ProfileUpdate />}
       {activeContent == "accounts" && <Accounts />}
       {activeContent == "observations" && <Observations />}
-      {activeContent == "sensors" && <SensorTypes />}
+      {activeContent == "sensorTypes" && <SensorTypes />}
       {activeContent == "notifications" && <NotificationsList />}
+      {activeContent == "sensors" && <Sensors />}
     </>
   );
 };

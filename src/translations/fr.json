@@ -16,7 +16,7 @@
 		"add-cont":"AJOUTEZ VOS CONTRIBUTIONS",
 		"cave-id": "ID de la grotte",
 		"country": "Choisissez le nom du pays",
-		"sensor": "Type de capteur",
+		"sensor": "Capteur",
 		"add-sensor": "Nouveau capteur",
 		"add-sensor-title":"Créer un nouveau type de capteur",
 		"add-sensor-name":"Nom",

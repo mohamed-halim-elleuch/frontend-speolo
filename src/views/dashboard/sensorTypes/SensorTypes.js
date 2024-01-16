@@ -28,17 +28,17 @@ import { TextField } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import {
-  deleteSensor,
-  getSensors,
-  updateSensor,
-} from "../../../apis/SensorController.js";
+  deleteSensorType,
+  getSensorTypes,
+  updateSensorType,
+} from "../../../apis/SensorTypeController.js";
 import { getUsers } from "../../../apis/UserController.js";
 import Layout from "../../Navbar/Layout.tsx";
-import CreateSensor from "./CreateSensor.js";
+import CreateSensor from "./CreateSensorType.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles.js";
 
-export default function Sensors() {
+export default function SensorTypes() {
   const { t } = useTranslation("translation");
   const [newSensorAdd, setNewSensorAdd] = React.useState("");
   const { register, handleSubmit } = useForm();
@@ -48,8 +48,25 @@ export default function Sensors() {
   const [selectedRow, setSelectedRow] = React.useState(0);
   const [sensors, setSensors] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [sensorTypes, setSensorTypes] = React.useState([]);
+  const [uniqueManufacturers, setUniqueManufacturers] = React.useState([]);
   const [isEditing, setIsEditing] = React.useState(false);
+
+  const properties = [
+    { value: "Encoding", label: "ENCODING" },
+    { value: "AAAA", label: "YEAR" },
+    { value: "JJ", label: "DAY" },
+    { value: "HH", label: "HOUR" },
+    { value: "MM", label: "MINUTE" },
+    { value: "SS", label: "SECOND" },
+  ];
+  const getLabelForValue = (values) => {
+    return values?.map((value) => {
+      const property = properties.find(
+        (prop) => prop.value?.toLowerCase() === value?.toLowerCase()
+      );
+      return property ? property.label : "Unknown Label";
+    });
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -58,18 +75,11 @@ export default function Sensors() {
 
   const fetchSensorType = async () => {
     try {
-      const responseSensor = await getSensors();
-      setSensorTypes(
-        Array.from(
-          new Set(
-            responseSensor.data.map((sensor) => ({
-              id: sensor.sensorTypeId._id,
-              type: sensor.sensorTypeId.type,
-            }))
-          )
-        )
+      const responseSensor = await getSensorTypes();
+      setUniqueManufacturers(
+        Array.from(new Set(responseSensor.map((sensor) => sensor.manufacturer)))
       );
-      setDataLength(responseSensor.data.length);
+      setDataLength(responseSensor.length);
     } catch (error) {
       console.error("Error fetching sensor types:", error);
     }
@@ -87,9 +97,13 @@ export default function Sensors() {
   useEffect(() => {
     const fetchSensors = async () => {
       try {
-        const newData = await getSensors("", page * rowsPerPage, rowsPerPage);
+        const newData = await getSensorTypes(
+          "",
+          page * rowsPerPage,
+          rowsPerPage
+        );
         // Create an array of promises for the additional requests
-        const additionalRequests = newData.data.map(async (row) => {
+        const additionalRequests = newData.map(async (row) => {
           const firstAdditionalInfo = await getUsers(
             `{"_id":"${row.createdBy}"}`
           );
@@ -134,11 +148,11 @@ export default function Sensors() {
       const queryObject = {};
 
       if (searchText) {
-        queryObject.name = searchText;
+        queryObject.type = searchText;
       }
 
       if (selectedPropertyValue !== null) {
-        queryObject.serialNo = selectedPropertyValue;
+        queryObject.properties = selectedPropertyValue;
       }
 
       if (selectedManufacturer !== null) {
@@ -146,9 +160,9 @@ export default function Sensors() {
       }
       const queryString = JSON.stringify(queryObject);
       // Make the API request using Axios with the constructed query object
-      const response = await getSensors(queryString);
-      setDataLength(response.data.length);
-      const additionalRequests = response.data.map(async (row) => {
+      const response = await getSensorTypes(queryString);
+      setDataLength(response.length);
+      const additionalRequests = response.map(async (row) => {
         const firstAdditionalInfo = await getUsers(
           `{"_id":"${row?.createdBy}"}`
         ); // Replace with your actual method
@@ -179,7 +193,7 @@ export default function Sensors() {
 
   const handleSaveClick = async () => {
     try {
-      const res = await updateSensor(
+      const res = await updateSensorType(
         sensors[page * rowsPerPage + selectedRow]?._id,
         {
           type: formData.type,
@@ -196,10 +210,9 @@ export default function Sensors() {
     }
   };
 
-  const deleteSensors = async () => {
+  const deleteSensor = async () => {
     try {
-      console.log(sensors[page * rowsPerPage + selectedRow]);
-      const response = await deleteSensor(
+      const response = await deleteSensorType(
         sensors[page * rowsPerPage + selectedRow]?._id
       );
 
@@ -211,42 +224,49 @@ export default function Sensors() {
 
   const filedetails = [
     {
-      label: "Name",
-      value: sensors[page * rowsPerPage + selectedRow]?.name || "Unnamed",
+      label: "Type",
+      value: sensors[page * rowsPerPage + selectedRow]?.type || "Unnamed",
     },
     {
-      label: "Serial No",
+      label: `${t("Sensors.manufacturer")}`,
       value:
-        sensors[page * rowsPerPage + selectedRow]?.serialNo || "Not defined",
+        sensors[page * rowsPerPage + selectedRow]?.manufacturer ||
+        "Not defined",
     },
 
     {
-      label: "observes",
-      value: sensors[page * rowsPerPage + selectedRow]?.observes,
+      label: `${t("Sensors.is-default")}`,
+      value: sensors[page * rowsPerPage + selectedRow]?.isDefault
+        ? "True"
+        : "False",
     },
     {
       label: `${t("Sensors.author")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.user || "",
     },
     {
-      label: "Sensor Type",
-      value: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
+      label: `${t("Sensors.properties")}`,
+      value: getLabelForValue(
+        sensors[page * rowsPerPage + selectedRow]?.properties
+      ),
     },
   ];
 
   const initialFormData = {
-    name: sensors[page * rowsPerPage + selectedRow]?.name,
-    sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
-    observes: sensors[page * rowsPerPage + selectedRow]?.observes,
-    serialNo: sensors[page * rowsPerPage + selectedRow]?.serialNo,
+    type: sensors[page * rowsPerPage + selectedRow]?.type,
+    properties: getLabelForValue(
+      sensors[page * rowsPerPage + selectedRow]?.properties
+    ),
+    manufacturer: sensors[page * rowsPerPage + selectedRow]?.manufacturer,
   };
   const [formData, setFormData] = React.useState(initialFormData);
   useEffect(() => {
     setFormData({
-      name: sensors[page * rowsPerPage + selectedRow]?.name,
-      sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
-      observes: sensors[page * rowsPerPage + selectedRow]?.observes,
-      serialNo: sensors[page * rowsPerPage + selectedRow]?.serialNo,
+      type: sensors[page * rowsPerPage + selectedRow]?.type,
+      properties: getLabelForValue(
+        sensors[page * rowsPerPage + selectedRow]?.properties
+      ),
+      manufacturer: sensors[page * rowsPerPage + selectedRow]?.manufacturer,
     });
   }, [selectedRow]);
   const handleCancelClick = () => {
@@ -294,7 +314,7 @@ export default function Sensors() {
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
                 <Box gridColumn="span 9">
                   <FormControl sx={{ flex: 1 }} size="sm">
-                    <FormLabel>Search for Sensor</FormLabel>
+                    <FormLabel>{t("Sensors.search")}</FormLabel>
                     <Input
                       size="sm"
                       value={searchText}
@@ -314,41 +334,51 @@ export default function Sensors() {
                   </Button>
                 </Box>
 
-                <Box gridColumn="span 4">
+                <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Serial No</FormLabel>
-                    <Input
-                      size="sm"
-                      value={searchText}
-                      onChange={(e) => setSelectedPropertyValue(e.target.value)}
-                      placeholder={t("Obs.search")}
-                    />
-                  </FormControl>
-                </Box>
-                <Box gridColumn="span 4">
-                  <FormControl size="sm">
-                    <FormLabel>Observes</FormLabel>
+                    <FormLabel>{t("Sensors.properties")}</FormLabel>
 
-                    <Input
+                    <Autocomplete
                       size="sm"
-                      value={searchText}
-                      onChange={(e) => setSelectedPropertyValue(e.target.value)}
-                      placeholder={t("Obs.search")}
+                      disabled
+                      autoHighlight
+                      {...register("properties")}
+                      options={properties} // Assuming sensorOptions is an array of objects with id and type properties
+                      getOptionLabel={(option) => option.label}
+                      getOptionValue={(option) => option.value} // Assuming id is the property you want to capture
+                      value={
+                        properties.find(
+                          (option) => option.value === selectedPropertyValue
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        setSelectedPropertyValue(newValue?.id || null)
+                      }
+                      placeholder={t("Obs.all")}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label={t("Contribute.sensor")}
+                          InputProps={{
+                            ...params.InputProps,
+                          }}
+                        />
+                      )}
                     />
                   </FormControl>
                 </Box>
-                <Box gridColumn="span 4">
+                <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Sensor Type</FormLabel>
+                    <FormLabel>{t("Sensors.manufacturer")}</FormLabel>
                     <Autocomplete
                       size="sm"
                       autoHighlight
                       {...register("manufacturer")}
-                      options={sensorTypes}
-                      getOptionLabel={(option) => option.type}
-                      getOptionValue={(option) => option.id}
+                      options={uniqueManufacturers}
+                      getOptionLabel={(option) => option}
+                      getOptionValue={(option) => option}
                       value={
-                        sensorTypes.find(
+                        uniqueManufacturers.find(
                           (option) => option === selectedManufacturer
                         ) || null
                       }
@@ -411,7 +441,7 @@ export default function Sensors() {
       >
         <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
           <Typography level="title-md" sx={{ flex: 1 }}>
-            {sensors[page * rowsPerPage + selectedRow]?.name || "Unnamed"}
+            {sensors[page * rowsPerPage + selectedRow]?.type || "Unnamed"}
           </Typography>
           <IconButton
             component="span"
@@ -466,9 +496,9 @@ export default function Sensors() {
                 // Display the form when editing
                 <form style={{ padding: 0 }}>
                   <FormControl sx={{ paddingBottom: 1.5, width: "90%" }}>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Type</FormLabel>
                     <Input
-                      value={formData?.name}
+                      value={formData.type}
                       onChange={handleChange}
                       label="Type"
                       name="type"
@@ -477,22 +507,28 @@ export default function Sensors() {
                     />
                   </FormControl>
                   <FormControl sx={{ paddingBottom: 1.5, width: "90%" }}>
-                    <FormLabel>Serial No</FormLabel>
-                    <Input
-                      value={formData?.serialNo}
-                      onChange={handleChange}
-                      label="Type"
-                      name="type"
-                      variant="outlined"
-                      size="md"
+                    <FormLabel>
+                      {t("Contribute.add-sensor-properties")}
+                    </FormLabel>
+                    <Autocomplete
+                      multiple
+                      size="sm"
+                      id="properties"
+                      options={properties}
+                      value={formData.properties}
+                      onChange={(_, newValue) =>
+                        handleChange({
+                          target: { name: "properties", value: newValue },
+                        })
+                      }
                     />
                   </FormControl>
                   <FormControl sx={{ paddingBottom: 2, width: "90%" }}>
-                    <FormLabel>Observes</FormLabel>
+                    <FormLabel>{t("Contribute.add-sensor-manu")}</FormLabel>
                     <Input
                       size="md"
                       name="manufacturer"
-                      value={formData?.observes}
+                      value={formData.manufacturer}
                       onChange={handleChange}
                     />
                   </FormControl>
@@ -551,7 +587,7 @@ export default function Sensors() {
                         <div>
                           {t("Sensors.delete-message")}{" "}
                           <strong>
-                            {sensors[page * rowsPerPage + selectedRow]?.name}
+                            {sensors[page * rowsPerPage + selectedRow]?.type}
                           </strong>{" "}
                           ?
                         </div>
@@ -561,7 +597,7 @@ export default function Sensors() {
                           variant="solid"
                           color="danger"
                           onClick={() => {
-                            deleteSensors();
+                            deleteSensor();
                             setOpen(false);
                           }}
                         >

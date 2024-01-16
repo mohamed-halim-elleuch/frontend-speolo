@@ -26,7 +26,7 @@ export function SetBoundsRectangles({ innerBounds }) {
 
     // Define the FitBoundsOptions, adjust as needed
     const fitBoundsOptions = {
-      padding: [-200, -200], // Example padding
+      padding: [-150, -150], // Example padding
     };
 
     // Fit the map bounds exactly to the rectangle with options

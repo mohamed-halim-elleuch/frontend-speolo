@@ -26,8 +26,8 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
       sensor: obsvalue?.sensor,
       sensorId: obsvalue?.sensorId,
       timeZone: obsvalue?.timeZone,
-      beginDate: obsvalue?.beginDate.slice(0, -5),
-      endDate: obsvalue?.endDate.slice(0, -5),
+      beginDate: obsvalue?.beginDate?.slice(0, -5),
+      endDate: obsvalue?.endDate?.slice(0, -5),
     }));
   }, [obsvalue]);
   const handleSubmit = async (event) => {
@@ -90,14 +90,14 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
         {t("Sensors.edit")}
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <ModalDialog>
+        <ModalDialog sx={{ backgroundColor: "white" }}>
           <DialogTitle>{t("Obs.titleUpdate")}</DialogTitle>
 
           <form
-            style={{ padding: 0, display: "initial" }}
+            style={{ padding: 0, display: "initial", backgroundColor: "white" }}
             onSubmit={handleSubmit}
           >
-            <Stack spacing={2}>
+            <Stack spacing={2} color="white">
               <FormControl>
                 <FormLabel>{t("Contribute.cave-id")}</FormLabel>
                 <Input

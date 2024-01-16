@@ -10,6 +10,7 @@ import Divider from "@mui/joy/Divider";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton from "@mui/joy/IconButton";
+import { styled } from "@mui/material/styles";
 import Input from "@mui/joy/Input";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
@@ -21,8 +22,10 @@ import { useTranslation } from "react-i18next";
 
 export default function ProfileUpdate() {
   const { t } = useTranslation("translation");
-  const [selectedImage, setSelectedImage] = React.useState(null);
   const [updateMessage, setUpdateMessage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(
+    "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+  );
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -31,6 +34,8 @@ export default function ProfileUpdate() {
     address: "",
     license: "",
     createdAt: "",
+    profileImage: "",
+    file: "",
   });
 
   useEffect(() => {
@@ -47,6 +52,7 @@ export default function ProfileUpdate() {
             address: userData.address,
             license: userData.license,
             createdAt: userData.createdAt,
+            profileImage: userData?.profileImage,
           });
         } else {
           console.error("Failed to fetch user information");
@@ -67,8 +73,9 @@ export default function ProfileUpdate() {
   };
   const handleSaveButtonClick = async () => {
     try {
+      console.log("formData", formData);
       const updatedUser = await updateUser(formData);
-
+      console.log("updates", updatedUser);
       setUpdateMessage({
         open: true,
         message: "User updated successfully!",
@@ -94,11 +101,16 @@ export default function ProfileUpdate() {
   }, [updateMessage]);
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-    }
+    const image = e.target.files[0];
+
+    const imageUrl = URL.createObjectURL(image);
+    setSelectedImage(imageUrl);
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      file: image,
+      profileImage: imageUrl,
+    }));
   };
 
   return (
@@ -138,17 +150,14 @@ export default function ProfileUpdate() {
                 sx={{ flex: 1, minWidth: 140, borderRadius: "100%" }}
               >
                 <img
-                  src={
-                    selectedImage ||
-                    "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                  }
+                  src={formData.profileImage || selectedImage}
                   loading="lazy"
                   alt=""
                 />
               </AspectRatio>
               <label htmlFor="upload-image">
                 <IconButton
-                  aria-label="upload new picture"
+                  component="label"
                   size="sm"
                   variant="outlined"
                   color="neutral"
@@ -162,11 +171,9 @@ export default function ProfileUpdate() {
                     boxShadow: "sm",
                   }}
                 >
-                  <input
+                  <VisuallyHiddenInput
                     type="file"
-                    id="upload-image"
                     accept="image/*"
-                    style={{ display: "none" }}
                     onChange={handleImageChange}
                   />
                   <EditRoundedIcon />
@@ -263,7 +270,7 @@ export default function ProfileUpdate() {
                   sx={{ flex: 1, minWidth: 108, borderRadius: "100%" }}
                 >
                   <img
-                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
+                    src={formData.profileImage || selectedImage}
                     loading="lazy"
                     alt=""
                   />
@@ -375,3 +382,15 @@ export default function ProfileUpdate() {
     </Box>
   );
 }
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});

@@ -108,7 +108,12 @@ export default function TableFiles({
                     <Typography
                       level="title-sm"
                       startDecorator={<TextSnippetIcon color="primary" />}
-                      sx={{ alignItems: "flex-start" }}
+                      sx={{
+                        alignItems: "flex-start",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
                     >
                       {row.fileName}
                     </Typography>

@@ -247,19 +247,21 @@ export default function FileTable({ rows }) {
               <th style={{ width: "25%", padding: "12px 6px" }}>
                 {t("Obs.table.file-name")}
               </th>
-              <th style={{ width: "14%", padding: "12px 6px" }}>
+              <th style={{ width: "12%", padding: "12px 6px" }}>Sensor</th>
+              <th style={{ width: "12%", padding: "12px 6px" }}>
                 {t("Obs.table.sensor")}
               </th>
+
               <th style={{ width: "14%", padding: "12px 6px" }}>
                 {t("Obs.table.begin-date")}
               </th>
               <th style={{ width: "14%", padding: "12px 6px" }}>
                 {t("Obs.table.end-date")}
               </th>
-              <th style={{ width: "20%", padding: "12px 6px" }}>
+              <th style={{ width: "17%", padding: "12px 6px" }}>
                 {t("Obs.table.author")}
               </th>
-              <th style={{ width: "8%", padding: "12px 6px" }}></th>
+              <th style={{ width: "4%", padding: "12px 6px" }}></th>
             </tr>
           </thead>
           <tbody>
@@ -284,6 +286,11 @@ export default function FileTable({ rows }) {
                   </td>
                   <td>
                     <Typography level="body-xs">{row?.fileName}</Typography>
+                  </td>
+                  <td>
+                    <Typography level="body-xs">
+                      {row?.isObservedBy?.name}
+                    </Typography>
                   </td>
                   <td>
                     <Typography level="body-xs">{row?.sensor_type}</Typography>
@@ -315,8 +322,6 @@ export default function FileTable({ rows }) {
                           <FileDownloadIcon />
                         </IconButton>
                       </Link>
-
-                      <RowMenu />
                     </Box>
                   </td>
                 </tr>

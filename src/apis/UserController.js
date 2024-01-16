@@ -40,7 +40,10 @@ export const getUsers = async (filter, skip, take, sortBy) => {
 export const updateUser = async (user) => {
   try {
     const response = await axios.put(`${API_BASE_URL}/api/user`, user, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
     });
     return response.data;
   } catch (error) {

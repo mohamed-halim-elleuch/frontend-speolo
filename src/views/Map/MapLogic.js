@@ -10,8 +10,10 @@ const MapLogic = () => {
   const [loading, setLoading] = useState(true);
   const [bounds, setBounds] = useState(null);
   const [caveInfo, setCaveInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const markerClick = async (item) => {
     try {
+      setIsLoading(true);
       const data = await fetchCaveDataByGeolocation(
         item[1] - 0.0000000000001,
         item[0] - 0.0000000000001,
@@ -23,6 +25,8 @@ const MapLogic = () => {
       console.log(data[0]);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoading(false); // Set loading to false when data fetching is complete
     }
   };
 
@@ -94,6 +98,7 @@ const MapLogic = () => {
     _onDeleted,
     markerClick,
     caveInfo,
+    isLoading,
   };
 };
 

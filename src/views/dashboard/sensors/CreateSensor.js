@@ -9,23 +9,48 @@ import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
 import Stack from "@mui/joy/Stack";
 import * as React from "react";
+import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
-import { createSensorType } from "../../../apis/SensorTypeController";
+import TextField from "@mui/material/TextField";
+import {
+  createSensorType,
+  getSensorTypes,
+} from "../../../apis/SensorTypeController";
+import { createSensor } from "../../../apis/SensorController";
 
 export default function CreateSensor({ setNewSensorAdd }) {
   const { t } = useTranslation("translation");
   const [open, setOpen] = React.useState(false);
+  const [options, setOptions] = React.useState(null);
+  const [sensorTypeValue, setSensorTypeValue] = React.useState(null);
   const [formData, setFormData] = React.useState({
-    type: "",
-    properties: [],
-    manufacturer: "",
+    name: "",
+    serialNo: "",
+    observes: "",
+    sensorTypeId: "",
   });
+  React.useEffect(() => {
+    const fetchSensorType = async () => {
+      try {
+        const responseSensorType = await getSensorTypes();
+        setOptions(
+          responseSensorType.map((sensor) => ({
+            type: sensor.type,
+            id: sensor._id,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching sensor types:", error);
+        // Handle errors as needed
+      }
+    };
 
+    fetchSensorType();
+  }, []);
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const valuesList = formData.properties.map((item) => item.value);
-    formData.properties = valuesList;
-    const response = await createSensorType(formData);
+
+    const response = await createSensor(formData);
 
     setNewSensorAdd(response);
     try {
@@ -61,8 +86,8 @@ export default function CreateSensor({ setNewSensorAdd }) {
         {t("Sensors.create")}
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
-        <ModalDialog>
-          <DialogTitle>{t("Contribute.add-sensor-title")}</DialogTitle>
+        <ModalDialog sx={{ width: "27vw" }}>
+          <DialogTitle>Create new sensor</DialogTitle>
 
           <form
             style={{ padding: 0, display: "initial" }}
@@ -70,42 +95,56 @@ export default function CreateSensor({ setNewSensorAdd }) {
           >
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>Type</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <Input
                   autoFocus
-                  name="type"
-                  value={formData.type}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>{t("Contribute.add-sensor-properties")}</FormLabel>
-
-                <Autocomplete
-                  sx={{
-                    height: "41.6px",
-                    minWidth: "25rem",
-                  }}
-                  multiple
-                  id="properties"
-                  options={properties}
-                  value={formData.properties}
-                  onChange={(event, newValue) => {
-                    setFormData({
-                      ...formData,
-                      properties: newValue,
-                    });
-                  }}
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>{t("Contribute.add-sensor-manu")}</FormLabel>
+                <FormLabel>serialNo</FormLabel>
                 <Input
-                  name="manufacturer"
-                  value={formData.manufacturer}
+                  autoFocus
+                  name="serialNo"
+                  value={formData.serialNo}
                   onChange={handleChange}
                 />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Observes</FormLabel>
+                <Input
+                  autoFocus
+                  name="observes"
+                  value={formData.observes}
+                  onChange={handleChange}
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Sensor Type</FormLabel>
+                <Box display="flex" sx={{ alignItems: "center" }}>
+                  <Autocomplete
+                    name="sensorTypeId"
+                    value={sensorTypeValue}
+                    autoHighlight
+                    getOptionLabel={(option) => option?.type}
+                    getOptionValue={(option) => option?.id}
+                    onChange={(event, newValue) => {
+                      setFormData({
+                        ...formData,
+                        sensorTypeId: newValue?.id,
+                      });
+                      setSensorTypeValue(newValue);
+                    }}
+                    options={options}
+                    sx={{ marginBottom: 2, width: "100%" }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Sensor Type" />
+                    )}
+                  />
+                </Box>
               </FormControl>
               <Button type="submit" onClick={handleInnerFormSubmit}>
                 {t("Contribute.submit")}
@@ -117,12 +156,3 @@ export default function CreateSensor({ setNewSensorAdd }) {
     </React.Fragment>
   );
 }
-
-const properties = [
-  { value: "encoding", label: "ENCODING" },
-  { value: "AAAA", label: "YEAR" },
-  { value: "JJ", label: "DAY" },
-  { value: "HH", label: "HOUR" },
-  { value: "MM", label: "MINUTE" },
-  { value: "SS", label: "SECOND" },
-];

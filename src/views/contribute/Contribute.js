@@ -17,6 +17,7 @@ import { createObservation } from "../../apis/CaveObservationController";
 import { getSensorTypes } from "../../apis/SensorTypeController";
 import ShowMessage from "../common/ShowMessage";
 import BasicModalDialog from "./DialogButton";
+import { getSensors } from "../../apis/SensorController";
 
 export default function Contribute() {
   const { t } = useTranslation("translation");
@@ -30,8 +31,9 @@ export default function Contribute() {
   React.useEffect(() => {
     const fetchSensorType = async () => {
       try {
-        const responseSensor = await getSensorTypes();
-        setOptions(responseSensor);
+        const responseSensor = await getSensors();
+        console.log("sensors", responseSensor);
+        setOptions(responseSensor.data);
       } catch (error) {
         console.error("Error fetching sensor types:", error);
         // Handle errors as needed
@@ -164,8 +166,8 @@ export default function Contribute() {
               }}
               id="controllable-states-demo"
               options={options}
-              isOptionEqualToValue={(option, value) => option.type === value}
-              getOptionLabel={(option) => option?.type}
+              isOptionEqualToValue={(option, value) => option?.name === value}
+              getOptionLabel={(option) => option?.name}
               sx={{ marginBottom: 2, width: "100%" }}
               renderInput={(params) => (
                 <TextField {...params} label={t("Contribute.sensor")} />

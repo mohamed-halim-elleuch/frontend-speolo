@@ -42,6 +42,7 @@ import Layout from "../../Navbar/Layout.tsx";
 import EditObservation from "./EditObservation.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles";
+import { getSensors } from "../../../apis/SensorController.js";
 
 export default function Observations() {
   const { t } = useTranslation("translation");
@@ -70,9 +71,13 @@ export default function Observations() {
   };
   const fetchSensorType = async () => {
     try {
-      const responseSensor = await getSensorTypes();
+      const responseSensor = await getSensors();
+
       setSensorOptions(
-        responseSensor.map((sensor) => ({ type: sensor.type, id: sensor._id }))
+        responseSensor.data.map((sensor) => ({
+          type: sensor?.name,
+          id: sensor._id,
+        }))
       );
     } catch (error) {
       console.error("Error fetching sensor types:", error);
@@ -197,18 +202,6 @@ export default function Observations() {
         );
 
         // Wrap the sensor request in a try-catch block
-        let sensor;
-        try {
-          if (observations[page * rowsPerPage + selectedRow]?.sensorId) {
-            sensor = await getSensorTypeById(
-              observations[page * rowsPerPage + selectedRow]?.sensorId
-            );
-          }
-        } catch (sensorError) {
-          console.error("Error fetching sensor details", sensorError);
-          // Handle sensor request error
-          sensor = { data: { type: "Not found" } }; // Provide a default value
-        }
 
         setObservations((prevObservations) => {
           const updatedObservations = [...prevObservations];
@@ -217,7 +210,10 @@ export default function Observations() {
           };
 
           // Add additional details to the updated row
-          updatedRow.sensor = sensor?.data?.type;
+          updatedRow.sensor =
+            observations[
+              page * rowsPerPage + selectedRow
+            ]?.isObservedBy?.sensorTypeId?.type;
           updatedRow.location = `${caveInfo.name}, ${caveInfo.entrances[0].city}, ${caveInfo.entrances[0].country}`;
 
           // Update the array with the modified row
@@ -239,6 +235,12 @@ export default function Observations() {
       label: `${t("Obs.table.file-name")}`,
       value:
         observations[page * rowsPerPage + selectedRow]?.fileName || "Unnamed",
+    },
+    {
+      label: "Sensor",
+      value:
+        observations[page * rowsPerPage + selectedRow]?.isObservedBy?.name ||
+        "Not found",
     },
     {
       label: `${t("Obs.table.sensor")}`,
@@ -463,7 +465,15 @@ export default function Observations() {
         }}
       >
         <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
-          <Typography level="title-md" sx={{ flex: 1 }}>
+          <Typography
+            level="title-md"
+            sx={{
+              flex: 1,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {observations[page * rowsPerPage + selectedRow]?.fileName ||
               "Unnamed"}
           </Typography>
@@ -501,7 +511,15 @@ export default function Observations() {
               {filedetails.map((item, index) => (
                 <React.Fragment key={index}>
                   <Typography level="title-sm">{item?.label}</Typography>
-                  <div style={{ fontSize: "14px", color: "#171A1C" }}>
+                  <div
+                    style={{
+                      fontSize: "14px",
+                      color: "#171A1C",
+                      wordWrap: "break-word",
+                      whiteSpace: "normal",
+                      width: "238px",
+                    }}
+                  >
                     {item?.value}
                   </div>
                 </React.Fragment>
