@@ -68,9 +68,10 @@ const MapLogic = () => {
   };
 
   const _onCreated = (e) => {
-    updateBounds(e.layer);
     let type = e.layerType;
-    let layer = e.layer;
+    if (type === "rectangle") {
+      updateBounds(e.layer);
+    }
     console.log("_onCreated: something else created:", type, e);
   };
 

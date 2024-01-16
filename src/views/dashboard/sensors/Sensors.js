@@ -32,7 +32,7 @@ import {
   getSensors,
   updateSensor,
 } from "../../../apis/SensorController.js";
-import { getUsers } from "../../../apis/UserController.js";
+import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
 import Layout from "../../Navbar/Layout.tsx";
 import CreateSensor from "./CreateSensor.js";
 import SmallTable from "./SmallTable.js";
@@ -50,6 +50,21 @@ export default function Sensors() {
   const [open, setOpen] = React.useState(false);
   const [sensorTypes, setSensorTypes] = React.useState([]);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [sensorTypeValue, setSensorTypeValue] = React.useState(null);
+  const [userRole, SetUserRole] = React.useState(null);
+  const [userEmail, setUseremail] = React.useState(null);
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const res = await fetchUserInfo();
+        console.log("res", res.role);
+        SetUserRole(res.role);
+        setUseremail(res.license);
+      } catch (error) {}
+    };
+
+    fetchUserRole();
+  }, []);
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -70,9 +85,7 @@ export default function Sensors() {
         )
       );
       setDataLength(responseSensor.data.length);
-    } catch (error) {
-      console.error("Error fetching sensor types:", error);
-    }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -93,12 +106,12 @@ export default function Sensors() {
           const firstAdditionalInfo = await getUsers(
             `{"_id":"${row.createdBy}"}`
           );
-
           return {
             ...row,
             user: `${firstAdditionalInfo[0]?.firstName} ${
               firstAdditionalInfo[0]?.lastName || ""
             }`,
+            useremail: firstAdditionalInfo[0]?.license,
           };
         });
 
@@ -121,6 +134,8 @@ export default function Sensors() {
     ) {
       fetchSensors();
     }
+
+    console.log(sensors[page * rowsPerPage + selectedRow]);
   }, [rowsPerPage, page, open, isEditing, newSensorAdd]);
 
   const [searchText, setSearchText] = useState("");
@@ -158,6 +173,7 @@ export default function Sensors() {
           user: `${firstAdditionalInfo[0]?.firstName} ${
             firstAdditionalInfo[0]?.lastName || ""
           }`,
+          useremail: firstAdditionalInfo[0]?.license,
         };
       });
 
@@ -182,10 +198,10 @@ export default function Sensors() {
       const res = await updateSensor(
         sensors[page * rowsPerPage + selectedRow]?._id,
         {
-          type: formData.type,
-          properties: formData.properties,
-          manufacturer: formData.manufacturer,
-          // Include any other properties you want to update
+          name: formData.name,
+          observes: formData.observes,
+          serialNo: formData.serialNo,
+          sensorTypeId: formData.sensorType,
         }
       );
       // Reset the state and hide the form
@@ -445,17 +461,12 @@ export default function Sensors() {
 
                   <div style={{ fontSize: "14px", color: "#171A1C" }}>
                     {Array.isArray(item.value)
-                      ? // If the value is an array, join its elements into a string
-                        // If the value is an array, map through its elements and display each value in line
-                        item.value.map((prop, propIndex) => (
+                      ? item.value.map((prop, propIndex) => (
                           <Chip key={propIndex} sx={{ m: 0.5 }}>
                             {prop}
-
-                            {/* Add comma if not the last element */}
                           </Chip>
                         ))
-                      : // If the value is not an array, display it as is
-                        item.value}
+                      : item.value}
                   </div>
                 </React.Fragment>
               ))}
@@ -465,7 +476,7 @@ export default function Sensors() {
               {isEditing ? (
                 // Display the form when editing
                 <form style={{ padding: 0 }}>
-                  <FormControl sx={{ paddingBottom: 1.5, width: "90%" }}>
+                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
                     <FormLabel>Name</FormLabel>
                     <Input
                       value={formData?.name}
@@ -476,7 +487,7 @@ export default function Sensors() {
                       size="md"
                     />
                   </FormControl>
-                  <FormControl sx={{ paddingBottom: 1.5, width: "90%" }}>
+                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
                     <FormLabel>Serial No</FormLabel>
                     <Input
                       value={formData?.serialNo}
@@ -487,7 +498,7 @@ export default function Sensors() {
                       size="md"
                     />
                   </FormControl>
-                  <FormControl sx={{ paddingBottom: 2, width: "90%" }}>
+                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
                     <FormLabel>Observes</FormLabel>
                     <Input
                       size="md"
@@ -495,6 +506,43 @@ export default function Sensors() {
                       value={formData?.observes}
                       onChange={handleChange}
                     />
+                  </FormControl>
+                  <FormControl sx={{ paddingBottom: 1 }}>
+                    <FormLabel>Sensor Type</FormLabel>
+                    <Box display="flex" sx={{ alignItems: "center" }}>
+                      <Autocomplete
+                        size="md"
+                        sx={{ minWidth: "21.15rem" }}
+                        autoHighlight
+                        value={
+                          sensorTypeValue ||
+                          sensorTypes.find(
+                            (option) => option.id === formData.sensorType
+                          ) ||
+                          null
+                        }
+                        options={sensorTypes}
+                        getOptionLabel={(option) => option.type}
+                        getOptionValue={(option) => option.id}
+                        onChange={(event, newValue) => {
+                          setFormData({
+                            ...formData,
+                            sensorType: newValue?.id,
+                          });
+                          setSensorTypeValue(newValue);
+                        }}
+                        placeholder={sensorTypeValue}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label={t("Contribute.sensor")}
+                            InputProps={{
+                              ...params.InputProps,
+                            }}
+                          />
+                        )}
+                      />
+                    </Box>
                   </FormControl>
 
                   <ButtonGroup
@@ -522,61 +570,72 @@ export default function Sensors() {
                 // Display the edit and delete buttons when not editing
                 <Box sx={{ py: 1, px: 1 }}>
                   <CreateSensor setNewSensorAdd={setNewSensorAdd} />
-                  <Button
-                    variant="plain"
-                    color="neutral"
-                    size="sm"
-                    startDecorator={<EditRoundedIcon />}
-                    onClick={handleEditClick}
-                  >
-                    {t("Sensors.edit")}
-                  </Button>
-                  <Button
-                    variant="plain"
-                    color="warning"
-                    size="sm"
-                    onClick={() => setOpen(true)}
-                    startDecorator={<DeleteIcon />}
-                  >
-                    {t("Sensors.delete")}
-                  </Button>
-                  <Modal open={open} onClose={() => setOpen(false)}>
-                    <ModalDialog variant="outlined" role="alertdialog">
-                      <DialogTitle>
-                        <WarningRoundedIcon />
-                        Confirmation
-                      </DialogTitle>
-                      <Divider />
-                      <DialogContent>
-                        <div>
-                          {t("Sensors.delete-message")}{" "}
-                          <strong>
-                            {sensors[page * rowsPerPage + selectedRow]?.name}
-                          </strong>{" "}
-                          ?
-                        </div>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          variant="solid"
-                          color="danger"
-                          onClick={() => {
-                            deleteSensors();
-                            setOpen(false);
-                          }}
-                        >
-                          {t("Sensors.delete")}
-                        </Button>
-                        <Button
-                          variant="plain"
-                          color="neutral"
-                          onClick={() => setOpen(false)}
-                        >
-                          {t("Settings.cancel")}
-                        </Button>
-                      </DialogActions>
-                    </ModalDialog>
-                  </Modal>
+                  {userRole === "user" &&
+                  sensors[page * rowsPerPage + selectedRow]?.useremail ===
+                    userEmail ? (
+                    <>
+                      <Button
+                        variant="plain"
+                        color="neutral"
+                        size="sm"
+                        startDecorator={<EditRoundedIcon />}
+                        onClick={handleEditClick}
+                      >
+                        {t("Sensors.edit")}
+                      </Button>
+                      <Button
+                        variant="plain"
+                        color="warning"
+                        size="sm"
+                        onClick={() => setOpen(true)}
+                        startDecorator={<DeleteIcon />}
+                      >
+                        {t("Sensors.delete")}
+                      </Button>
+                      <Modal open={open} onClose={() => setOpen(false)}>
+                        <ModalDialog variant="outlined" role="alertdialog">
+                          <DialogTitle>
+                            <WarningRoundedIcon />
+                            Confirmation
+                          </DialogTitle>
+                          <Divider />
+                          <DialogContent>
+                            <div>
+                              {t("Sensors.delete-message")}{" "}
+                              <strong>
+                                {
+                                  sensors[page * rowsPerPage + selectedRow]
+                                    ?.name
+                                }
+                              </strong>{" "}
+                              ?
+                            </div>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              variant="solid"
+                              color="danger"
+                              onClick={() => {
+                                deleteSensors();
+                                setOpen(false);
+                              }}
+                            >
+                              {t("Sensors.delete")}
+                            </Button>
+                            <Button
+                              variant="plain"
+                              color="neutral"
+                              onClick={() => setOpen(false)}
+                            >
+                              {t("Settings.cancel")}
+                            </Button>
+                          </DialogActions>
+                        </ModalDialog>
+                      </Modal>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
               )}
             </Box>

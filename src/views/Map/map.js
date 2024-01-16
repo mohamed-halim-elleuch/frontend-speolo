@@ -94,6 +94,7 @@ const Map = () => {
             polyline: false,
             marker: false,
             circle: true,
+            polygon: false,
             circlemarker: false,
           }}
         />

@@ -119,12 +119,12 @@ export default function TableFiles({
                   </TableCell>
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.sensorTypeId?.type}
+                      {row.observes}
                     </div>
                   </TableCell>
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.user}
+                      {row.sensorTypeId?.type}
                     </div>
                   </TableCell>
                 </TableRow>

@@ -87,10 +87,10 @@ export default function TableFiles({
               <TableCell style={{ width: "23%" }}>
                 <Typography level="title-sm">{t("Obs.added-date")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "17%" }}>
+              <TableCell style={{ width: "22%" }}>
                 <Typography level="title-sm">{t("Obs.author")}</Typography>
               </TableCell>
-              <TableCell style={{ width: "20%" }}>
+              <TableCell style={{ width: "15%" }}>
                 <Typography level="title-sm">{t("Obs.table.cave")}</Typography>
               </TableCell>
             </TableRow>
