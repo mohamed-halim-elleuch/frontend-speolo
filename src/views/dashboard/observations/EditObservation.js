@@ -15,15 +15,18 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { createSensorType } from "../../../apis/SensorTypeController";
 import CountrySelector from "../settings/CountrySelector";
+import { TextField } from "@mui/material";
+import { getSensors } from "../../../apis/SensorController";
 
 export default function EditObservation({ obsvalue, setNewSensorAdd }) {
   const { t } = useTranslation("translation");
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState(obsvalue);
+  const [sensors, setSensors] = React.useState(null);
   useEffect(() => {
+    console.log(obsvalue);
     setFormData((prevFormData) => ({
       caveId: obsvalue?.caveId,
-      sensor: obsvalue?.sensor,
       sensorId: obsvalue?.sensorId,
       timeZone: obsvalue?.timeZone,
       beginDate: obsvalue?.beginDate?.slice(0, -5),
@@ -32,13 +35,18 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
   }, [obsvalue]);
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const valuesList = formData.properties.map((item) => item.value);
-    formData.properties = valuesList;
-    //const response = await createSensorType(formData);
-
-    //setNewSensorAdd(response);
+    console.log("handleSubmit", formData);
     try {
-      // Assuming you have an API endpoint for adding a new sensor
+      //const res = await update(
+      //     sensors[page * rowsPerPage + selectedRow]?._id,
+      //     {
+      //       type: formData.type,
+      //       properties: formData.properties,
+      //       manufacturer: formData.manufacturer,
+      //       // Include any other properties you want to update
+      //     }
+      //   );
+      //   console.log(res);
     } catch (error) {
       console.error("Error adding sensor:", error.message);
     }
@@ -53,7 +61,23 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
     }));
   };
 
+  const fetchSensors = async () => {
+    try {
+      const responseSensor = await getSensors();
+      setSensors(
+        responseSensor.data.map((sensor) => ({
+          name: sensor?.name,
+          id: sensor._id,
+        }))
+      );
+    } catch (error) {}
+  };
+  useEffect(() => {
+    fetchSensors();
+  }, []);
+
   const handleSaveClick = async () => {
+    console.log("handleSaveClick", formData);
     // try {
     //   const res = await updateSensorType(
     //     sensors[page * rowsPerPage + selectedRow]?._id,
@@ -73,9 +97,6 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
     // }
   };
   const handleCancelClick = () => {
-    // // Reset the state and hide the form
-    // setIsEditing(false);
-    // setFormData(initialFormData);
     setOpen(false);
   };
 
@@ -109,19 +130,35 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>{t("Obs.table.sensor")}</FormLabel>
-
-                <Input
-                  autoFocus
+                <FormLabel>Sensor</FormLabel>
+                <Autocomplete
+                  size="md"
                   sx={{
-                    height: "41.6px",
                     minWidth: "25rem",
                     marginBottom: 2,
                   }}
-                  multiple
-                  id="properties"
-                  value={formData?.sensor}
-                  onChange={handleChange}
+                  autoHighlight
+                  value={sensors?.find(
+                    (option) => option.id === formData?.sensorId
+                  )}
+                  options={sensors}
+                  getOptionLabel={(option) => option.name}
+                  getOptionValue={(option) => option.id}
+                  onChange={(event, newValue) => {
+                    setFormData({
+                      ...formData,
+                      sensorId: newValue?.id,
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label={"Sensor"}
+                      InputProps={{
+                        ...params.InputProps,
+                      }}
+                    />
+                  )}
                 />
               </FormControl>
               <CountrySelector initialValue={formData?.timeZone} />
@@ -148,11 +185,7 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
                 sx={{ alignSelf: "center" }}
                 aria-label="spacing button group"
               >
-                <Button
-                  onClick={handleSaveClick}
-                  color="primary"
-                  variant="soft"
-                >
+                <Button type="submit" color="primary" variant="soft">
                   {t("Obs.update")}
                 </Button>
 

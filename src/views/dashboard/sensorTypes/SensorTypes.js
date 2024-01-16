@@ -32,7 +32,7 @@ import {
   getSensorTypes,
   updateSensorType,
 } from "../../../apis/SensorTypeController.js";
-import { getUsers } from "../../../apis/UserController.js";
+import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
 import Layout from "../../Navbar/Layout.tsx";
 import CreateSensor from "./CreateSensorType.js";
 import SmallTable from "./SmallTable.js";
@@ -52,17 +52,29 @@ export default function SensorTypes() {
   const [isEditing, setIsEditing] = React.useState(false);
 
   const properties = [
-    { value: "Encoding", label: "ENCODING" },
-    { value: "AAAA", label: "YEAR" },
-    { value: "JJ", label: "DAY" },
-    { value: "HH", label: "HOUR" },
-    { value: "MM", label: "MINUTE" },
-    { value: "SS", label: "SECOND" },
+    { value: "temperature", label: "TEMPERATURE" },
+    { value: "pression", label: "PRESSION" },
+    { value: "conductivity_meters", label: "CONDUCTIVITY METERS" },
   ];
+
+  const [userRole, SetUserRole] = React.useState(null);
+  const [userlicense, setUserlicense] = React.useState(null);
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const res = await fetchUserInfo();
+        console.log("res", res.role);
+        SetUserRole(res.role);
+        setUserlicense(res.license);
+      } catch (error) {}
+    };
+
+    fetchUserRole();
+  }, []);
   const getLabelForValue = (values) => {
     return values?.map((value) => {
       const property = properties.find(
-        (prop) => prop.value?.toLowerCase() === value?.toLowerCase()
+        (prop) => prop?.value?.toLowerCase() === value?.toLowerCase()
       );
       return property ? property.label : "Unknown Label";
     });
@@ -113,6 +125,7 @@ export default function SensorTypes() {
             user: `${firstAdditionalInfo[0]?.firstName} ${
               firstAdditionalInfo[0]?.lastName || ""
             }`,
+            license: firstAdditionalInfo[0]?.license,
           };
         });
 
@@ -172,6 +185,7 @@ export default function SensorTypes() {
           user: `${firstAdditionalInfo[0]?.firstName} ${
             firstAdditionalInfo[0]?.lastName || ""
           }`,
+          license: firstAdditionalInfo[0]?.license,
         };
       });
 
@@ -558,61 +572,73 @@ export default function SensorTypes() {
                 // Display the edit and delete buttons when not editing
                 <Box sx={{ py: 1, px: 1 }}>
                   <CreateSensor setNewSensorAdd={setNewSensorAdd} />
-                  <Button
-                    variant="plain"
-                    color="neutral"
-                    size="sm"
-                    startDecorator={<EditRoundedIcon />}
-                    onClick={handleEditClick}
-                  >
-                    {t("Sensors.edit")}
-                  </Button>
-                  <Button
-                    variant="plain"
-                    color="warning"
-                    size="sm"
-                    onClick={() => setOpen(true)}
-                    startDecorator={<DeleteIcon />}
-                  >
-                    {t("Sensors.delete")}
-                  </Button>
-                  <Modal open={open} onClose={() => setOpen(false)}>
-                    <ModalDialog variant="outlined" role="alertdialog">
-                      <DialogTitle>
-                        <WarningRoundedIcon />
-                        Confirmation
-                      </DialogTitle>
-                      <Divider />
-                      <DialogContent>
-                        <div>
-                          {t("Sensors.delete-message")}{" "}
-                          <strong>
-                            {sensors[page * rowsPerPage + selectedRow]?.type}
-                          </strong>{" "}
-                          ?
-                        </div>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          variant="solid"
-                          color="danger"
-                          onClick={() => {
-                            deleteSensor();
-                            setOpen(false);
-                          }}
-                        >
-                          {t("Sensors.delete")}
-                        </Button>
-                        <Button
-                          variant="plain"
-                          color="neutral"
-                          onClick={() => setOpen(false)}
-                        >
-                          {t("Settings.cancel")}
-                        </Button>
-                      </DialogActions>
-                    </ModalDialog>
-                  </Modal>
+                  {(userRole === "user" &&
+                    sensors[page * rowsPerPage + selectedRow]?.license ===
+                      userlicense) ||
+                  userRole === "admin" ? (
+                    <>
+                      <Button
+                        variant="plain"
+                        color="neutral"
+                        size="sm"
+                        startDecorator={<EditRoundedIcon />}
+                        onClick={handleEditClick}
+                      >
+                        {t("Sensors.edit")}
+                      </Button>
+                      <Button
+                        variant="plain"
+                        color="warning"
+                        size="sm"
+                        onClick={() => setOpen(true)}
+                        startDecorator={<DeleteIcon />}
+                      >
+                        {t("Sensors.delete")}
+                      </Button>
+                      <Modal open={open} onClose={() => setOpen(false)}>
+                        <ModalDialog variant="outlined" role="alertdialog">
+                          <DialogTitle>
+                            <WarningRoundedIcon />
+                            Confirmation
+                          </DialogTitle>
+                          <Divider />
+                          <DialogContent>
+                            <div>
+                              {t("Sensors.delete-message")}{" "}
+                              <strong>
+                                {
+                                  sensors[page * rowsPerPage + selectedRow]
+                                    ?.type
+                                }
+                              </strong>{" "}
+                              ?
+                            </div>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button
+                              variant="solid"
+                              color="danger"
+                              onClick={() => {
+                                deleteSensor();
+                                setOpen(false);
+                              }}
+                            >
+                              {t("Sensors.delete")}
+                            </Button>
+                            <Button
+                              variant="plain"
+                              color="neutral"
+                              onClick={() => setOpen(false)}
+                            >
+                              {t("Settings.cancel")}
+                            </Button>
+                          </DialogActions>
+                        </ModalDialog>
+                      </Modal>
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </Box>
               )}
             </Box>

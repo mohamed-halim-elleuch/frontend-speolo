@@ -37,6 +37,7 @@ import Layout from "../../Navbar/Layout.tsx";
 import CreateSensor from "./CreateSensor.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles.js";
+import { getSensorTypes } from "../../../apis/SensorTypeController.js";
 
 export default function Sensors() {
   const { t } = useTranslation("translation");
@@ -74,19 +75,30 @@ export default function Sensors() {
   const fetchSensorType = async () => {
     try {
       const responseSensor = await getSensors();
-      setSensorTypes(
-        Array.from(
-          new Set(
-            responseSensor.data.map((sensor) => ({
-              id: sensor.sensorTypeId._id,
-              type: sensor.sensorTypeId.type,
-            }))
-          )
-        )
-      );
       setDataLength(responseSensor.data.length);
     } catch (error) {}
   };
+
+  useEffect(() => {
+    const fetchSenType = async () => {
+      try {
+        const responseSensor = await getSensorTypes();
+        setSensorTypes(
+          Array.from(
+            new Set(
+              responseSensor.map((sensor) => ({
+                id: sensor._id,
+                type: sensor.type,
+              }))
+            )
+          )
+        );
+        setDataLength(responseSensor.data.length);
+      } catch (error) {}
+    };
+
+    fetchSenType();
+  }, [open, newSensorAdd]);
 
   useEffect(() => {
     fetchSensorType();
@@ -134,12 +146,11 @@ export default function Sensors() {
     ) {
       fetchSensors();
     }
-
-    console.log(sensors[page * rowsPerPage + selectedRow]);
   }, [rowsPerPage, page, open, isEditing, newSensorAdd]);
 
   const [searchText, setSearchText] = useState("");
-  const [selectedPropertyValue, setSelectedPropertyValue] = useState(null);
+  const [searchSerialNo, setSearchSerialNo] = useState("");
+  const [observes, setObserves] = useState("");
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
 
   const handleSearch = async (e) => {
@@ -152,12 +163,17 @@ export default function Sensors() {
         queryObject.name = searchText;
       }
 
-      if (selectedPropertyValue !== null) {
-        queryObject.serialNo = selectedPropertyValue;
+      if (searchSerialNo) {
+        queryObject.serialNo = searchSerialNo;
       }
 
-      if (selectedManufacturer !== null) {
-        queryObject.manufacturer = selectedManufacturer;
+      if (observes) {
+        queryObject.observes = observes;
+      }
+
+      if (selectedManufacturer) {
+        console.log(selectedManufacturer);
+        queryObject.sensorTypeId = selectedManufacturer.id;
       }
       const queryString = JSON.stringify(queryObject);
       // Make the API request using Axios with the constructed query object
@@ -252,7 +268,7 @@ export default function Sensors() {
 
   const initialFormData = {
     name: sensors[page * rowsPerPage + selectedRow]?.name,
-    sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
+    sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?._id,
     observes: sensors[page * rowsPerPage + selectedRow]?.observes,
     serialNo: sensors[page * rowsPerPage + selectedRow]?.serialNo,
   };
@@ -260,7 +276,7 @@ export default function Sensors() {
   useEffect(() => {
     setFormData({
       name: sensors[page * rowsPerPage + selectedRow]?.name,
-      sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
+      sensorType: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?._id,
       observes: sensors[page * rowsPerPage + selectedRow]?.observes,
       serialNo: sensors[page * rowsPerPage + selectedRow]?.serialNo,
     });
@@ -335,8 +351,8 @@ export default function Sensors() {
                     <FormLabel>Serial No</FormLabel>
                     <Input
                       size="sm"
-                      value={searchText}
-                      onChange={(e) => setSelectedPropertyValue(e.target.value)}
+                      value={searchSerialNo}
+                      onChange={(e) => setSearchSerialNo(e.target.value)}
                       placeholder={t("Obs.search")}
                     />
                   </FormControl>
@@ -347,8 +363,8 @@ export default function Sensors() {
 
                     <Input
                       size="sm"
-                      value={searchText}
-                      onChange={(e) => setSelectedPropertyValue(e.target.value)}
+                      value={observes}
+                      onChange={(e) => setObserves(e.target.value)}
                       placeholder={t("Obs.search")}
                     />
                   </FormControl>
@@ -507,42 +523,35 @@ export default function Sensors() {
                       onChange={handleChange}
                     />
                   </FormControl>
-                  <FormControl sx={{ paddingBottom: 1 }}>
+                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
                     <FormLabel>Sensor Type</FormLabel>
-                    <Box display="flex" sx={{ alignItems: "center" }}>
-                      <Autocomplete
-                        size="md"
-                        sx={{ minWidth: "21.15rem" }}
-                        autoHighlight
-                        value={
-                          sensorTypeValue ||
-                          sensorTypes.find(
-                            (option) => option.id === formData.sensorType
-                          ) ||
-                          null
-                        }
-                        options={sensorTypes}
-                        getOptionLabel={(option) => option.type}
-                        getOptionValue={(option) => option.id}
-                        onChange={(event, newValue) => {
-                          setFormData({
-                            ...formData,
-                            sensorType: newValue?.id,
-                          });
-                          setSensorTypeValue(newValue);
-                        }}
-                        placeholder={sensorTypeValue}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label={t("Contribute.sensor")}
-                            InputProps={{
-                              ...params.InputProps,
-                            }}
-                          />
-                        )}
-                      />
-                    </Box>
+
+                    <Autocomplete
+                      size="md"
+                      //sx={{ minWidth: "21.15rem" }}
+                      autoHighlight
+                      value={sensorTypes.find(
+                        (option) => option.id === formData?.sensorType
+                      )}
+                      options={sensorTypes}
+                      getOptionLabel={(option) => option.type}
+                      getOptionValue={(option) => option.id}
+                      onChange={(event, newValue) => {
+                        setFormData({
+                          ...formData,
+                          sensorType: newValue?.id,
+                        });
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label={t("Contribute.sensor")}
+                          InputProps={{
+                            ...params.InputProps,
+                          }}
+                        />
+                      )}
+                    />
                   </FormControl>
 
                   <ButtonGroup
@@ -570,9 +579,10 @@ export default function Sensors() {
                 // Display the edit and delete buttons when not editing
                 <Box sx={{ py: 1, px: 1 }}>
                   <CreateSensor setNewSensorAdd={setNewSensorAdd} />
-                  {userRole === "user" &&
-                  sensors[page * rowsPerPage + selectedRow]?.useremail ===
-                    userEmail ? (
+                  {(userRole === "user" &&
+                    sensors[page * rowsPerPage + selectedRow]?.useremail ===
+                      userEmail) ||
+                  userRole === "admin" ? (
                     <>
                       <Button
                         variant="plain"

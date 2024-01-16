@@ -32,17 +32,13 @@ import {
   deleteObservation,
   searchObservations,
 } from "../../../apis/CaveObservationController.js";
-import {
-  getSensorTypeById,
-  getSensorTypes,
-} from "../../../apis/SensorTypeController.js";
-import { getUsers } from "../../../apis/UserController.js";
+import { getSensors } from "../../../apis/SensorController.js";
+import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
 import caveImage from "../../../images/cave_map.png";
 import Layout from "../../Navbar/Layout.tsx";
 import EditObservation from "./EditObservation.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles";
-import { getSensors } from "../../../apis/SensorController.js";
 
 export default function Observations() {
   const { t } = useTranslation("translation");
@@ -55,6 +51,21 @@ export default function Observations() {
   const [sensorOptions, setSensorOptions] = useState([]); // Separate state for sensor options
   const [userNameOptions, setUserNameOptions] = useState([]); // Separate state for user name options
   const [auxDeleteFile, setAuxDeleteFile] = useState(0);
+  const [userRole, SetUserRole] = React.useState(null);
+  const [userlicense, setUserlicense] = React.useState(null);
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const res = await fetchUserInfo();
+        console.log("res", res.role);
+        SetUserRole(res.role);
+        setUserlicense(res.license);
+      } catch (error) {}
+    };
+
+    fetchUserRole();
+  }, []);
+
   const fetchUserName = async () => {
     try {
       const responseUserNames = await getUsers(); // Assuming there's a function to fetch user names
@@ -122,6 +133,7 @@ export default function Observations() {
             user: `${firstAdditionalInfo[0]?.firstName} ${
               firstAdditionalInfo[0]?.lastName || ""
             }`,
+            license: firstAdditionalInfo[0]?.license,
           };
         });
 
@@ -182,6 +194,7 @@ export default function Observations() {
           user: `${firstAdditionalInfo[0]?.firstName} ${
             firstAdditionalInfo[0]?.lastName || ""
           }`,
+          license: firstAdditionalInfo[0]?.license,
         };
       });
 
@@ -526,60 +539,69 @@ export default function Observations() {
               ))}
             </Box>
             <Divider />
-            <Box sx={{ py: 2, px: 1 }}>
-              <EditObservation
-                obsvalue={observations[page * rowsPerPage + selectedRow]}
-              />
-              <Button
-                variant="plain"
-                color="warning"
-                size="sm"
-                onClick={() => setOpen(true)}
-                endDecorator={<DeleteIcon />}
-              >
-                {t("Sensors.delete")}
-              </Button>
-              <Modal open={open} onClose={() => setOpen(false)}>
-                <ModalDialog variant="outlined" role="alertdialog">
-                  <DialogTitle>
-                    <WarningRoundedIcon />
-                    Confirmation
-                  </DialogTitle>
-                  <Divider />
-                  <DialogContent>
-                    <div>
-                      {t("Sensors.delete-message")}{" "}
-                      <strong>
-                        {
-                          observations[page * rowsPerPage + selectedRow]
-                            ?.fileName
-                        }
-                      </strong>{" "}
-                      ?
-                    </div>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      variant="solid"
-                      color="danger"
-                      onClick={() => {
-                        deleteFile();
-                        setOpen(false);
-                      }}
-                    >
-                      {t("Sensors.delete")}
-                    </Button>
-                    <Button
-                      variant="plain"
-                      color="neutral"
-                      onClick={() => setOpen(false)}
-                    >
-                      {t("Settings.cancel")}
-                    </Button>
-                  </DialogActions>
-                </ModalDialog>
-              </Modal>
-            </Box>
+            {(userRole === "user" &&
+              observations[page * rowsPerPage + selectedRow]?.license ===
+                userlicense) ||
+            userRole === "admin" ? (
+              <>
+                <Box sx={{ py: 2, px: 1 }}>
+                  <EditObservation
+                    obsvalue={observations[page * rowsPerPage + selectedRow]}
+                  />
+                  <Button
+                    variant="plain"
+                    color="warning"
+                    size="sm"
+                    onClick={() => setOpen(true)}
+                    endDecorator={<DeleteIcon />}
+                  >
+                    {t("Sensors.delete")}
+                  </Button>
+                  <Modal open={open} onClose={() => setOpen(false)}>
+                    <ModalDialog variant="outlined" role="alertdialog">
+                      <DialogTitle>
+                        <WarningRoundedIcon />
+                        Confirmation
+                      </DialogTitle>
+                      <Divider />
+                      <DialogContent>
+                        <div>
+                          {t("Sensors.delete-message")}{" "}
+                          <strong>
+                            {
+                              observations[page * rowsPerPage + selectedRow]
+                                ?.fileName
+                            }
+                          </strong>{" "}
+                          ?
+                        </div>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          variant="solid"
+                          color="danger"
+                          onClick={() => {
+                            deleteFile();
+                            setOpen(false);
+                          }}
+                        >
+                          {t("Sensors.delete")}
+                        </Button>
+                        <Button
+                          variant="plain"
+                          color="neutral"
+                          onClick={() => setOpen(false)}
+                        >
+                          {t("Settings.cancel")}
+                        </Button>
+                      </DialogActions>
+                    </ModalDialog>
+                  </Modal>
+                </Box>
+              </>
+            ) : (
+              <></>
+            )}
           </TabPanel>
         </Tabs>
       </Sheet>
