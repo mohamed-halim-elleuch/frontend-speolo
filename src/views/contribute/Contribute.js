@@ -21,7 +21,7 @@ import { getSensors } from "../../apis/SensorController";
 
 export default function Contribute() {
   const { t } = useTranslation("translation");
-  const [options, setOptions] = React.useState(null);
+  const [options, setOptions] = React.useState([]);
   const [beginvalue, setBeginValue] = React.useState(null);
   const [endvalue, setEndValue] = React.useState(null);
   const [value, setValueType] = React.useState(null);
