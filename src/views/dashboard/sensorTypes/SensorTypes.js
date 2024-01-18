@@ -116,17 +116,24 @@ export default function SensorTypes() {
         );
         // Create an array of promises for the additional requests
         const additionalRequests = newData.map(async (row) => {
-          const firstAdditionalInfo = await getUsers(
-            `{"_id":"${row.createdBy}"}`
-          );
+           if (row.hasOwnProperty("createdBy")) {
+            const userid = row?.createdBy;
+            const firstAdditionalInfo = await getUsers(`{"_id":"${userid}"}`);
 
-          return {
-            ...row,
-            user: `${firstAdditionalInfo[0]?.firstName} ${
-              firstAdditionalInfo[0]?.lastName || ""
-            }`,
-            license: firstAdditionalInfo[0]?.license,
-          };
+            return {
+              ...row,
+              user: `${firstAdditionalInfo[0]?.firstName} ${
+                firstAdditionalInfo[0]?.lastName || ""
+              }`,
+              license: firstAdditionalInfo[0]?.license,
+            };
+          } else {
+            return {
+              ...row,
+              user: "",
+              license: "",
+            };
+          }
         });
 
         // Wait for all additional requests to complete
@@ -176,17 +183,25 @@ export default function SensorTypes() {
       const response = await getSensorTypes(queryString);
       setDataLength(response.length);
       const additionalRequests = response.map(async (row) => {
-        const firstAdditionalInfo = await getUsers(
-          `{"_id":"${row?.createdBy}"}`
-        ); // Replace with your actual method
+ if (row.hasOwnProperty("createdBy")) {
+            const userid = row?.createdBy;
+            const firstAdditionalInfo = await getUsers(`{"_id":"${userid}"}`);
 
-        return {
-          ...row,
-          user: `${firstAdditionalInfo[0]?.firstName} ${
-            firstAdditionalInfo[0]?.lastName || ""
-          }`,
-          license: firstAdditionalInfo[0]?.license,
-        };
+            return {
+              ...row,
+              user: `${firstAdditionalInfo[0]?.firstName} ${
+                firstAdditionalInfo[0]?.lastName || ""
+              }`,
+              license: firstAdditionalInfo[0]?.license,
+            };
+          } else {
+            // Handle the case when 'createdBy' property is not present in the 'row' object
+            return {
+              ...row,
+              user: "",
+              license: "",
+            };
+          }
       });
 
       // Wait for all additional requests to complete
