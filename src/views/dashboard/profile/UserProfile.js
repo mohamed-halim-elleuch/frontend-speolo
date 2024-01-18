@@ -48,12 +48,12 @@ export default function UserProfile() {
   };
 
   const downloadFile = (row) => {
-    //window.open(row.filePath, '_blank');
-    const parts = row?.filePath.split("/");
+    window.open(row.filePath, '_blank');
+    //const parts = row?.filePath.split("/");
 
     // Get the last part of the array (which is the part after the last "/")
-    const fileName = parts[parts.length - 1];
-    window.open("http://127.0.0.1:8083/uploads/" + fileName, "_blank");
+    //const fileName = parts[parts.length - 1];
+    //window.open("http://127.0.0.1:8083/uploads/" + fileName, "_blank");
   };
 
   useEffect(() => {
