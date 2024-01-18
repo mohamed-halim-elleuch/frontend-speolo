@@ -72,6 +72,10 @@ const MapLogic = () => {
     if (type === "rectangle") {
       updateBounds(e.layer);
     }
+
+    if (type === "circle") {
+      console.log("aa", e.layer.getLatLng(), e.layer.getRadius());
+    }
     console.log("_onCreated: something else created:", type, e);
   };
 

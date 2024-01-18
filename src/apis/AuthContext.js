@@ -2,8 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { fetchUserInfo } from "./UserController";
 
-const ipAddress = process.env.REACT_APP_API_BASE_URL;
-const port = process.env.REACT_APP_PORT;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const AuthContext = createContext();
 
@@ -18,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const email = formSignIn.email;
     const password = formSignIn.password;
     axios
-      .post(`http://${ipAddress}:${port}/api/user/login`, { email, password })
+      .post(`${API_BASE_URL}/api/user/login`, { email, password })
       .then((response) => {
         // Assuming the response contains a success status indicating successful login
         const data = response.data;
@@ -66,10 +65,13 @@ export const AuthProvider = ({ children }) => {
     const license = formSignUp.license;
 
     try {
-      const response = await axios.post(
-        `http://${ipAddress}:${port}/api/user/register`,
-        { email, password, firstName, lastName, license }
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/user/register`, {
+        email,
+        password,
+        firstName,
+        lastName,
+        license,
+      });
 
       return response.data, "ok";
     } catch (error) {

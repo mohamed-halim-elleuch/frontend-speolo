@@ -2,13 +2,7 @@ version: '3'
 services:
   frontend:
     container_name: frontend-speolo
-    image: frontend
+    build: .
     working_dir: /app
     ports:
       - "3000:3000"
-<<<<<<< HEAD
-    volumes:
-      - './app:/app'
-      - '/app/node_modules'
-=======
->>>>>>> 11c2afd1ef3ae9799dfce0bab7053dae167b2e98

@@ -22,19 +22,12 @@ yarn install
 # run project  
 npm start  
 
-<<<<<<< HEAD
-=======
 
 # docker run
 docker build -t frontend .
 docker-compose up
->>>>>>> 11c2afd1ef3ae9799dfce0bab7053dae167b2e98
 
 
 
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 11c2afd1ef3ae9799dfce0bab7053dae167b2e98
