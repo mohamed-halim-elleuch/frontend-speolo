@@ -15,6 +15,7 @@ const SignIn = () => {
   const [isRightPanelActive, setIsRightPanelActive] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
+  const [message, setMessage] = useState("");
   const [formSignUp, setFormSignUp] = useState({
     firstName: "",
     lastName: "",
@@ -35,6 +36,8 @@ const SignIn = () => {
 
   const handleClose = () => {
     setState({ ...state, open: false });
+    setMessage("");
+    setCheckPassword(false);
   };
 
   const handleSignUpClick = () => {
@@ -64,7 +67,9 @@ const SignIn = () => {
     try {
       const userData = await login(formSignIn, navigate);
     } catch (error) {
-      console.error("Login failed", error);
+      setCheckPassword(true);
+      setMessage(error.message);
+      setState({ vertical: "top", horizontal: "center", open: true });
     }
   };
 
@@ -72,6 +77,7 @@ const SignIn = () => {
     event.preventDefault();
     if (formSignUp.password !== formSignUp.confirm_password) {
       setCheckPassword(true);
+      setMessage("Passwords don't match. Please try again!");
       setState({ vertical: "top", horizontal: "center", open: true });
     }
     try {
@@ -86,7 +92,9 @@ const SignIn = () => {
         }));
       }
     } catch (error) {
-      console.error("Login failed", error);
+      setCheckPassword(true);
+      setMessage(error.message);
+      setState({ vertical: "top", horizontal: "center", open: true });
     }
   };
 
@@ -97,11 +105,10 @@ const SignIn = () => {
           anchorOrigin={{ vertical, horizontal }}
           open={open}
           onClose={handleClose}
-          message="Passwords don't match. Please try again!"
           key={vertical + horizontal}
         >
           <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
-            Passwords don't match. Please try again!
+            {message}
           </Alert>
         </Snackbar>
       ) : (

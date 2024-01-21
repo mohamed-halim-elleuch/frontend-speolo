@@ -9,7 +9,6 @@ export const SignUpRequest = async (formSignUp) => {
   const firstName = formSignUp.firstName;
   const lastName = formSignUp.lastName;
   const license = formSignUp.license;
-
   try {
     const response = await axios.post(`${API_BASE_URL}/api/user/register`, {
       email,
@@ -21,6 +20,6 @@ export const SignUpRequest = async (formSignUp) => {
 
     return response.data;
   } catch (error) {
-    console.error(error);
+    throw new Error(error?.response?.data.err);
   }
 };

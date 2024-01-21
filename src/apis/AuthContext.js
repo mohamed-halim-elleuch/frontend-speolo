@@ -14,39 +14,43 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (formSignIn, navigate) => {
-    const email = formSignIn.email;
-    const password = formSignIn.password;
-    axios
-      .post(`${API_BASE_URL}/api/user/login`, { email, password })
-      .then((response) => {
-        // Assuming the response contains a success status indicating successful login
-        const data = response.data;
-        if (data.success) {
-          // Check to see if we stored our cookie's JWT
-
-          // Retrieve the bearer token from the response
-          const token = data.data.token;
-          const email = data.data.email;
-          // Save the token to local storage or session storage for future authenticated requests
-          localStorage.setItem("token", token);
-          localStorage.setItem("email", email);
-
-          setIsAuthenticated(true);
-          // Redirect to the user's dashboard
-
-          navigate("dashboard");
-          window.location.reload();
-
-          return data;
-        } else {
-          // Display error message for wrong login credentials
-          alert("Incorrect email or password. Please try again.");
-        }
-      })
-      .catch((error) => {
-        // Handle any errors that occurred during the request
-        console.error(error);
+    const { email, password } = formSignIn;
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/user/login`, {
+        email,
+        password,
       });
+      const data = response.data;
+
+      if (data.success) {
+        // Check to see if we stored our cookie's JWT
+
+        // Retrieve the bearer token from the response
+        const token = data.data.token;
+        const email = data.data.email;
+        // Save the token to local storage or session storage for future authenticated requests
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", email);
+
+        setIsAuthenticated(true);
+        // Redirect to the user's dashboard
+
+        navigate("dashboard");
+        window.location.reload();
+
+        return data;
+      } else {
+        // Display error message for wrong login credentials
+        alert("Incorrect email or password. Please try again.");
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the request
+      if (error.response && error.response.data && error.response.data.err) {
+        throw new Error("Error: " + error.response.data.err);
+      } else {
+        throw new Error("An unexpected error occurred.");
+      }
+    }
   };
 
   const logout = () => {

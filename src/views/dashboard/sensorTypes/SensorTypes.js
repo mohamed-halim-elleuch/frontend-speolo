@@ -72,11 +72,15 @@ export default function SensorTypes() {
     fetchUserRole();
   }, []);
   const getLabelForValue = (values) => {
+    console.log("p1", values);
+    console.log("p2", properties);
     return values?.map((value) => {
-      const property = properties.find(
-        (prop) => prop?.value?.toLowerCase() === value?.toLowerCase()
+      const property = properties?.find(
+        (prop) =>
+          prop?.value?.toLowerCase() ===
+          (value?.toLowerCase() || value?.label?.toLowerCase())
       );
-      return property ? property.label : "Unknown Label";
+      return property ? property?.label : value;
     });
   };
 
@@ -116,7 +120,7 @@ export default function SensorTypes() {
         );
         // Create an array of promises for the additional requests
         const additionalRequests = newData.map(async (row) => {
-           if (row.hasOwnProperty("createdBy")) {
+          if (row.hasOwnProperty("createdBy")) {
             const userid = row?.createdBy;
             const firstAdditionalInfo = await getUsers(`{"_id":"${userid}"}`);
 
@@ -183,25 +187,25 @@ export default function SensorTypes() {
       const response = await getSensorTypes(queryString);
       setDataLength(response.length);
       const additionalRequests = response.map(async (row) => {
- if (row.hasOwnProperty("createdBy")) {
-            const userid = row?.createdBy;
-            const firstAdditionalInfo = await getUsers(`{"_id":"${userid}"}`);
+        if (row.hasOwnProperty("createdBy")) {
+          const userid = row?.createdBy;
+          const firstAdditionalInfo = await getUsers(`{"_id":"${userid}"}`);
 
-            return {
-              ...row,
-              user: `${firstAdditionalInfo[0]?.firstName} ${
-                firstAdditionalInfo[0]?.lastName || ""
-              }`,
-              license: firstAdditionalInfo[0]?.license,
-            };
-          } else {
-            // Handle the case when 'createdBy' property is not present in the 'row' object
-            return {
-              ...row,
-              user: "",
-              license: "",
-            };
-          }
+          return {
+            ...row,
+            user: `${firstAdditionalInfo[0]?.firstName} ${
+              firstAdditionalInfo[0]?.lastName || ""
+            }`,
+            license: firstAdditionalInfo[0]?.license,
+          };
+        } else {
+          // Handle the case when 'createdBy' property is not present in the 'row' object
+          return {
+            ...row,
+            user: "",
+            license: "",
+          };
+        }
       });
 
       // Wait for all additional requests to complete
@@ -226,7 +230,9 @@ export default function SensorTypes() {
         sensors[page * rowsPerPage + selectedRow]?._id,
         {
           type: formData.type,
-          properties: formData.properties,
+          properties: formData.properties.map((v) =>
+            v.hasOwnProperty("value") ? v.value : v
+          ),
           manufacturer: formData.manufacturer,
           // Include any other properties you want to update
         }
@@ -373,11 +379,11 @@ export default function SensorTypes() {
                       autoHighlight
                       {...register("properties")}
                       options={properties} // Assuming sensorOptions is an array of objects with id and type properties
-                      getOptionLabel={(option) => option.label}
-                      getOptionValue={(option) => option.value} // Assuming id is the property you want to capture
+                      getOptionLabel={(option) => option?.label}
+                      getOptionValue={(option) => option?.value} // Assuming id is the property you want to capture
                       value={
                         properties.find(
-                          (option) => option.value === selectedPropertyValue
+                          (option) => option?.value === selectedPropertyValue
                         ) || null
                       }
                       onChange={(e, newValue) =>
@@ -539,7 +545,7 @@ export default function SensorTypes() {
                     <FormLabel>
                       {t("Contribute.add-sensor-properties")}
                     </FormLabel>
-                    <Autocomplete
+                    {/*<Autocomplete
                       multiple
                       size="sm"
                       id="properties"
@@ -550,6 +556,47 @@ export default function SensorTypes() {
                           target: { name: "properties", value: newValue },
                         })
                       }
+                    />*/}
+                    <Autocomplete
+                      multiple
+                      size="sm"
+                      id="properties"
+                      options={properties}
+                      value={formData.properties}
+                      onChange={(event, newValue) => {
+                        handleChange({
+                          target: { name: "properties", value: newValue },
+                        });
+                      }}
+                      filterOptions={(options, params) => {
+                        const filtered = options.filter((option) => {
+                          const label = option.hasOwnProperty("label")
+                            ? option.label
+                            : option;
+                          return label.includes(params.inputValue);
+                        });
+
+                        const { inputValue } = params;
+                        // Suggest the creation of a new value
+                        const isExisting = options.some(
+                          (option) => inputValue === option.label
+                        );
+                        if (inputValue !== "" && !isExisting) {
+                          filtered.push({
+                            value: inputValue,
+                            label: inputValue,
+                          });
+                        }
+
+                        return filtered;
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          label="Properties"
+                        />
+                      )}
                     />
                   </FormControl>
                   <FormControl sx={{ paddingBottom: 2, width: "90%" }}>
