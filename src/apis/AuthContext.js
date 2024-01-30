@@ -27,10 +27,10 @@ export const AuthProvider = ({ children }) => {
 
         // Retrieve the bearer token from the response
         const token = data.data.token;
-        const email = data.data.email;
+        //const email = data.data.email;
         // Save the token to local storage or session storage for future authenticated requests
         localStorage.setItem("token", token);
-        localStorage.setItem("email", email);
+        //localStorage.setItem("email", email);
 
         setIsAuthenticated(true);
         // Redirect to the user's dashboard
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       // Handle any errors that occurred during the request
       if (error.response && error.response.data && error.response.data.err) {
-        throw new Error("Error: " + error.response.data.err);
+        throw new Error(error.response.data.err);
       } else {
         throw new Error("An unexpected error occurred.");
       }

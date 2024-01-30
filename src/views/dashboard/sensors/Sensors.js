@@ -38,11 +38,13 @@ import CreateSensor from "./CreateSensor.js";
 import SmallTable from "./SmallTable.js";
 import TableFiles from "./TableFiles.js";
 import { getSensorTypes } from "../../../apis/SensorTypeController.js";
+import ShowMessage from "../../common/ShowMessage.js";
 
 export default function Sensors() {
   const { t } = useTranslation("translation");
   const [newSensorAdd, setNewSensorAdd] = React.useState("");
   const { register, handleSubmit } = useForm();
+  const [updateMessage, setUpdateMessage] = React.useState(null);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [page, setPage] = React.useState(0);
   const [dataLength, setDataLength] = React.useState(0);
@@ -51,14 +53,14 @@ export default function Sensors() {
   const [open, setOpen] = React.useState(false);
   const [sensorTypes, setSensorTypes] = React.useState([]);
   const [isEditing, setIsEditing] = React.useState(false);
-  const [sensorTypeValue, setSensorTypeValue] = React.useState(null);
   const [userRole, SetUserRole] = React.useState(null);
   const [userEmail, setUseremail] = React.useState(null);
+  const [userId, setUserId] = React.useState(null);
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
         const res = await fetchUserInfo();
-        console.log("res", res.role);
+        setUserId(res._id);
         SetUserRole(res.role);
         setUseremail(res.license);
       } catch (error) {}
@@ -75,7 +77,12 @@ export default function Sensors() {
   const fetchSensorType = async () => {
     try {
       const responseSensor = await getSensors();
-      setDataLength(responseSensor.data.length);
+      const filteredObservations = responseSensor.data.filter(
+        (row) =>
+          (userRole === "user" && userId === row.createdBy) ||
+          userRole === "admin"
+      );
+      setDataLength(filteredObservations.length);
     } catch (error) {}
   };
 
@@ -93,7 +100,7 @@ export default function Sensors() {
             )
           )
         );
-        setDataLength(responseSensor.data.length);
+        // setDataLength(responseSensor.data.length);
       } catch (error) {}
     };
 
@@ -102,7 +109,8 @@ export default function Sensors() {
 
   useEffect(() => {
     fetchSensorType();
-  }, [open, newSensorAdd]);
+  }, [userId, open, newSensorAdd]);
+
   const [prevPage, setPrevPage] = useState(0);
 
   useEffect(() => {
@@ -114,24 +122,32 @@ export default function Sensors() {
       try {
         const newData = await getSensors("", page * rowsPerPage, rowsPerPage);
         // Create an array of promises for the additional requests
-        const additionalRequests = newData.data.map(async (row) => {
-          const firstAdditionalInfo = await getUsers(
-            `{"_id":"${row.createdBy}"}`
-          );
-          return {
-            ...row,
-            user: `${firstAdditionalInfo[0]?.firstName} ${
-              firstAdditionalInfo[0]?.lastName || ""
-            }`,
-            useremail: firstAdditionalInfo[0]?.license,
-          };
-        });
+
+        const additionalRequests = newData.data
+          .filter(
+            (row) =>
+              (userRole == "user" && userId == row.createdBy) ||
+              userRole == "admin"
+          )
+          .map(async (row) => {
+            const firstAdditionalInfo = await getUsers(
+              `{"_id":"${row.createdBy}"}`
+            );
+            return {
+              ...row,
+              user: `${firstAdditionalInfo[0]?.firstName} ${
+                firstAdditionalInfo[0]?.lastName || ""
+              }`,
+              useremail: firstAdditionalInfo[0]?.license,
+            };
+          });
 
         // Wait for all additional requests to complete
         const additionalResults = await Promise.all(additionalRequests);
 
         if (page === 0) {
           setSensors(additionalResults);
+          //setDataLength(additionalResults.length);
           setPrevPage(0);
         } else {
           setSensors((prevData) => {
@@ -146,11 +162,11 @@ export default function Sensors() {
     ) {
       fetchSensors();
     }
-  }, [rowsPerPage, page, open, isEditing, newSensorAdd]);
+  }, [rowsPerPage, page, open, isEditing, newSensorAdd, userId]);
 
   const [searchText, setSearchText] = useState("");
   const [searchSerialNo, setSearchSerialNo] = useState("");
-  const [observes, setObserves] = useState("");
+  //const [observes, setObserves] = useState("");
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
 
   const handleSearch = async (e) => {
@@ -167,9 +183,9 @@ export default function Sensors() {
         queryObject.serialNo = searchSerialNo;
       }
 
-      if (observes) {
-        queryObject.observes = observes;
-      }
+      // if (observes) {
+      //   queryObject.observes = observes;
+      // }
 
       if (selectedManufacturer) {
         console.log(selectedManufacturer);
@@ -178,23 +194,29 @@ export default function Sensors() {
       const queryString = JSON.stringify(queryObject);
       // Make the API request using Axios with the constructed query object
       const response = await getSensors(queryString);
-      setDataLength(response.data.length);
-      const additionalRequests = response.data.map(async (row) => {
-        const firstAdditionalInfo = await getUsers(
-          `{"_id":"${row?.createdBy}"}`
-        ); // Replace with your actual method
 
-        return {
-          ...row,
-          user: `${firstAdditionalInfo[0]?.firstName} ${
-            firstAdditionalInfo[0]?.lastName || ""
-          }`,
-          useremail: firstAdditionalInfo[0]?.license,
-        };
-      });
+      const additionalRequests = response.data
+        .filter(
+          (row) =>
+            (userRole === "user" && userId === row.createdBy) ||
+            userRole === "admin"
+        )
+        .map(async (row) => {
+          const firstAdditionalInfo = await getUsers(
+            `{"_id":"${row.createdBy}"}`
+          );
+          return {
+            ...row,
+            user: `${firstAdditionalInfo[0]?.firstName} ${
+              firstAdditionalInfo[0]?.lastName || ""
+            }`,
+            useremail: firstAdditionalInfo[0]?.license,
+          };
+        });
 
       // Wait for all additional requests to complete
       const additionalResults = await Promise.all(additionalRequests);
+      setDataLength(additionalResults.length);
       setSensors(additionalResults);
     } catch (error) {
       setSensors([]);
@@ -210,24 +232,39 @@ export default function Sensors() {
   };
 
   const handleSaveClick = async () => {
+    setUpdateMessage({});
     try {
       const res = await updateSensor(
         sensors[page * rowsPerPage + selectedRow]?._id,
         {
           name: formData.name,
-          observes: formData.observes,
+          //observes: formData.observes,
           serialNo: formData.serialNo,
           sensorTypeId: formData.sensorType,
         }
       );
+
       // Reset the state and hide the form
       setIsEditing(false);
     } catch (error) {
       // Handle errors as needed
       console.error("Error updating sensor type:", error);
+      setUpdateMessage({
+        open: true,
+        message: error.message,
+        status: "error",
+      });
     }
   };
+  useEffect(() => {
+    if (updateMessage) {
+      const timer = setTimeout(() => {
+        setUpdateMessage(null);
+      }, 6000);
 
+      return () => clearTimeout(timer);
+    }
+  }, [updateMessage]);
   const deleteSensors = async () => {
     try {
       console.log(sensors[page * rowsPerPage + selectedRow]);
@@ -252,10 +289,10 @@ export default function Sensors() {
         sensors[page * rowsPerPage + selectedRow]?.serialNo || "Not defined",
     },
 
-    {
-      label: "observes",
-      value: sensors[page * rowsPerPage + selectedRow]?.observes,
-    },
+    // {
+    //   label: "observes",
+    //   value: sensors[page * rowsPerPage + selectedRow]?.observes,
+    // },
     {
       label: `${t("Sensors.author")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.user || "",
@@ -321,6 +358,13 @@ export default function Sensors() {
             },
           }}
         >
+          {updateMessage && (
+            <ShowMessage
+              openvalue={updateMessage.open}
+              message={updateMessage.message}
+              status={updateMessage.status}
+            />
+          )}
           <form onSubmit={handleSearch} style={{ padding: "0px" }}>
             <Box sx={{ width: 1 }}>
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
@@ -346,7 +390,7 @@ export default function Sensors() {
                   </Button>
                 </Box>
 
-                <Box gridColumn="span 4">
+                <Box gridColumn="span 6">
                   <FormControl size="sm">
                     <FormLabel>Serial No</FormLabel>
                     <Input
@@ -357,7 +401,7 @@ export default function Sensors() {
                     />
                   </FormControl>
                 </Box>
-                <Box gridColumn="span 4">
+                {/* <Box gridColumn="span 4">
                   <FormControl size="sm">
                     <FormLabel>Observes</FormLabel>
 
@@ -368,8 +412,8 @@ export default function Sensors() {
                       placeholder={t("Obs.search")}
                     />
                   </FormControl>
-                </Box>
-                <Box gridColumn="span 4">
+                </Box> */}
+                <Box gridColumn="span 6">
                   <FormControl size="sm">
                     <FormLabel>Sensor Type</FormLabel>
                     <Autocomplete
@@ -417,7 +461,7 @@ export default function Sensors() {
             sx={{
               borderRadius: "sm",
               gridColumn: "1/-1",
-              display: { xs: "none", md: "flex" },
+              display: { md: "flex" },
             }}
           >
             <TableFiles
@@ -431,7 +475,7 @@ export default function Sensors() {
               setSelectedRow={setSelectedRow}
             />
           </Sheet>
-          <SmallTable items={sensors} />
+          {/* <SmallTable items={sensors} /> */}
         </Box>
       </Layout.Main>
       <Sheet
@@ -497,8 +541,8 @@ export default function Sensors() {
                     <Input
                       value={formData?.name}
                       onChange={handleChange}
-                      label="Type"
-                      name="type"
+                      label="Name"
+                      name="name"
                       variant="outlined"
                       size="md"
                     />
@@ -508,13 +552,13 @@ export default function Sensors() {
                     <Input
                       value={formData?.serialNo}
                       onChange={handleChange}
-                      label="Type"
-                      name="type"
+                      label="Serial number"
+                      name="serialNo"
                       variant="outlined"
                       size="md"
                     />
                   </FormControl>
-                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
+                  {/* <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
                     <FormLabel>Observes</FormLabel>
                     <Input
                       size="md"
@@ -522,8 +566,8 @@ export default function Sensors() {
                       value={formData?.observes}
                       onChange={handleChange}
                     />
-                  </FormControl>
-                  <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
+                  </FormControl> */}
+                  <FormControl sx={{ paddingBottom: 2, width: "90%" }}>
                     <FormLabel>Sensor Type</FormLabel>
 
                     <Autocomplete

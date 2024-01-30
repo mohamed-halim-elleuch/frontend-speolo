@@ -32,7 +32,6 @@ export const getUsers = async (filter, skip, take, sortBy) => {
 
     return response.data;
   } catch (error) {
-    console.error("Error fetching users:", error);
     throw error;
   }
 };

@@ -43,7 +43,11 @@ export const createSensorType = async (sensorTypeData) => {
     return response.data;
   } catch (error) {
     console.error("Error creating sensor type:", error.response.data.err);
-    throw error;
+    if (error.response && error.response.data && error.response.data.err) {
+      throw new Error(error.response.data.err);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
   }
 };
 

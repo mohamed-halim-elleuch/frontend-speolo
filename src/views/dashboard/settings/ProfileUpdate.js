@@ -94,7 +94,7 @@ export default function ProfileUpdate() {
     if (updateMessage) {
       const timer = setTimeout(() => {
         setUpdateMessage(null);
-      }, 3000); // Reset the message after 3 seconds
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -234,7 +234,6 @@ export default function ProfileUpdate() {
                 <FormControl>
                   <FormLabel>{t("Settings.license")}</FormLabel>
                   <Input
-                    readOnly
                     size="sm"
                     value={formData.license}
                     onChange={(e) =>

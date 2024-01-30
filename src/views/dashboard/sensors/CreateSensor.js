@@ -8,15 +8,12 @@ import Input from "@mui/joy/Input";
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
 import Stack from "@mui/joy/Stack";
-import * as React from "react";
 import Box from "@mui/material/Box";
-import { useTranslation } from "react-i18next";
 import TextField from "@mui/material/TextField";
-import {
-  createSensorType,
-  getSensorTypes,
-} from "../../../apis/SensorTypeController";
+import * as React from "react";
+import { useTranslation } from "react-i18next";
 import { createSensor } from "../../../apis/SensorController";
+import { getSensorTypes } from "../../../apis/SensorTypeController";
 
 export default function CreateSensor({ setNewSensorAdd }) {
   const { t } = useTranslation("translation");
@@ -26,7 +23,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
   const [formData, setFormData] = React.useState({
     name: "",
     serialNo: "",
-    observes: "",
+    //observes: "",
     sensorTypeId: "",
   });
   React.useEffect(() => {
@@ -49,16 +46,12 @@ export default function CreateSensor({ setNewSensorAdd }) {
   }, []);
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const response = await createSensor(formData);
-
-    setNewSensorAdd(response);
     try {
-      // Assuming you have an API endpoint for adding a new sensor
+      const response = await createSensor(formData);
+      setNewSensorAdd(response);
     } catch (error) {
       console.error("Error adding sensor:", error.message);
     }
-
     setOpen(false);
   };
   const handleInnerFormSubmit = (event) => {
@@ -112,7 +105,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl>
+              {/* <FormControl>
                 <FormLabel>Observes</FormLabel>
                 <Input
                   autoFocus
@@ -120,7 +113,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
                   value={formData.observes}
                   onChange={handleChange}
                 />
-              </FormControl>
+              </FormControl> */}
 
               <FormControl>
                 <FormLabel>Sensor Type</FormLabel>

@@ -93,6 +93,8 @@ export default function SearchPage() {
   const onSubmit = async (data) => {
     try {
       if (data.caveID === "") {
+        sessionStorage.setItem("CaveNameValue", data.caveName);
+        sessionStorage.setItem("CaveIDValue", "");
         const response = await searchCaves(data.caveName, data.countryName);
         const responses = await Promise.all(
           response.results.map(async (row) => {
@@ -104,6 +106,8 @@ export default function SearchPage() {
         );
         setRows(responses);
       } else {
+        sessionStorage.setItem("CaveIDValue", data.caveID);
+        sessionStorage.setItem("CaveNameValue", "");
         const response = await getCaveById(data.caveID);
         const county = response[`entrances`]?.[0]["county"];
         const country = response[`entrances`]?.[0]["country"];
@@ -150,6 +154,7 @@ export default function SearchPage() {
                 <TextField
                   {...register("caveName")}
                   name="caveName"
+                  defaultValue={sessionStorage.getItem("CaveNameValue") || ""}
                   label={t("Search.cave-name")}
                   size="small"
                   id="outlined-start-adornment"
@@ -159,6 +164,7 @@ export default function SearchPage() {
                 <TextField
                   {...register("caveID")}
                   name="caveID"
+                  defaultValue={sessionStorage.getItem("CaveIDValue") || ""}
                   size="small"
                   label={t("Search.cave-id")}
                   id="outlined-start-adornment"

@@ -43,7 +43,11 @@ export const createSensor = async (sensorData) => {
     return response.data;
   } catch (error) {
     console.error("Error creating sensor :", error);
-    throw error;
+    if (error.response && error.response.data && error.response.data.err) {
+      throw new Error(error.response.data.err);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
   }
 };
 
@@ -59,7 +63,11 @@ export const updateSensor = async (id, sensorData) => {
     return response.data;
   } catch (error) {
     console.error("Error updating sensor :", error);
-    throw error;
+    if (error.response && error.response.data && error.response.data.err) {
+      throw new Error(error.response.data.err);
+    } else {
+      throw new Error("An unexpected error occurred.");
+    }
   }
 };
 

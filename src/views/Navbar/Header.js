@@ -40,6 +40,7 @@ export default function Header() {
     lastName: "",
     email: "",
     profileImage: "",
+    role: "",
   });
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function Header() {
           lastName: userData.lastName,
           email: userData.email,
           profileImage: userData.profileImage,
+          role: userData.role,
         });
       } catch (error) {
         console.error("Error fetching user information", error);
@@ -196,7 +198,7 @@ export default function Header() {
           onClose={() => setOpen(false)}
         >
           <ModalClose />
-          <DialogTitle>Speolo</DialogTitle>
+          <DialogTitle>Karstlink</DialogTitle>
           <Box sx={{ px: 1 }}>
             <Navigation />
           </Box>
@@ -210,7 +212,7 @@ export default function Header() {
           alignItems: "center",
         }}
       >
-        <Notifications />
+        {userData.role === "admin" ? <Notifications /> : <></>}
         <LanguageSelector color="black" />
 
         <Dropdown>

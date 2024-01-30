@@ -17,7 +17,7 @@ import { searchObservations } from "../../apis/CaveObservationController.js";
 import { getSensorTypeById } from "../../apis/SensorTypeController.js";
 import { getUsers } from "../../apis/UserController.js";
 import FileList from "./FileList.tsx";
-import FileTable from "./FileTable.tsx";
+import FileTable from "./FileTable.jsx";
 
 const useEnhancedEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
@@ -117,13 +117,6 @@ export default function ObservationFiles() {
             }}
           >
             <Typography level="h2">{t("Obs.title")}</Typography>
-            <Button
-              color="primary"
-              startDecorator={<DownloadRoundedIcon />}
-              size="sm"
-            >
-              {t("Obs.download")}
-            </Button>
           </Box>
           <FileTable rows={rows} />
           <FileList listItems={rows} />

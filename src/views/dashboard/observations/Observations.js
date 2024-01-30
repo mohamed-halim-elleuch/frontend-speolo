@@ -53,11 +53,12 @@ export default function Observations() {
   const [auxDeleteFile, setAuxDeleteFile] = useState(0);
   const [userRole, SetUserRole] = React.useState(null);
   const [userlicense, setUserlicense] = React.useState(null);
+  const [userId, setUserId] = React.useState(null);
   useEffect(() => {
     const fetchUserRole = async () => {
       try {
         const res = await fetchUserInfo();
-        console.log("res", res.role);
+        setUserId(res._id);
         SetUserRole(res.role);
         setUserlicense(res.license);
       } catch (error) {}
@@ -99,15 +100,22 @@ export default function Observations() {
   useEffect(() => {
     const fetchObservations = async () => {
       try {
-        const data = await searchObservations();
-        setDataLength(data.length);
+        const allObservations = await searchObservations();
+
+        const filteredObservations = allObservations.filter(
+          (row) =>
+            (userRole === "user" && userId === row.createdBy) ||
+            userRole === "admin"
+        );
+
+        setDataLength(filteredObservations.length);
       } catch (error) {}
     };
 
     fetchObservations();
     fetchSensorType();
     fetchUserName();
-  }, [auxDeleteFile]);
+  }, [userId, auxDeleteFile]);
   const [prevPage, setPrevPage] = useState(0);
 
   useEffect(() => {
@@ -123,19 +131,24 @@ export default function Observations() {
           rowsPerPage
         );
         // Create an array of promises for the additional requests
-        const additionalRequests = newData.map(async (row) => {
-          const firstAdditionalInfo = await getUsers(
-            `{"_id":"${row.createdBy}"}`
-          ); // Replace with your actual method
-
-          return {
-            ...row,
-            user: `${firstAdditionalInfo[0]?.firstName} ${
-              firstAdditionalInfo[0]?.lastName || ""
-            }`,
-            license: firstAdditionalInfo[0]?.license,
-          };
-        });
+        const additionalRequests = newData
+          .filter(
+            (row) =>
+              (userRole === "user" && userId === row.createdBy) ||
+              userRole === "admin"
+          )
+          .map(async (row) => {
+            const firstAdditionalInfo = await getUsers(
+              `{"_id":"${row.createdBy}"}`
+            );
+            return {
+              ...row,
+              user: `${firstAdditionalInfo[0]?.firstName} ${
+                firstAdditionalInfo[0]?.lastName || ""
+              }`,
+              license: firstAdditionalInfo[0]?.license,
+            };
+          });
 
         // Wait for all additional requests to complete
         const additionalResults = await Promise.all(additionalRequests);
@@ -156,7 +169,7 @@ export default function Observations() {
     ) {
       fetchObservations();
     }
-  }, [rowsPerPage, page]);
+  }, [rowsPerPage, page, dataLength]);
 
   const [searchText, setSearchText] = useState("");
   const [selectedSensorId, setSelectedSensorId] = useState(null);
@@ -183,24 +196,31 @@ export default function Observations() {
       const queryString = JSON.stringify(queryObject);
       // Make the API request using Axios with the constructed query object
       const response = await searchObservations(queryString);
-      setDataLength(response.length);
-      const additionalRequests = response.map(async (row) => {
-        const firstAdditionalInfo = await getUsers(
-          `{"_id":"${row.createdBy}"}`
-        ); // Replace with your actual method
 
-        return {
-          ...row,
-          user: `${firstAdditionalInfo[0]?.firstName} ${
-            firstAdditionalInfo[0]?.lastName || ""
-          }`,
-          license: firstAdditionalInfo[0]?.license,
-        };
-      });
+      const additionalRequests = response
+        .filter(
+          (row) =>
+            (userRole === "user" && userId === row.createdBy) ||
+            userRole === "admin"
+        )
+        .map(async (row) => {
+          const firstAdditionalInfo = await getUsers(
+            `{"_id":"${row.createdBy}"}`
+          ); // Replace with your actual method
+
+          return {
+            ...row,
+            user: `${firstAdditionalInfo[0]?.firstName} ${
+              firstAdditionalInfo[0]?.lastName || ""
+            }`,
+            license: firstAdditionalInfo[0]?.license,
+          };
+        });
 
       // Wait for all additional requests to complete
       const additionalResults = await Promise.all(additionalRequests);
       setObservations(additionalResults);
+      setDataLength(observations.length);
     } catch (error) {
       setObservations([]);
       console.error("Error fetching observations:", error);
@@ -241,7 +261,7 @@ export default function Observations() {
     };
 
     fetchObservationDetails();
-  }, [selectedRow, page, rowsPerPage]);
+  }, [selectedRow, page, rowsPerPage, observations[0]?.fileName]);
 
   const filedetails = [
     {
@@ -326,7 +346,7 @@ export default function Observations() {
         gridTemplateColumns: {
           xs: "1fr",
           sm: "minmax(450px, 1fr)",
-          md: "  minmax(550px, 1fr) minmax(250px, 400px)",
+          md: "  minmax(500px, 1fr) minmax(250px, 410px)",
         },
 
         minHeight: "92vh",
@@ -410,6 +430,7 @@ export default function Observations() {
                   <FormControl size="sm">
                     <Autocomplete
                       size="small"
+                      disabled={userRole !== "admin"}
                       autoHighlight
                       id="createdBy"
                       options={userNameOptions} // Assuming userNameOptions is an array of objects with id and name properties
@@ -507,7 +528,7 @@ export default function Observations() {
             </Tab>
           </TabList>
           <TabPanel value={0} sx={{ p: 0 }}>
-            <AspectRatio ratio="21/9">
+            <AspectRatio ratio="21/8">
               <img alt="" src={caveImage} />
             </AspectRatio>
             <Divider />
@@ -530,7 +551,7 @@ export default function Observations() {
                       color: "#171A1C",
                       wordWrap: "break-word",
                       whiteSpace: "normal",
-                      width: "238px",
+                      width: "240px",
                     }}
                   >
                     {item?.value}

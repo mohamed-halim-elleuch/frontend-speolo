@@ -4,15 +4,11 @@ import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
 import Checkbox from "@mui/joy/Checkbox";
 import Divider from "@mui/joy/Divider";
-import Dropdown from "@mui/joy/Dropdown";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
 import IconButton, { iconButtonClasses } from "@mui/joy/IconButton";
 import Input from "@mui/joy/Input";
 import Link from "@mui/joy/Link";
-import Menu from "@mui/joy/Menu";
-import MenuButton from "@mui/joy/MenuButton";
-import MenuItem from "@mui/joy/MenuItem";
 import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import ModalDialog from "@mui/joy/ModalDialog";
@@ -21,46 +17,67 @@ import Select from "@mui/joy/Select";
 import Sheet from "@mui/joy/Sheet";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // icons
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import SearchIcon from "@mui/icons-material/Search";
 
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import MoreHorizRoundedIcon from "@mui/icons-material/MoreHorizRounded";
 
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 
+import { Autocomplete, MenuItem, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { getSensors } from "../../apis/SensorController";
+import { getUsers } from "../../apis/UserController";
+import { getSensorTypes } from "../../apis/SensorTypeController";
 
-function RowMenu() {
-  const { t } = useTranslation("translation");
-  return (
-    <Dropdown>
-      <MenuButton
-        slots={{ root: IconButton }}
-        slotProps={{ root: { variant: "plain", color: "neutral", size: "sm" } }}
-      >
-        <MoreHorizRoundedIcon />
-      </MenuButton>
-      <Menu size="sm" sx={{ minWidth: 140 }}>
-        <MenuItem>{t("Obs.table.edit")}</MenuItem>
-
-        <Divider />
-        <MenuItem color="danger">{t("Obs.table.delete")}</MenuItem>
-      </Menu>
-    </Dropdown>
-  );
-}
 
 export default function FileTable({ rows }) {
   const { t } = useTranslation("translation");
-  const [selected, setSelected] = useState<readonly string[]>([]);
+  const [selected, setSelected] = useState([]);
   const [open, setOpen] = useState(false);
   const rowsPerPage = 10; // Set the desired number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
+  const [sensorOptions, setSensorOptions] = useState([]);
+  const [selectedUserNameId, setSelectedUserNameId] = useState(null);
+  const [userNameOptions, setUserNameOptions] = useState([]);
 
+  const fetchUserName = async () => {
+    try {
+      const responseUserNames = await getUsers(); // Assuming there's a function to fetch user names
+      setUserNameOptions(
+        responseUserNames.map((user) => ({
+          name: `${user.firstName} ${user.lastName}`,
+          id: user._id,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching user names:", error);
+      // Handle errors as needed
+    }
+  };
+  const fetchSensorType = async () => {
+    try {
+      const responseSensor = await getSensorTypes();
+
+      setSensorOptions(
+        responseSensor.map((sensor) => ({
+          type: sensor?.type,
+          id: sensor._id,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching sensor types:", error);
+      // Handle errors as needed
+    }
+  };
+
+  useEffect(() => {
+    fetchSensorType();
+    fetchUserName();
+  }, []);
   // Calculate the index range for the current page
   const startIndex = (currentPage - 1) * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -74,33 +91,7 @@ export default function FileTable({ rows }) {
     window.open(row.filePath, "_blank");
   };
 
-  const renderFilters = () => (
-    <React.Fragment>
-      <FormControl size="sm">
-        <FormLabel>{t("Obs.sensor")}</FormLabel>
-        <Select size="md" sx={{ height: "38.6px" }} placeholder={t("Obs.all")}>
-          <Option value="all">{t("Obs.all")}</Option>
-          <Option value="reefnet">Reefnet Sensor</Option>
-          <Option value="ctd">CTD Sensor</Option>
-          <Option value="pluviometer">PluvioMeter</Option>
-          <Option value="other">Other</Option>
-        </Select>
-      </FormControl>
-
-      <FormControl size="sm">
-        <FormLabel>{t("Obs.author")}</FormLabel>
-        <Select size="md" sx={{ height: "38.6px" }} placeholder={t("Obs.all")}>
-          <Option value="all">{t("Obs.all")}</Option>
-          <Option value="olivia">Olivia Rhye</Option>
-          <Option value="steve">Steve Hampton</Option>
-          <Option value="ciaran">Ciaran Murray</Option>
-          <Option value="marina">Marina Macdonald</Option>
-          <Option value="charles">Charles Fulton</Option>
-          <Option value="jay">Jay Hoper</Option>
-        </Select>
-      </FormControl>
-    </React.Fragment>
-  );
+  const renderFilters = () => <React.Fragment></React.Fragment>;
 
   return (
     <React.Fragment>
@@ -172,7 +163,41 @@ export default function FileTable({ rows }) {
             startDecorator={<SearchIcon />}
           />
         </FormControl>
-        {renderFilters()}
+        <FormControl size="sm">
+          <FormLabel>{t("Obs.sensor")}</FormLabel>
+           <Select
+        size="md"
+        id="demo-simple-select"
+        value={''}
+        //onChange={(e) => setSelectedUserNameId(e.target.value)}
+        sx={{ width: '100%',height:"38.6px" }}
+      >
+
+        {sensorOptions.map((sensor) => (
+          <Option key={sensor.id} value={sensor.id}>
+            {sensor.type}
+          </Option>
+        ))}
+      </Select>
+        </FormControl>
+
+        <FormControl size="sm">
+          <FormLabel>{t("Obs.author")}</FormLabel>
+        <Select
+        size="md"
+        id="demo-simple-select"
+        value={selectedUserNameId || ''}
+        //onChange={(e) => setSelectedUserNameId(e.target.value)}
+        sx={{ width: '100%',height:"38.6px" }}
+      >
+
+        {userNameOptions.map((user) => (
+          <Option key={user.id} value={user.id}>
+            {user.name}
+          </Option>
+        ))}
+      </Select>
+        </FormControl>
       </Box>
       <Sheet
         className="OrderTableContainer"

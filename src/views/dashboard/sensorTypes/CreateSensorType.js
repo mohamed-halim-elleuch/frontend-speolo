@@ -11,10 +11,13 @@ import Stack from "@mui/joy/Stack";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { createSensorType } from "../../../apis/SensorTypeController";
+import ShowMessage from "../../common/ShowMessage";
+import { useEffect } from "react";
 
 export default function CreateSensor({ setNewSensorAdd }) {
   const { t } = useTranslation("translation");
   const [open, setOpen] = React.useState(false);
+  const [updateMessage, setUpdateMessage] = React.useState(null);
   const [formData, setFormData] = React.useState({
     type: "",
     properties: [],
@@ -25,15 +28,17 @@ export default function CreateSensor({ setNewSensorAdd }) {
     event.preventDefault();
     const valuesList = formData.properties.map((item) => item.value);
     formData.properties = valuesList;
-    const response = await createSensorType(formData);
-
-    setNewSensorAdd(response);
     try {
-      // Assuming you have an API endpoint for adding a new sensor
+      const response = await createSensorType(formData);
+      setNewSensorAdd(response);
     } catch (error) {
-      console.error("Error adding sensor:", error.message);
+      setUpdateMessage({
+        open: true,
+        message: error.message,
+        status: "error",
+      });
     }
-
+    setFormData({ type: "", properties: [], manufacturer: "" });
     setOpen(false);
   };
   const handleInnerFormSubmit = (event) => {
@@ -48,9 +53,25 @@ export default function CreateSensor({ setNewSensorAdd }) {
       [name]: value,
     }));
   };
+  useEffect(() => {
+    if (updateMessage) {
+      const timer = setTimeout(() => {
+        setUpdateMessage(null);
+      }, 6000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [updateMessage]);
 
   return (
     <React.Fragment>
+      {updateMessage && (
+        <ShowMessage
+          openvalue={updateMessage.open}
+          message={updateMessage.message}
+          status={updateMessage.status}
+        />
+      )}
       <Button
         size="sm"
         variant="plain"

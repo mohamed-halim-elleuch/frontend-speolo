@@ -80,16 +80,16 @@ export default function TableFiles({
         >
           <TableHead sx={{ overflow: "hidden" }}>
             <TableRow>
-              <TableCell style={{ width: "30%" }}>
+              <TableCell style={{ width: "40%" }}>
                 <Typography level="title-sm">Sensor</Typography>
               </TableCell>
-              <TableCell style={{ width: "22%" }}>
+              <TableCell style={{ width: "30%" }}>
                 <Typography level="title-sm">Serial No</Typography>
               </TableCell>
-              <TableCell style={{ width: "25%" }}>
+              {/* <TableCell style={{ width: "25%" }}>
                 <Typography level="title-sm">Observes</Typography>
-              </TableCell>
-              <TableCell style={{ width: "23%" }}>
+              </TableCell> */}
+              <TableCell style={{ width: "30%" }}>
                 <Typography level="title-sm">{t("User.sensor")}</Typography>
               </TableCell>
             </TableRow>
@@ -109,22 +109,22 @@ export default function TableFiles({
                       startDecorator={<SensorsIcon color="primary" />}
                       sx={{ alignItems: "flex-start" }}
                     >
-                      {row.name}
+                      {row?.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.serialNo}
+                      {row?.serialNo}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
                       {row.observes}
                     </div>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <div style={{ fontSize: "14px", color: "#555E70" }}>
-                      {row.sensorTypeId?.type}
+                      {row?.sensorTypeId?.type}
                     </div>
                   </TableCell>
                 </TableRow>
