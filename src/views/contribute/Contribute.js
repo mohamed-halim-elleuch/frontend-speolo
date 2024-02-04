@@ -208,7 +208,7 @@ export default function Contribute() {
               {t("Contribute.upload")}
               <VisuallyHiddenInput
                 type="file"
-                accept=".csv"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                 onChange={handleFileChange}
               />
             </Button>

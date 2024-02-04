@@ -47,6 +47,22 @@ const MapLogic = () => {
     }
   };
 
+  const CollectCavesID = async () => {
+    try {
+      const data = await fetchCaveDataByGeolocation(
+        bounds.swLat,
+        bounds.swLng,
+        bounds.neLat,
+        bounds.neLng
+      );
+
+      const ids = data.map((cave) => cave.caveId);
+      return ids;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   const updateBounds = (layer) => {
     const updatedBounds = {
       swLat: layer._bounds._southWest.lat,
@@ -104,6 +120,7 @@ const MapLogic = () => {
     markerClick,
     caveInfo,
     isLoading,
+    CollectCavesID,
   };
 };
 

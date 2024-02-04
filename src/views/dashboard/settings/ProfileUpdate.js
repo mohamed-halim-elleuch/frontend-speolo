@@ -36,6 +36,7 @@ export default function ProfileUpdate() {
     createdAt: "",
     profileImage: "",
     file: "",
+    //preferences: "",
   });
 
   useEffect(() => {
@@ -53,6 +54,7 @@ export default function ProfileUpdate() {
             license: userData.license,
             createdAt: userData.createdAt,
             profileImage: userData?.profileImage,
+            // preferences: userData?.preferences,
           });
         } else {
           console.error("Failed to fetch user information");
@@ -254,6 +256,18 @@ export default function ProfileUpdate() {
                   />
                 </FormControl>
               </div>
+              {/* <div>
+                <FormControl>
+                  <FormLabel>{t("Preferred location")}</FormLabel>
+                  <Input
+                    size="sm"
+                    value={formData.preferences}
+                    onChange={(e) =>
+                      handleInputChange("preferences", e.target.value)
+                    }
+                  />
+                </FormControl>
+              </div> */}
             </Stack>
           </Stack>
           <Stack
@@ -358,6 +372,18 @@ export default function ProfileUpdate() {
                 />
               </FormControl>
             </div>
+            {/* <div>
+              <FormControl>
+                <FormLabel>{t("Preferred location")}</FormLabel>
+                <Input
+                  size="sm"
+                  value={formData.preferences}
+                  onChange={(e) =>
+                    handleInputChange("preferences", e.target.value)
+                  }
+                />
+              </FormControl>
+            </div> */}
           </Stack>
           <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
             <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>

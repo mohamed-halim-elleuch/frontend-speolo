@@ -14,7 +14,7 @@ import { styled } from "@mui/material/styles";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCaveById, searchCaves } from "../../apis/CaveController";
 
 const columns = [
@@ -67,7 +67,40 @@ const columns = [
 
 export default function SearchPage() {
   const { t } = useTranslation("translation");
+  const { ids } = useParams();
   const height = window.innerHeight;
+  React.useEffect(() => {
+    console.log("ids", ids);
+
+    const getSelectedCaves = async (ids) => {
+      // Check if ids is a non-empty string
+      if (typeof ids === "string" && ids.trim() !== "") {
+        try {
+          // Split the string into an array of IDs
+          const idArray = ids.split(",");
+
+          // Assuming getCaveById is an asynchronous function
+          const promises = idArray.map(async (id) => {
+            const response = await getCaveById(id);
+            const county = response?.entrances?.[0]?.county;
+            const country = response?.entrances?.[0]?.country;
+            return { ...response, country, county };
+          });
+
+          // Wait for all promises to resolve
+          const caveDataArray = await Promise.all(promises);
+
+          // Set the rows with the array of cave data
+          setRows(caveDataArray);
+        } catch (error) {
+          console.error("Error fetching cave data:", error);
+        }
+      }
+    };
+
+    getSelectedCaves(ids);
+  }, [ids]);
+
   const {
     handleSubmit,
     register,

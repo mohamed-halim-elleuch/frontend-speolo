@@ -79,7 +79,7 @@ function App() {
                   <PrivateRoute index path="map" element={<Map />} />
                   <PrivateRoute
                     index
-                    path="search-page"
+                    path="search-page/:ids?"
                     element={<SearchPage />}
                   />
                   <PrivateRoute
