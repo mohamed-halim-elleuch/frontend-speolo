@@ -270,7 +270,7 @@ export default function Observations() {
         observations[page * rowsPerPage + selectedRow]?.fileName || "Unnamed",
     },
     {
-      label: "Sensor",
+      label: `${t("Contribute.sensor")}`,
       value:
         observations[page * rowsPerPage + selectedRow]?.isObservedBy?.name ||
         "Not found",

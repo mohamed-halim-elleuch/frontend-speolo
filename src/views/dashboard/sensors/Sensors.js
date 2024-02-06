@@ -280,11 +280,11 @@ export default function Sensors() {
 
   const filedetails = [
     {
-      label: "Name",
+      label: `${t("Settings.name")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.name || "Unnamed",
     },
     {
-      label: "Serial No",
+      label: `${t("Sensors.serialNo")}`,
       value:
         sensors[page * rowsPerPage + selectedRow]?.serialNo || "Not defined",
     },
@@ -298,7 +298,7 @@ export default function Sensors() {
       value: sensors[page * rowsPerPage + selectedRow]?.user || "",
     },
     {
-      label: "Sensor Type",
+      label: `${t("Obs.sensor")}`,
       value: sensors[page * rowsPerPage + selectedRow]?.sensorTypeId?.type,
     },
   ];
@@ -370,7 +370,7 @@ export default function Sensors() {
               <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
                 <Box gridColumn="span 9">
                   <FormControl sx={{ flex: 1 }} size="sm">
-                    <FormLabel>Search for Sensor</FormLabel>
+                    <FormLabel>{t("Sensors.search2")}</FormLabel>
                     <Input
                       size="sm"
                       value={searchText}
@@ -392,7 +392,7 @@ export default function Sensors() {
 
                 <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Serial No</FormLabel>
+                    <FormLabel>{t("Sensors.serialNo")}</FormLabel>
                     <Input
                       size="sm"
                       value={searchSerialNo}
@@ -415,7 +415,7 @@ export default function Sensors() {
                 </Box> */}
                 <Box gridColumn="span 6">
                   <FormControl size="sm">
-                    <FormLabel>Sensor Type</FormLabel>
+                    <FormLabel>{t("User.sensor")}</FormLabel>
                     <Autocomplete
                       size="sm"
                       autoHighlight
@@ -537,7 +537,7 @@ export default function Sensors() {
                 // Display the form when editing
                 <form style={{ padding: 0 }}>
                   <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("Settings.name")}</FormLabel>
                     <Input
                       value={formData?.name}
                       onChange={handleChange}
@@ -548,7 +548,7 @@ export default function Sensors() {
                     />
                   </FormControl>
                   <FormControl sx={{ paddingBottom: 1, width: "90%" }}>
-                    <FormLabel>Serial No</FormLabel>
+                    <FormLabel>{t("Sensors.serialNo")}</FormLabel>
                     <Input
                       value={formData?.serialNo}
                       onChange={handleChange}
@@ -568,7 +568,7 @@ export default function Sensors() {
                     />
                   </FormControl> */}
                   <FormControl sx={{ paddingBottom: 2, width: "90%" }}>
-                    <FormLabel>Sensor Type</FormLabel>
+                    <FormLabel>{t("User.sensor")}</FormLabel>
 
                     <Autocomplete
                       size="md"

@@ -48,7 +48,7 @@ export default function UserProfile() {
   };
 
   const downloadFile = (row) => {
-    window.open(row.filePath, '_blank');
+    window.open(row.filePath, "_blank");
     //const parts = row?.filePath.split("/");
 
     // Get the last part of the array (which is the part after the last "/")
@@ -360,7 +360,9 @@ export default function UserProfile() {
                           <thead>
                             <tr>
                               <th style={{ width: 50 }}>{t("User.row")}</th>
-                              <th style={{ width: 125 }}>Sensor</th>
+                              <th style={{ width: 125 }}>
+                                {t("Contribute.sensor")}
+                              </th>
                               <th style={{ width: 155 }}>{t("User.added")}</th>
                               <th style={{ width: 260 }}>
                                 {t("User.file-name")}

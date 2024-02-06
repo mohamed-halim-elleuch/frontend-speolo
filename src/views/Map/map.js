@@ -23,14 +23,16 @@ import MapLogic from "./MapLogic";
 import ChangeSkin from "./changeSkin";
 import "./style.css";
 import { SetBoundsRectangles } from "./viewbounds";
+import { useTranslation } from "react-i18next";
 const Map = () => {
+  const { t } = useTranslation("translation");
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userData = await fetchUserInfo();
-        setAddress(userData.address);
+        setAddress(userData.interest);
       } catch (error) {
         console.error("Error fetching sensor types:", error);
         // Handle errors as needed
@@ -203,6 +205,7 @@ const Map = () => {
 export default Map;
 
 const OpenStreetMapSearch = ({ setAddress, mapRef }) => {
+  const { t } = useTranslation("translation");
   const [autocompleteSuggestions, setAutocompleteSuggestions] = useState([]);
 
   const handleAutocomplete = async (query) => {
@@ -239,7 +242,7 @@ const OpenStreetMapSearch = ({ setAddress, mapRef }) => {
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Search for a cave..."
+            label={t("Map.search")}
             onInput={(e) => handleAutocomplete(e.target.value)}
           />
         )}
@@ -248,44 +251,47 @@ const OpenStreetMapSearch = ({ setAddress, mapRef }) => {
   );
 };
 
-const CustomPopup = ({ data, isLoading }) => (
-  <Popup>
-    {isLoading ? (
-      <p>Loading...</p>
-    ) : (
-      <div>
-        <div
-          style={{
-            color: "blue",
-            fontSize: "16px",
-            marginBottom: "-10px",
-            textAlign: "center",
-          }}
-        >
-          {data?.caveName}
+const CustomPopup = ({ data, isLoading }) => {
+  const { t } = useTranslation("translation");
+  return (
+    <Popup>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <div>
+          <div
+            style={{
+              color: "blue",
+              fontSize: "16px",
+              marginBottom: "-10px",
+              textAlign: "center",
+            }}
+          >
+            {data?.caveName}
+          </div>
+          <br />
+          <strong>{t("Map.cave_id")}:</strong> {data?.caveId || "No_data"}
+          <br />
+          <strong>{t("Map.city")}:</strong> {data?.city || "No_data"}
+          <br />
+          <strong>{t("Map.region")}:</strong> {data?.region || "No_data"}
+          <br />
+          <strong>{t("Map.depth")}:</strong> {data?.depth || "No_data"}
+          <br />
+          <strong>{t("Map.length")}:</strong> {data?.length || "No_data"}
+          <br />
+          <strong>{t("Map.coordinates")}:</strong> {data?.latitude?.toFixed(4)}{" "}
+          <strong>,</strong> {data?.longitude?.toFixed(4)}
+          <br />
+          <strong>{t("Map.quality")}:</strong> {data?.quality || "No_data"}
+          <br />
+          <strong>{t("Map.observations")}:</strong>{" "}
+          <a href={`caves/${data?.caveId}`} target="_blank" rel="noopener">
+            {t("Map.new_tab")}
+          </a>
+          <br />
         </div>
-        <br />
-        <strong>Cave ID:</strong> {data?.caveId || "No_data"}
-        <br />
-        <strong>City:</strong> {data?.city || "No_data"}
-        <br />
-        <strong>Region:</strong> {data?.region || "No_data"}
-        <br />
-        <strong>Depth:</strong> {data?.depth || "No_data"}
-        <br />
-        <strong>Length:</strong> {data?.length || "No_data"}
-        <br />
-        <strong>Coordinates:</strong> {data?.latitude?.toFixed(4)}{" "}
-        <strong>,</strong> {data?.longitude?.toFixed(4)}
-        <br />
-        <strong>Quality:</strong> {data?.quality || "No_data"}
-        <br />
-        <strong>Observations:</strong>{" "}
-        <a href={`caves/${data?.caveId}`} target="_blank" rel="noopener">
-          Open in new tab
-        </a>
-        <br />
-      </div>
-    )}
-  </Popup>
-);
+      )}
+    </Popup>
+  );
+};

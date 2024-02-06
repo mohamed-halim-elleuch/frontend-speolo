@@ -26,6 +26,7 @@ export default function ProfileUpdate() {
   const [selectedImage, setSelectedImage] = useState(
     "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
   );
+  const [userLicense, setUserLicense] = useState("");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,7 +37,7 @@ export default function ProfileUpdate() {
     createdAt: "",
     profileImage: "",
     file: "",
-    //preferences: "",
+    interest: "",
   });
 
   useEffect(() => {
@@ -54,8 +55,9 @@ export default function ProfileUpdate() {
             license: userData.license,
             createdAt: userData.createdAt,
             profileImage: userData?.profileImage,
-            // preferences: userData?.preferences,
+            interest: userData?.interest,
           });
+          setUserLicense(userData.license);
         } else {
           console.error("Failed to fetch user information");
         }
@@ -76,6 +78,9 @@ export default function ProfileUpdate() {
   const handleSaveButtonClick = async () => {
     try {
       console.log("formData", formData);
+      if (formData.license === userLicense) {
+        delete formData.license;
+      }
       const updatedUser = await updateUser(formData);
       console.log("updates", updatedUser);
       setUpdateMessage({
@@ -256,18 +261,18 @@ export default function ProfileUpdate() {
                   />
                 </FormControl>
               </div>
-              {/* <div>
+              <div>
                 <FormControl>
-                  <FormLabel>{t("Preferred location")}</FormLabel>
+                  <FormLabel>{t("Settings.preferred_location")}</FormLabel>
                   <Input
                     size="sm"
-                    value={formData.preferences}
+                    value={formData.interest}
                     onChange={(e) =>
-                      handleInputChange("preferences", e.target.value)
+                      handleInputChange("interest", e.target.value)
                     }
                   />
                 </FormControl>
-              </div> */}
+              </div>
             </Stack>
           </Stack>
           <Stack
@@ -372,18 +377,18 @@ export default function ProfileUpdate() {
                 />
               </FormControl>
             </div>
-            {/* <div>
+            <div>
               <FormControl>
                 <FormLabel>{t("Preferred location")}</FormLabel>
                 <Input
                   size="sm"
-                  value={formData.preferences}
+                  value={formData.interest}
                   onChange={(e) =>
-                    handleInputChange("preferences", e.target.value)
+                    handleInputChange("interest", e.target.value)
                   }
                 />
               </FormControl>
-            </div> */}
+            </div>
           </Stack>
           <CardOverflow sx={{ borderTop: "1px solid", borderColor: "divider" }}>
             <CardActions sx={{ alignSelf: "flex-end", pt: 2 }}>

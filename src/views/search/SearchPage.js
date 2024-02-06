@@ -15,7 +15,11 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { getCaveById, searchCaves } from "../../apis/CaveController";
+import {
+  getCaveById,
+  searchCaves,
+  searchCavesCountry,
+} from "../../apis/CaveController";
 
 const columns = [
   { id: "name", label: "Name", minWidth: 210 },
@@ -125,6 +129,22 @@ export default function SearchPage() {
 
   const onSubmit = async (data) => {
     try {
+      if (data.caveID === "" && data.countryName !== "") {
+        const response = await searchCavesCountry(
+          data.caveName,
+          data.countryName
+        );
+        const uniqueResults = response.results.map((row) => {
+          const countryList = row.country.split(", ");
+
+          return { ...row, country: countryList[0] };
+        });
+        //return { ...response, results: uniqueResults };
+
+        setRows(uniqueResults);
+
+        return;
+      }
       if (data.caveID === "") {
         sessionStorage.setItem("CaveNameValue", data.caveName);
         sessionStorage.setItem("CaveIDValue", "");
@@ -215,7 +235,6 @@ export default function SearchPage() {
                   sx={{ width: "100%", marginInlineEnd: 1 }}
                   options={countries}
                   autoHighlight
-                  disabled
                   getOptionLabel={(option) => option.label}
                   renderOption={(props, option) => (
                     <Box

@@ -32,6 +32,25 @@ export const searchCaves = async (name, country) => {
   }
 };
 
+export const searchCavesCountry = async (name, country) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/api/cave/search?resourceType=entrances`,
+      {
+        params: { name, country },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching caves:", error);
+    throw error;
+  }
+};
+
 // Function to fetch caves by geolocation coordinates
 export const fetchCavesByGeolocation = async (swLat, swLng, neLat, neLng) => {
   try {

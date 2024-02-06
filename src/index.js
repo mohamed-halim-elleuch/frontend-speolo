@@ -17,13 +17,12 @@ i18next
   .use(Backend)
   .init({
     debug: true,
-    interpolation: { escapeValue: false }, // React already does escaping
-    //lng: "fr", // language to use
+    interpolation: { escapeValue: false },
     fallbackLng: "en",
     saveMissing: true, // If translation key is missing, which lang use instead
     resources: {
       en: {
-        translation: translation_en, // 'translation' is our custom namespace
+        translation: translation_en,
       },
       fr: {
         translation: translation_fr,

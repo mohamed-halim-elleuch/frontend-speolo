@@ -273,7 +273,7 @@ export default function Header() {
             <a href="/authenticate/contact" style={{ margin: 0 }}>
               <MenuItem>
                 <HelpRoundedIcon />
-                Contact
+                {t("Browse.help")}
               </MenuItem>
             </a>
             <a href="/authenticate/dashboard" style={{ margin: 0 }}>

@@ -81,10 +81,14 @@ export default function TableFiles({
           <TableHead sx={{ overflow: "hidden" }}>
             <TableRow>
               <TableCell style={{ width: "40%" }}>
-                <Typography level="title-sm">Sensor</Typography>
+                <Typography level="title-sm">
+                  {t("Contribute.sensor")}
+                </Typography>
               </TableCell>
               <TableCell style={{ width: "30%" }}>
-                <Typography level="title-sm">Serial No</Typography>
+                <Typography level="title-sm">
+                  {t("Sensors.serialNo")}
+                </Typography>
               </TableCell>
               {/* <TableCell style={{ width: "25%" }}>
                 <Typography level="title-sm">Observes</Typography>

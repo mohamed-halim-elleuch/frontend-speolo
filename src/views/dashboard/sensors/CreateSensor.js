@@ -80,7 +80,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
       </Button>
       <Modal open={open} onClose={() => setOpen(false)}>
         <ModalDialog sx={{ width: "27vw" }}>
-          <DialogTitle>Create new sensor</DialogTitle>
+          <DialogTitle>{t("Sensors.add-sensor-title")}</DialogTitle>
 
           <form
             style={{ padding: 0, display: "initial" }}
@@ -88,7 +88,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
           >
             <Stack spacing={2}>
               <FormControl>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("Contribute.add-sensor-name")}</FormLabel>
                 <Input
                   autoFocus
                   name="name"
@@ -97,7 +97,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>serialNo</FormLabel>
+                <FormLabel>{t("Sensors.serialNo")}</FormLabel>
                 <Input
                   autoFocus
                   name="serialNo"
@@ -116,7 +116,7 @@ export default function CreateSensor({ setNewSensorAdd }) {
               </FormControl> */}
 
               <FormControl>
-                <FormLabel>Sensor Type</FormLabel>
+                <FormLabel>{t("Obs.sensor")}</FormLabel>
                 <Box display="flex" sx={{ alignItems: "center" }}>
                   <Autocomplete
                     name="sensorTypeId"

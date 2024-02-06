@@ -1,6 +1,7 @@
 {
     "Home": {
-        "title": "World Caves"
+        "title": "General Description",
+		"content":"KarstLink2, a dynamic web platform, serves as a collaborative network for speleologists and underground data enthusiasts, streamlining the storage and retrieval of valuable observations related to karst environments. The website offers an intuitive interface with advanced search capabilities, supporting multilingual functionality for accessibility. Integrated with essential sources like Grottocenter, KarstLink ensures a comprehensive and diverse dataset, fostering collaboration among speleologists, researchers, and enthusiasts. A speleologist, as an expert in cave exploration, contributes to this platform by conducting field surveys, collecting data on cave systems, and advancing our understanding of subterranean ecosystems. Their work is pivotal in promoting conservation efforts and scientific advancements in the study of caves and karst landscapes. Join KarstLink2 in unlocking the mysteries of the underground world and contributing to a global community passionate about subterranean exploration."
     },
     "Navbar": {
         "contact": "Help",
@@ -99,7 +100,8 @@
 		"license":"License Number",
 		"address":"Address",
 		"cancel":"Cancel",
-		"save":"Save"
+		"save":"Save",
+		"preferred_location":"Preferred location"
 	},
 	"Accounts":{
 		"member":"Member",
@@ -117,6 +119,9 @@
 	},
 	"Sensors":{
 		"search":"Search for Sensor Types",
+		"search2":"Search for Sensor",
+		"add-sensor-title":"Create new sensor",
+		"serialNo":"Serial No",
 		"properties":"Properties",
 		"manufacturer":"Manufacturer",
 		"is-default":"Is Default",
@@ -149,6 +154,7 @@
 		"browse":"Browse",
 		"profil":"Profil",
 		"settings":"Settings",
+		"help":"Help",
 		"accounts":"Managing accounts",
 		"observations":"Observations",
 		"sensors":"Sensor Types",
@@ -182,5 +188,121 @@
 		"email":"Enter Your Email",
 		"login-again":"Login Again",
 		"button":"RESET PASSWORD"
+	},
+	"Map":{
+		"search":"Search for location",
+		"cave_id":"Cave ID",
+		"city":"City",
+		"region":"Region",
+		"depth":"Depth",
+		"length":"Length",
+		"coordinates":"Coordinates",
+		"quality":"Quality",
+		"observations":"Observations",
+		"new_tab":"Open in new tab"
+	},
+	"Help":
+		{
+			"Introduction": "Introduction:",
+			"Content": "This project aims to develop a dynamic web application dedicated to simplifying the storage and retrieval of underground observation data, emphasizing time series data collected from sensors measuring various parameters. The web application provides users with an intuitive interface, advanced search capabilities, and multilingual functionality (French and English). For administrators, an Admin Dashboard enhances control with features like notification displays, account management, and observation and sensor type control. The platform also incorporates mapping features and proximity search functionality.",
+			"Modules": {
+				"User_Registration_and_Authentication": {
+				"Title": "User Registration and Authentication:",
+				"Register_Page": {
+					"Title": "Register Page:",
+					"Description": [
+					"Collects essential information for user profiles.",
+					"Validates password strength and checks for duplicate email/license."
+					]
+				},
+				"Login_Page": {
+					"Title": "Login Page:",
+					"Description": [
+					"Secure entry for registered users.",
+					"Alerts for incorrect email or password entries."
+					]
+				}
+				},
+				"Admin_Dashboard": {
+				"Title": "Admin Dashboard:",
+				"Profile_Page": {
+					"Title": "Profile Page:",
+					"Description": [
+					"Showcases vital user details. Displays contributions made by the user in selected caves."
+					]
+				},
+				"Settings_Page": {
+					"Title": "Settings Page:",
+					"Description": [
+					"Allows users to personalize their profile. Certain fields (email, license, role) are marked as read-only for data integrity."
+					]
+				},
+				"Managing_Accounts_Page": {
+					"Title": "Managing Accounts Page:",
+					"Description": [
+					"Exclusive for administrators to oversee all registered accounts. Features robust filtering capabilities for efficient account management."
+					]
+				},
+				"Observation_Page": {
+					"Title": "Observation Page:",
+					"Description": [
+					"Central hub for exploring and managing observations. Detailed information about selected observations for analysis and decision-making."
+					]
+				},
+				"Sensor_Page": {
+					"Title": "Sensor Page:",
+					"Description": [
+					"Overview of sensors through a user-friendly table. Detailed view for editing or deleting selected sensors."
+					]
+				},
+				"Sensor_Type_Page": {
+					"Title": "Sensor Type Page:",
+					"Description": [
+					"Dedicated space for managing sensor types efficiently. Detailed view for editing or deleting selected sensor types."
+					]
+				},
+				"Notification_Page": {
+					"Title": "Notification Page:",
+					"Description": [
+					"Exclusively for administrators to receive notifications about deleted objects. Notifications include details about the deleted object's properties and the user who performed the deletion."
+					]
+				}
+				},
+				"Contribution": {
+				"Title": "Contribution:",
+				"Contribution_Page": {
+					"Title": "Contribution Page:",
+					"Description": [
+					"Allows authenticated users to add data to the database through various input options. Users can contribute observations with details like cave ID, location, sensor, datetime, and file upload."
+					]
+				}
+				},
+				"Search": {
+				"Title": "Search:",
+				"Search_Page": {
+					"Title": "Search Page:",
+					"Description": [
+					"Empowers users to navigate through the database using various search parameters. Offers flexible options for exploration with detailed information about caves."
+					]
+				},
+				"Cave_Observation_Page": {
+					"Title": "Cave Observation Page:",
+					"Description": [
+					"Functions as a user interface, providing access to specific cave data. Allows users to retrieve data related to a particular cave through a GET request to the backend API."
+					]
+				}
+				},
+				"Map": {
+				"Title": "Map:",
+				"Map_Page": {
+					"Title": "Map Page:",
+					"Description": [
+					"Provides an engaging and interactive experience for exploring geographical data. Users can draw rectangles on the map, switch between map layers, and access detailed information about selected caves."
+					]
+				}
+				}
+			}
+
 	}
+
 }

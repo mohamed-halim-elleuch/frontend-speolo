@@ -175,6 +175,7 @@ const SignIn = () => {
               type="text"
               placeholder={t("Signup.license")}
               name="license"
+              required
               value={formSignUp.license}
               onChange={handleChangeSignUp}
             />

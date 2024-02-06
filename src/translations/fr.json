@@ -1,7 +1,8 @@
 {
-    "Home": {
-        "title": "Grottes du monde"
-    },
+	"Home": {
+		"title": "Description Générale",
+		"content": "KarstLink2, une plateforme web dynamique, sert de réseau collaboratif pour les spéléologues et les passionnés de données souterraines, facilitant le stockage et la récupération d'observations précieuses liées aux environnements karstiques. Le site offre une interface intuitive avec des capacités de recherche avancées, prenant en charge une fonctionnalité multilingue pour une accessibilité accrue. Intégré à des sources essentielles telles que Grottocenter, KarstLink garantit un ensemble de données complet et diversifié, favorisant la collaboration entre spéléologues, chercheurs et passionnés. Un spéléologue, en tant qu'expert de l'exploration de grottes, contribue à cette plateforme en réalisant des relevés sur le terrain, en collectant des données sur les systèmes de grottes et en faisant progresser notre compréhension des écosystèmes souterrains. Leur travail est crucial pour promouvoir les efforts de conservation et les avancées scientifiques dans l'étude des grottes et des paysages karstiques. Rejoignez KarstLink2 pour percer les mystères du monde souterrain et contribuer à une communauté mondiale passionnée par l'exploration souterraine."
+	},
     "Navbar": {
         "contact": "Aide",
         "home": "Accueil",
@@ -84,7 +85,7 @@
 		"add":"AJOUTER",
 		"edit":"Éditer",
 		"delete":"Supprimer",
-		"row":"Row",
+		"row":"Rang",
 		"sensor":"Type de capteur",
 		"added":"Date d'ajout",
 		"file-name":"Nom du fichier"
@@ -97,7 +98,8 @@
 		"license":"Numéro de licence",
 		"address":"Adresse",
 		"cancel":"Annuler",
-		"save":"Enregistrer"
+		"save":"Enregistrer",
+		"preferred_location":"Localisation préféré"
 		},
 	"Accounts":{
 		"member":"Membre",
@@ -115,6 +117,9 @@
 		},
 	"Sensors":{
 		"search":"Rechercher des types de capteurs",
+		"search2":"Rechercher des capteurs",
+		"serialNo":"Numéro de série",
+		"add-sensor-title":"Créer un nouveau capteur",
 		"properties":"Propriétés",
 		"manufacturer":"Fabricant",
 		"is-default":"Par défaut",
@@ -146,6 +151,7 @@
 	"Browse":{
 		"browse":"Explorer",
 		"profil":"Profil",
+		"help":"Aide",
 		"settings":"Paramètres",
 		"accounts":"Gestion des comptes",
 		"observations":"Observations",
@@ -183,5 +189,119 @@
 		"email" : "Entrez votre Email",
 		"login-again":"Se connecter à nouveau",
 		"button":"RÉINITIALISER VOTRE MOT DE PASSE"
-	}
+	},
+	"Map":{
+    "search":"Recherche de lieu",
+    "cave_id":"ID de la grotte",
+    "city":"Ville",
+    "region":"Région",
+    "depth":"Profondeur",
+    "length":"Longueur",
+    "coordinates":"Coordonnées",
+    "quality":"Qualité",
+    "observations":"Observations",
+	"new_tab":"Ouvrir dans un nouvel onglet"
+},
+"Help":{
+  "Introduction": "Introduction :",
+  "Content": "Ce projet vise à développer une application web dynamique dédiée à simplifier le stockage et la récupération de données d'observation souterraine, en mettant l'accent sur les données de séries temporelles collectées à partir de capteurs mesurant divers paramètres. L'application web offre aux utilisateurs une interface intuitive, des capacités de recherche avancées et une fonctionnalité multilingue (français et anglais). Pour les administrateurs, un tableau de bord d'administration améliore le contrôle avec des fonctionnalités telles que l'affichage des notifications, la gestion des comptes et le contrôle des observations et des types de capteurs. La plateforme intègre également des fonctionnalités de cartographie et de recherche de proximité.",
+  "Modules": {
+    "User_Registration_and_Authentication": {
+      "Title": "Enregistrement et Authentification de l'Utilisateur :",
+      "Register_Page": {
+        "Title": "Page d'Enregistrement :",
+        "Description": [
+          "Collecte des informations essentielles pour les profils d'utilisateurs.",
+          "Valide la force du mot de passe et vérifie les doublons d'e-mail/licence."
+        ]
+      },
+      "Login_Page": {
+        "Title": "Page de Connexion :",
+        "Description": [
+          "Accès sécurisé pour les utilisateurs enregistrés.",
+          "Alertes en cas de saisie incorrecte de l'e-mail ou du mot de passe."
+        ]
+      }
+    },
+    "Admin_Dashboard": {
+      "Title": "Tableau de Bord d'Administration :",
+      "Profile_Page": {
+        "Title": "Page de Profil :",
+        "Description": [
+          "Présente des détails vitaux sur l'utilisateur. Affiche les contributions apportées par l'utilisateur dans des grottes sélectionnées."
+        ]
+      },
+      "Settings_Page": {
+        "Title": "Page de Paramètres :",
+        "Description": [
+          "Permet aux utilisateurs de personnaliser leur profil. Certains champs (e-mail, licence, rôle) sont marqués comme en lecture seule pour garantir l'intégrité des données."
+        ]
+      },
+      "Managing_Accounts_Page": {
+        "Title": "Page de Gestion des Comptes :",
+        "Description": [
+          "Exclusif pour les administrateurs pour superviser tous les comptes enregistrés. Dispose de capacités de filtrage robustes pour une gestion efficace des comptes."
+        ]
+      },
+      "Observation_Page": {
+        "Title": "Page d'Observation :",
+        "Description": [
+          "Centre névralgique pour l'exploration et la gestion des observations. Informations détaillées sur les observations sélectionnées pour l'analyse et la prise de décision."
+        ]
+      },
+      "Sensor_Page": {
+        "Title": "Page de Capteur :",
+        "Description": [
+          "Vue d'ensemble des capteurs à travers un tableau convivial. Vue détaillée pour l'édition ou la suppression des capteurs sélectionnés."
+        ]
+      },
+      "Sensor_Type_Page": {
+        "Title": "Page de Type de Capteur :",
+        "Description": [
+          "Espace dédié à la gestion efficace des types de capteurs. Vue détaillée pour l'édition ou la suppression des types de capteurs sélectionnés."
+        ]
+      },
+      "Notification_Page": {
+        "Title": "Page de Notification :",
+        "Description": [
+          "Exclusivement pour les administrateurs pour recevoir des notifications sur les objets supprimés. Les notifications incluent des détails sur les propriétés de l'objet supprimé et l'utilisateur ayant effectué la suppression."
+        ]
+      }
+    },
+    "Contribution": {
+      "Title": "Contribution :",
+      "Contribution_Page": {
+        "Title": "Page de Contribution :",
+        "Description": [
+          "Permet aux utilisateurs authentifiés d'ajouter des données à la base de données via diverses options de saisie. Les utilisateurs peuvent contribuer des observations avec des détails tels que l'ID de la grotte, l'emplacement, le capteur, la date et l'heure, et le téléchargement de fichiers."
+        ]
+      }
+    },
+    "Search": {
+      "Title": "Recherche :",
+      "Search_Page": {
+        "Title": "Page de Recherche :",
+        "Description": [
+          "Permet aux utilisateurs de naviguer dans la base de données en utilisant divers paramètres de recherche. Offre des options flexibles pour l'exploration avec des informations détaillées sur les grottes."
+        ]
+      },
+      "Cave_Observation_Page": {
+        "Title": "Page d'Observation de Grotte :",
+        "Description": [
+          "Fonctionne comme une interface utilisateur, fournissant un accès à des données de grotte spécifiques. Permet aux utilisateurs de récupérer des données liées à une grotte particulière via une requête GET vers l'API backend."
+        ]
+      }
+    },
+    "Map": {
+      "Title": "Carte :",
+      "Map_Page": {
+        "Title": "Page de Carte :",
+        "Description": [
+          "Fournit une expérience engageante et interactive pour explorer des données géographiques. Les utilisateurs peuvent dessiner des rectangles sur la carte, basculer entre les couches de carte et accéder à des informations détaillées sur les grottes sélectionnées."
+        ]
+      }
+    }
+  }
+}
+
 }
