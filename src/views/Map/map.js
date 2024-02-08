@@ -32,7 +32,7 @@ const Map = () => {
     const fetchData = async () => {
       try {
         const userData = await fetchUserInfo();
-        setAddress(userData.interest);
+        setAddress(userData.preferedLocation);
       } catch (error) {
         console.error("Error fetching sensor types:", error);
         // Handle errors as needed

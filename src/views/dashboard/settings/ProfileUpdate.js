@@ -37,7 +37,7 @@ export default function ProfileUpdate() {
     createdAt: "",
     profileImage: "",
     file: "",
-    interest: "",
+    preferedLocation: "",
   });
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function ProfileUpdate() {
             license: userData.license,
             createdAt: userData.createdAt,
             profileImage: userData?.profileImage,
-            interest: userData?.interest,
+            preferedLocation: userData?.preferedLocation,
           });
           setUserLicense(userData.license);
         } else {
@@ -266,9 +266,9 @@ export default function ProfileUpdate() {
                   <FormLabel>{t("Settings.preferred_location")}</FormLabel>
                   <Input
                     size="sm"
-                    value={formData.interest}
+                    value={formData.preferedLocation}
                     onChange={(e) =>
-                      handleInputChange("interest", e.target.value)
+                      handleInputChange("preferedLocation", e.target.value)
                     }
                   />
                 </FormControl>
@@ -382,9 +382,9 @@ export default function ProfileUpdate() {
                 <FormLabel>{t("Preferred location")}</FormLabel>
                 <Input
                   size="sm"
-                  value={formData.interest}
+                  value={formData.preferedLocation}
                   onChange={(e) =>
-                    handleInputChange("interest", e.target.value)
+                    handleInputChange("preferedLocation", e.target.value)
                   }
                 />
               </FormControl>
