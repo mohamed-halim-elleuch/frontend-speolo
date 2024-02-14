@@ -568,9 +568,9 @@ export default function Observations() {
             userRole === "admin" ? (
               <>
                 <Box sx={{ py: 2, px: 1 }}>
-                  <EditObservation
+                  {/* <EditObservation
                     obsvalue={observations[page * rowsPerPage + selectedRow]}
-                  />
+                  /> */}
                   <Button
                     variant="plain"
                     color="warning"
