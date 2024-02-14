@@ -53,7 +53,6 @@ export default function Contribute() {
             (userRole === "user" && userId === row.createdBy) ||
             userRole === "admin"
         );
-        console.log("sensors", responseSensor.data);
         setOptions(responseSensor.data);
       } catch (error) {
         console.error("Error fetching sensor types:", error);
@@ -62,7 +61,7 @@ export default function Contribute() {
     };
 
     fetchSensorType();
-  }, [newSensorAdd]);
+  }, [userId, newSensorAdd]);
 
   const {
     handleSubmit,
