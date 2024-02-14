@@ -18,6 +18,7 @@ import { getSensorTypes } from "../../apis/SensorTypeController";
 import ShowMessage from "../common/ShowMessage";
 import BasicModalDialog from "./DialogButton";
 import { getSensors } from "../../apis/SensorController";
+import { fetchUserInfo } from "../../apis/UserController";
 
 export default function Contribute() {
   const { t } = useTranslation("translation");
@@ -28,11 +29,31 @@ export default function Contribute() {
   const [sensorValue, setSensorValue] = React.useState("");
   const [showMessage, setShowMessage] = React.useState(false);
   const [newSensorAdd, setNewSensorAdd] = React.useState("");
+  const [userRole, SetUserRole] = React.useState(null);
+  const [userId, setUserId] = React.useState(null);
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      try {
+        const res = await fetchUserInfo();
+        setUserId(res._id);
+        SetUserRole(res.role);
+      } catch (error) {}
+    };
+
+    fetchUserRole();
+  }, []);
+
   React.useEffect(() => {
     const fetchSensorType = async () => {
       try {
         const responseSensor = await getSensors();
-        console.log("sensors", responseSensor);
+
+        responseSensor.data = responseSensor.data.filter(
+          (row) =>
+            (userRole === "user" && userId === row.createdBy) ||
+            userRole === "admin"
+        );
+        console.log("sensors", responseSensor.data);
         setOptions(responseSensor.data);
       } catch (error) {
         console.error("Error fetching sensor types:", error);
@@ -168,7 +189,7 @@ export default function Contribute() {
               id="controllable-states-demo"
               options={options}
               isOptionEqualToValue={(option, value) => option?.name === value}
-              getOptionLabel={(option) => option?.name}
+              getOptionLabel={(option) => option?.name || option?.serialNo}
               sx={{ marginBottom: 2, width: "100%" }}
               renderInput={(params) => (
                 <TextField {...params} label={t("Contribute.sensor")} />

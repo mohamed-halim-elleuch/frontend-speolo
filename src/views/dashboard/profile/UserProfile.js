@@ -134,7 +134,10 @@ export default function UserProfile() {
       data.map(async (item) => {
         //const formattedEndDate = item?.endDate ? dayjs(item.endDate).format('MMM DD, YYYY') : 'no_date';
 
-        return { ...item, sensor_type: item?.isObservedBy?.name };
+        return {
+          ...item,
+          sensor: item?.isObservedBy?.name || item?.isObservedBy?.serialNo,
+        };
       })
     );
     return responses;
@@ -378,7 +381,7 @@ export default function UserProfile() {
                             {selectedCaveData?.map((row, index) => (
                               <tr key={index + 1}>
                                 <td>{index + 1}</td>
-                                <td>{row?.sensor_type}</td>
+                                <td>{row?.sensor}</td>
                                 <td>
                                   {row?.createdAt
                                     ? dayjs(row.createdAt).format(

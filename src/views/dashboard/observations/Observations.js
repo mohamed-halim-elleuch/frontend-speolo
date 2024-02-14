@@ -273,6 +273,8 @@ export default function Observations() {
       label: `${t("Contribute.sensor")}`,
       value:
         observations[page * rowsPerPage + selectedRow]?.isObservedBy?.name ||
+        observations[page * rowsPerPage + selectedRow]?.isObservedBy
+          ?.serialNo ||
         "Not found",
     },
     {

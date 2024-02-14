@@ -25,7 +25,6 @@ export default function BasicModalDialog({ setNewSensorAdd }) {
   const [sensorTypeValue, setSensorTypeValue] = React.useState(null);
   const [formData, setFormData] = React.useState({
     name: "",
-    observes: "",
     serialNo: "",
     sensorTypeId: "",
   });
@@ -108,16 +107,6 @@ export default function BasicModalDialog({ setNewSensorAdd }) {
                   onChange={handleChange}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Observes</FormLabel>
-                <Input
-                  autoFocus
-                  name="observes"
-                  value={formData.observes}
-                  onChange={handleChange}
-                />
-              </FormControl>
-
               <FormControl>
                 <FormLabel>Sensor Type</FormLabel>
                 <Box display="flex" sx={{ alignItems: "center" }}>
