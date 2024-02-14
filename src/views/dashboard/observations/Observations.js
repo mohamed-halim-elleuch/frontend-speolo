@@ -43,7 +43,7 @@ import TableFiles from "./TableFiles";
 export default function Observations() {
   const { t } = useTranslation("translation");
   const [observations, setObservations] = useState([]);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [page, setPage] = React.useState(0);
   const [dataLength, setDataLength] = React.useState(0);
   const [selectedRow, setSelectedRow] = React.useState(0); // Store the selected row index
@@ -130,16 +130,17 @@ export default function Observations() {
           page * rowsPerPage,
           rowsPerPage
         );
+
         // Create an array of promises for the additional requests
         const additionalRequests = newData
           .filter(
             (row) =>
-              (userRole === "user" && userId === row.createdBy) ||
+              (userRole === "user" && userId === row?.createdBy) ||
               userRole === "admin"
           )
           .map(async (row) => {
             const firstAdditionalInfo = await getUsers(
-              `{"_id":"${row.createdBy}"}`
+              `{"_id":"${row?.createdBy}"}`
             );
             return {
               ...row,
