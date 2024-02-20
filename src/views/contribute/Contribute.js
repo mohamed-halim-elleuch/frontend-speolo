@@ -46,7 +46,7 @@ export default function Contribute() {
   React.useEffect(() => {
     const fetchSensorType = async () => {
       try {
-        const responseSensor = await getSensors();
+        const responseSensor = await getSensors(`{"isDeleted":false}`);
 
         responseSensor.data = responseSensor.data.filter(
           (row) =>

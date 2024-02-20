@@ -106,6 +106,7 @@ export default function TableFiles({
                   key={index}
                   onClick={() => handleRowClick(index)} // Handle row click
                   selected={selectedRow === index} // Apply selected style
+                  sx={{ bgcolor: row.isDeleted ? "#FFCCCC" : "inherit" }}
                 >
                   <TableCell>
                     <Typography
@@ -113,7 +114,7 @@ export default function TableFiles({
                       startDecorator={<SensorsIcon color="primary" />}
                       sx={{ alignItems: "flex-start" }}
                     >
-                      {row?.name}
+                      {row?.isDeleted ? `${row?.name} (deleted)` : row?.name}
                     </Typography>
                   </TableCell>
                   <TableCell>
