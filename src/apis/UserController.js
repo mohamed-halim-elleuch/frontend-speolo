@@ -67,24 +67,24 @@ export const handleForgotPassword = async (forgotdata) => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/api/user/forgot-password`,
-      {
-        forgotdata,
-      }
+      forgotdata
     );
     return response.data;
   } catch (error) {
     console.error("Error sending forgot password email:", error);
-    // Handle error, e.g., show an error message
+    throw error.response.data;
   }
 };
 
 export const handleResetPassword = async (resetdata) => {
   try {
-    const response = await axios.post("your-api-base-url/user/reset-password", {
-      resetdata,
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/api/user/reset-password`,
+      resetdata
+    );
     return response.data;
   } catch (error) {
     console.error("Error resetting password:", error);
+    throw error.response.data;
   }
 };

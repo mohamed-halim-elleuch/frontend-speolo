@@ -74,8 +74,6 @@ export default function SearchPage() {
   const { ids } = useParams();
   const height = window.innerHeight;
   React.useEffect(() => {
-    console.log("ids", ids);
-
     const getSelectedCaves = async (ids) => {
       // Check if ids is a non-empty string
       if (typeof ids === "string" && ids.trim() !== "") {
