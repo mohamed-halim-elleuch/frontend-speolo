@@ -51,17 +51,17 @@ export const updateUser = async (user) => {
   }
 };
 
-// export const deleteUser = async () => {
-//   try {
-//     const response = await axios.delete(`${API_BASE_URL}/api/user`,{
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//     return response.data;
-//   } catch (error) {
-//     console.error('Error deleting user :', error);
-//     throw error;
-//   }
-// };
+export const deleteUser = async (id) => {
+  try {
+    const response = await axios.delete(`${API_BASE_URL}/api/user/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting user :", error);
+    throw error;
+  }
+};
 
 export const handleForgotPassword = async (forgotdata) => {
   try {

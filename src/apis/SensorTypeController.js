@@ -81,3 +81,19 @@ export const deleteSensorType = async (id) => {
     throw error;
   }
 };
+
+export const restoreSensorType = async (id) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/sensorType/restore`,
+      { ids: [id] },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error restoring sensor type:", error);
+    throw error;
+  }
+};

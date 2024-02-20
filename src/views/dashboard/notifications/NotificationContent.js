@@ -1,5 +1,5 @@
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+import RestoreIcon from "@mui/icons-material/Restore";
 import Avatar from "@mui/joy/Avatar";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
@@ -12,14 +12,35 @@ import dayjs from "dayjs";
 import * as React from "react";
 import { getUsers } from "../../../apis/UserController";
 import { useTranslation } from "react-i18next";
+import { restoreSensorType } from "../../../apis/SensorTypeController";
+import { restoreSensor } from "../../../apis/SensorController";
+import { restoreObservations } from "../../../apis/CaveObservationController";
 
 export default function NotificationContent({ selectedNotification }) {
   const [open, setOpen] = React.useState([false, false, false]);
+  const [itemTypeId, setItemTypeId] = React.useState("");
   const { t } = useTranslation("translation");
+
   const handleSnackbarOpen = async (index) => {
-    const updatedOpen = [...open];
-    updatedOpen[index] = true;
-    setOpen(updatedOpen);
+    try {
+      if (selectedNotification.itemType === "Observation") {
+        const res = await restoreObservations(
+          selectedNotification.caveObservation.id
+        );
+      } else if (selectedNotification.itemType === "Sensor") {
+        const res = await restoreSensor(selectedNotification.sensor._id);
+      } else if (selectedNotification.itemType === "SensorType") {
+        const res = await restoreSensorType(
+          selectedNotification.sensorType._id
+        );
+      }
+
+      const updatedOpen = [...open];
+      updatedOpen[index] = true;
+      setOpen(updatedOpen);
+    } catch (e) {
+      console.log("error restore", e);
+    }
   };
 
   const handleSnackbarClose = (index) => {
@@ -216,11 +237,11 @@ export default function NotificationContent({ selectedNotification }) {
           <Button
             size="sm"
             variant="plain"
-            color="danger"
-            startDecorator={<DeleteRoundedIcon />}
+            color="primary"
+            startDecorator={<RestoreIcon />}
             onClick={() => handleSnackbarOpen(2)}
           >
-            {t("User.delete")}
+            Restore
           </Button>
           <Snackbar
             color="danger"
@@ -239,7 +260,7 @@ export default function NotificationContent({ selectedNotification }) {
               </Button>
             }
           >
-            Your notification has been deleted.
+            Your {selectedNotification?.itemType} has been restored.
           </Snackbar>
         </Box>
       </Box>

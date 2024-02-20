@@ -63,7 +63,6 @@ export default function SensorTypes() {
     const fetchUserRole = async () => {
       try {
         const res = await fetchUserInfo();
-        console.log("res", res.role);
         SetUserRole(res.role);
         setUserlicense(res.license);
       } catch (error) {}
@@ -72,8 +71,6 @@ export default function SensorTypes() {
     fetchUserRole();
   }, []);
   const getLabelForValue = (values) => {
-    console.log("p1", values);
-    console.log("p2", properties);
     return values?.map((value) => {
       const property = properties?.find(
         (prop) =>

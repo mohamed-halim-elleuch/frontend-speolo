@@ -1,19 +1,31 @@
+import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import Box from "@mui/joy/Box";
+import WarningRoundedIcon from "@mui/icons-material/WarningRounded";
+import Button from "@mui/joy/Button";
+import DialogActions from "@mui/joy/DialogActions";
+import DialogContent from "@mui/joy/DialogContent";
+import DialogTitle from "@mui/joy/DialogTitle";
+import Divider from "@mui/joy/Divider";
 import IconButton from "@mui/joy/IconButton";
 import Link from "@mui/joy/Link";
+import Modal from "@mui/joy/Modal";
+import ModalDialog from "@mui/joy/ModalDialog";
 import Sheet from "@mui/joy/Sheet";
 import Table from "@mui/joy/Table";
 import Typography from "@mui/joy/Typography";
-import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { searchObservations } from "../../../apis/CaveObservationController";
 import dayjs from "dayjs";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-function Row({ dataRow, initialOpen }) {
+import { searchObservations } from "../../../apis/CaveObservationController";
+import { deleteUser } from "../../../apis/UserController";
+
+function Row({ dataRow, initialOpen, onDelete }) {
   const { t } = useTranslation("translation");
   const [open, setOpen] = useState(initialOpen || false);
   const [row, setRow] = useState(dataRow);
+  const [opendelete, setOpendelete] = React.useState(false);
   const downloadFile = (row) => {
     window.open(row.filePath, "_blank");
     //const parts = row?.filePath.split("/");
@@ -21,6 +33,14 @@ function Row({ dataRow, initialOpen }) {
     // Get the last part of the array (which is the part after the last "/")
     //const fileName = parts[parts.length - 1];
     //window.open("http://127.0.0.1:8083/uploads/" + fileName, "_blank");
+  };
+  const deleteRow = async () => {
+    try {
+      await deleteUser(row._id);
+      onDelete(row._id);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
   };
   useEffect(() => {
     // Check if dataRow?._id exists
@@ -106,6 +126,53 @@ function Row({ dataRow, initialOpen }) {
                 <Typography level="body-lg" component="div">
                   {t("Accounts.details")}
                 </Typography>
+                <Button
+                  variant="soft"
+                  color="danger"
+                  startDecorator={<DeleteIcon />}
+                  size="sm"
+                  onClick={() => setOpendelete(true)}
+                  sx={{ textTransform: "none", marginInlineEnd: 1 }}
+                >
+                  {t("Sensors.delete")}
+                </Button>
+                <Modal open={opendelete} onClose={() => setOpendelete(false)}>
+                  <ModalDialog variant="outlined" role="alertdialog">
+                    <DialogTitle>
+                      <WarningRoundedIcon />
+                      Confirmation
+                    </DialogTitle>
+                    <Divider />
+                    <DialogContent>
+                      <div>
+                        {t("Sensors.delete-message")}{" "}
+                        <strong>
+                          {row?.firstName} {row?.lastName}
+                        </strong>{" "}
+                        ?
+                      </div>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        variant="solid"
+                        color="danger"
+                        onClick={() => {
+                          deleteRow();
+                          setOpendelete(false);
+                        }}
+                      >
+                        {t("Sensors.delete")}
+                      </Button>
+                      <Button
+                        variant="plain"
+                        color="neutral"
+                        onClick={() => setOpendelete(false)}
+                      >
+                        {t("Settings.cancel")}
+                      </Button>
+                    </DialogActions>
+                  </ModalDialog>
+                </Modal>
               </Box>
               <Table
                 stickyHeader
@@ -155,8 +222,9 @@ function Row({ dataRow, initialOpen }) {
   );
 }
 
-function UsersList({ rows }) {
+function UsersList({ rows, deleteUser }) {
   const { t } = useTranslation("translation");
+
   return (
     <div>
       <Sheet
@@ -209,7 +277,12 @@ function UsersList({ rows }) {
           </thead>
           <tbody>
             {rows?.map((row, index) => (
-              <Row key={row?._id} dataRow={row} initialOpen={index === 0} />
+              <Row
+                key={row?._id}
+                dataRow={row}
+                initialOpen={index === 0}
+                onDelete={deleteUser}
+              />
             ))}
           </tbody>
         </Table>

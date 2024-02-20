@@ -21,7 +21,6 @@ export default function EditObservation({ obsvalue, setNewSensorAdd }) {
   const [formData, setFormData] = React.useState(obsvalue);
   const [sensors, setSensors] = React.useState(null);
   useEffect(() => {
-    console.log(obsvalue);
     setFormData((prevFormData) => ({
       caveId: obsvalue?.caveId,
       sensorId: obsvalue?.sensorId,

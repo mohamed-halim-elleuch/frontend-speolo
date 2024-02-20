@@ -32,13 +32,12 @@ import {
   getSensors,
   updateSensor,
 } from "../../../apis/SensorController.js";
+import { getSensorTypes } from "../../../apis/SensorTypeController.js";
 import { fetchUserInfo, getUsers } from "../../../apis/UserController.js";
 import Layout from "../../Navbar/Layout.tsx";
-import CreateSensor from "./CreateSensor.js";
-import SmallTable from "./SmallTable.js";
-import TableFiles from "./TableFiles.js";
-import { getSensorTypes } from "../../../apis/SensorTypeController.js";
 import ShowMessage from "../../common/ShowMessage.js";
+import CreateSensor from "./CreateSensor.js";
+import TableFiles from "./TableFiles.js";
 
 export default function Sensors() {
   const { t } = useTranslation("translation");
@@ -188,7 +187,6 @@ export default function Sensors() {
       // }
 
       if (selectedManufacturer) {
-        console.log(selectedManufacturer);
         queryObject.sensorTypeId = selectedManufacturer.id;
       }
       const queryString = JSON.stringify(queryObject);
@@ -267,7 +265,6 @@ export default function Sensors() {
   }, [updateMessage]);
   const deleteSensors = async () => {
     try {
-      console.log(sensors[page * rowsPerPage + selectedRow]);
       const response = await deleteSensor(
         sensors[page * rowsPerPage + selectedRow]?._id
       );

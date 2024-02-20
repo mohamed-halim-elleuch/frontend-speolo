@@ -22,7 +22,6 @@ const MapLogic = () => {
       );
 
       setCaveInfo(data[0]);
-      console.log(data[0]);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -55,7 +54,6 @@ const MapLogic = () => {
       neLng: layer._bounds._northEast.lng,
     };
 
-    console.log("Updated Bounds", updatedBounds);
     setBounds(updatedBounds);
   };
 
@@ -64,7 +62,6 @@ const MapLogic = () => {
     e.layers.eachLayer((layer) => {
       numEdited += 1;
     });
-    console.log(`_onEdited: edited ${numEdited} layers`, e);
   };
 
   const _onCreated = (e) => {
@@ -76,7 +73,6 @@ const MapLogic = () => {
     if (type === "circle") {
       console.log("aa", e.layer.getLatLng(), e.layer.getRadius());
     }
-    console.log("_onCreated: something else created:", type, e);
   };
 
   const _onDeleted = (e) => {
@@ -85,7 +81,6 @@ const MapLogic = () => {
       numDeleted += 1;
     });
     if (numDeleted > 0) setBounds(null);
-    console.log(`onDeleted: removed ${numDeleted} layers`, e);
   };
 
   useEffect(() => {

@@ -77,7 +77,8 @@ export const restoreObservations = async (ids) => {
   try {
     const response = await axios.patch(
       `${API_BASE_URL}/api/caveObservation/restore`,
-      { ids, headers: { Authorization: `Bearer ${token}` } }
+      { ids: [ids] },
+      { headers: { Authorization: `Bearer ${token}` } }
     );
     return response.data;
   } catch (error) {

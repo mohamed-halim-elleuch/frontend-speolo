@@ -77,12 +77,11 @@ export default function ProfileUpdate() {
   };
   const handleSaveButtonClick = async () => {
     try {
-      console.log("formData", formData);
       if (formData.license === userLicense) {
         delete formData.license;
       }
       const updatedUser = await updateUser(formData);
-      console.log("updates", updatedUser);
+
       setUpdateMessage({
         open: true,
         message: "User updated successfully!",

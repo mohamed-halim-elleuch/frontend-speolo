@@ -82,3 +82,19 @@ export const deleteSensor = async (id) => {
     throw error;
   }
 };
+
+export const restoreSensor = async (id) => {
+  try {
+    const response = await axios.patch(
+      `${API_BASE_URL}/api/sensor/restore`,
+      { ids: [id] },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error restoring sensor: ", error);
+    throw error;
+  }
+};

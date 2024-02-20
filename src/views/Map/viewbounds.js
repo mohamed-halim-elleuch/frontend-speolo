@@ -15,7 +15,7 @@ export function SetBoundsRectangles({ innerBounds }) {
   const map = useMap();
   useEffect(() => {
     // Log innerBounds whenever it changes
-    console.log("innerBounds changed:", bounds);
+
     const { swLat, swLng, neLat, neLng } = innerBounds;
     const mapBounds = [
       [Math.min(swLat, neLat), Math.min(swLng, neLng)],

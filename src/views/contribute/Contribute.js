@@ -81,7 +81,6 @@ export default function Contribute() {
     //const renamedFile = new File([file], fileName, { type: file?.type });
     setValue("fileName", file.name);
     setValue("file", file);
-    console.log("file", file);
   };
 
   const onSubmit = async (data) => {

@@ -79,7 +79,9 @@ export default function Accounts() {
       return nameMatch && licenseMatch && roleMatch; //&& membershipDurationMatch;
     });
   };
-
+  const deleteUser = (userId) => {
+    setUsersList((prevRows) => prevRows.filter((row) => row._id !== userId));
+  };
   return (
     <>
       <Box
@@ -222,7 +224,7 @@ export default function Accounts() {
           </AccordionGroup>
         </Layout.SidePane>
 
-        <UsersList rows={usersList} />
+        <UsersList rows={usersList} deleteUser={deleteUser} />
       </Box>
     </>
   );
