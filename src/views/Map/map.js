@@ -51,7 +51,6 @@ const Map = () => {
     markerClick,
     caveInfo,
     isLoading,
-    CollectCavesID,
   } = MapLogic();
   const drawControlOptions = {
     polygon: {
@@ -121,8 +120,9 @@ const Map = () => {
   }, [position]);
   const handleRectangleClick = async () => {
     // Redirect to another page with all caves inside the rectangle
-    const ids = await CollectCavesID();
-    navigate(`/authenticate/search-page/${ids}`);
+    navigate(
+      `/authenticate/search-page/${bounds.swLat},${bounds.swLng},${bounds.neLat},${bounds.neLng}`
+    );
   };
   return (
     position && (
@@ -182,7 +182,14 @@ const Map = () => {
         )}
 
         {loading ? (
-          <div>Loading...</div>
+          <div
+            style={{
+              position: "absolute",
+              zIndex: 1000,
+            }}
+          >
+            Loading...
+          </div>
         ) : (
           <MarkerClusterGroup>
             {caves?.map((item, index) => (

@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  fetchCaveDataByGeolocation,
   getCaveById,
   searchCaves,
   searchCavesCountry,
@@ -72,30 +73,32 @@ const columns = [
 export default function SearchPage() {
   const { t } = useTranslation("translation");
   const { ids } = useParams();
+  const [error, setError] = React.useState("");
   const height = window.innerHeight;
   React.useEffect(() => {
+    console.log("ids", ids);
     const getSelectedCaves = async (ids) => {
       // Check if ids is a non-empty string
       if (typeof ids === "string" && ids.trim() !== "") {
         try {
           // Split the string into an array of IDs
           const idArray = ids.split(",");
+          const caveDataArray = await fetchCaveDataByGeolocation(
+            idArray[0],
+            idArray[1],
+            idArray[2],
+            idArray[3]
+          );
 
-          // Assuming getCaveById is an asynchronous function
-          const promises = idArray.map(async (id) => {
-            const response = await getCaveById(id);
-            const county = response?.entrances?.[0]?.county;
-            const country = response?.entrances?.[0]?.country;
-            return { ...response, country, county };
-          });
-
-          // Wait for all promises to resolve
-          const caveDataArray = await Promise.all(promises);
-
+          const cityDataArray = caveDataArray.map((caveData) => ({
+            ...caveData,
+            county: caveData.city,
+          }));
           // Set the rows with the array of cave data
-          setRows(caveDataArray);
+          setRows(cityDataArray);
         } catch (error) {
           console.error("Error fetching cave data:", error);
+          setError(error?.response?.data?.message);
         }
       }
     };
