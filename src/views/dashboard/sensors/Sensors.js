@@ -45,7 +45,7 @@ export default function Sensors() {
   const [newSensorAdd, setNewSensorAdd] = React.useState("");
   const { register, handleSubmit } = useForm();
   const [updateMessage, setUpdateMessage] = React.useState(null);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const [page, setPage] = React.useState(0);
   const [dataLength, setDataLength] = React.useState(0);
   const [selectedRow, setSelectedRow] = React.useState(0);
